@@ -288,7 +288,6 @@ function renderArticlePage(catId, subId, articleId) {
 
         ${embedUrl ? `
           <div class="yt-embed-section">
-            <div class="yt-embed-label">Watch on YouTube</div>
             <div class="yt-embed-wrapper">
               <iframe src="${embedUrl}" allowfullscreen loading="lazy" title="${article.title}"></iframe>
             </div>
