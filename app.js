@@ -91,6 +91,7 @@ function renderPage(state) {
   }
 
   updateNavActive(catId);
+  initEmptyStateLottie();
 }
 
 // ── NAV ──────────────────────────────────────────────────────
@@ -105,7 +106,7 @@ function initNav() {
   const navLogoText = document.getElementById('navLogoText');
   if (navLogoText) {
     navLogoText.innerHTML =
-      `<span>${SITE.name.split(' ').slice(0, 2).join(' ')}</span>`;
+      `<span>${SITE.navLogo || SITE.name.split(' ').slice(0, 2).join(' ')}</span>`;
   }
 
   const navLinks = document.getElementById('navLinks');
@@ -219,7 +220,10 @@ function renderSubcategoryPage(catId, subId) {
 
       <div class="section-title">${sub.title}</div>
       <div class="section-divider"></div>
-      ${articles.length ? renderArticleList(articles) : '<div class="empty"><p>No articles yet. Coming soon.</p></div>'}
+      ${articles.length ? renderArticleList(articles) : `<div class="empty-state">
+        <div class="empty-state-lottie"></div>
+        <p class="empty-state-text">No articles yet. Coming soon.</p>
+      </div>`}
     </div>
   `;
 }
@@ -227,19 +231,20 @@ function renderSubcategoryPage(catId, subId) {
 // ── ARTICLE LIST ─────────────────────────────────────────────
 
 function renderArticleList(articles) {
-  if (!articles.length) return `<div class="empty"><p>No articles yet.</p></div>`;
+  if (!articles.length) return `<div class="empty-state">
+    <div class="empty-state-lottie"></div>
+    <p class="empty-state-text">No articles yet.</p>
+  </div>`;
   return `<div class="article-list">
     ${articles.map(a => {
     const cat = getCategoryById(a.categoryId);
     const thumb = getThumbUrl(a.youtubeUrl);
     return `
         <div class="article-item" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
-          <div class="article-info">
-            <div class="article-tag-sm">${cat?.title || ''}</div>
-            <div class="article-title">${a.title}</div>
-            <div class="article-desc">${a.description}</div>
-            <div class="article-date">${formatDate(a.date)}</div>
-          </div>
+          <div class="article-tag-sm">${cat?.title || ''}</div>
+          <div class="article-title">${a.title}</div>
+          <div class="article-desc">${a.description}</div>
+          <div class="article-date">${formatDate(a.date)}</div>
           <div class="article-thumb">
             ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">▶</div>`}
           </div>
@@ -354,7 +359,52 @@ function renderBreadcrumb(crumbs) {
 }
 
 function emptyPage(msg) {
-  return `<div class="page-wide"><div class="empty"><p>${msg}</p></div></div>`;
+  return `<div class="page-wide">
+    <div class="empty-state">
+      <div class="empty-state-lottie"></div>
+      <p class="empty-state-text">${msg}</p>
+    </div>
+  </div>`;
+}
+
+let lottieDataPromise = null;
+function getLottieData() {
+  if (!lottieDataPromise) {
+    lottieDataPromise = fetch('./empty-state-lottie.json')
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
+      .catch(err => {
+        console.error('Failed to load Lottie JSON:', err);
+        lottieDataPromise = null; // retry next time
+        return null;
+      });
+  }
+  return lottieDataPromise;
+}
+
+async function initEmptyStateLottie() {
+  const containers = document.querySelectorAll('.empty-state-lottie');
+  if (!containers.length) return;
+
+  const data = await getLottieData();
+  if (!data || !window.lottie) return;
+
+  // Re-query in case DOM changed during await
+  const currentContainers = document.querySelectorAll('.empty-state-lottie');
+  currentContainers.forEach(container => {
+    if (container.dataset.lottieLoaded === 'true') return;
+    container.dataset.lottieLoaded = 'true';
+
+    window.lottie.loadAnimation({
+      container: container,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: data
+    });
+  });
 }
 
 // ── SVG ICONS ────────────────────────────────────────────────
