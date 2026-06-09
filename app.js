@@ -241,10 +241,12 @@ function renderArticleList(articles) {
     const thumb = getThumbUrl(a.youtubeUrl);
     return `
         <div class="article-item" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
-          <div class="article-tag-sm">${cat?.title || ''}</div>
-          <div class="article-title">${a.title}</div>
-          <div class="article-desc">${a.description}</div>
-          <div class="article-date">${formatDate(a.date)}</div>
+          <div class="article-info">
+            <div class="article-tag-sm">${cat?.title || ''}</div>
+            <div class="article-title">${a.title}</div>
+            <div class="article-desc">${a.description}</div>
+            <div class="article-date">${formatDate(a.date)}</div>
+          </div>
           <div class="article-thumb">
             ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">▶</div>`}
           </div>
