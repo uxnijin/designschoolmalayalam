@@ -954,6 +954,58 @@ ol {
 }
 
 /* ============================================================
+   ARTICLE MEDIA & INLINE IMAGES
+   ============================================================ */
+
+.article-hero-image {
+  margin: 16px 0 32px 0;
+  width: 100%;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  aspect-ratio: 16 / 9;
+  background: var(--bg-3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.article-hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.article-body img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  margin: 32px auto;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.article-image-figure {
+  margin: 36px 0;
+  text-align: center;
+}
+
+.article-image-figure img {
+  margin: 0 auto 12px;
+}
+
+.article-image-figure figcaption {
+  font-size: 14px;
+  color: var(--text-3);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.thumb-placeholder svg {
+  stroke: var(--text-3);
+  opacity: 0.6;
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 
