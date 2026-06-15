@@ -74,6 +74,14 @@ const CATEGORIES = [
       { id: "variables", title: "Variables & Tokens", description: "Design tokens and theming" },
     ],
   },
+  {
+    id: "graphic-design",
+    title: "Graphic Design",
+    description: "The art of visual communication",
+    subcategories: [
+      { id: "trends", title: "Trends", description: "Latest Design Trends" },
+    ],
+  },
 ];
 
 // ── ARTICLES ─────────────────────────────────────────────────
@@ -142,6 +150,240 @@ const ARTICLES = [
             All of these beauties are crafted by the brilliant team at <strong>Ek Type</strong> and are open-source. Go swap out those boring system fonts and make your next Malayalam project pop!
     `,
   },
+
+
+
+  {
+  "id": "every-ui-ux-concept-explained",
+  "subcategoryId": "basics",
+  "categoryId": "ui-design",
+  "title": "Every Major UI/UX Concept Explained in Under 10 Minutes",
+  "description": "No fluff, no massive textbooks. Just the foundational design rules that instantly separate pros from absolute amateurs.",
+  "date": "2026-06-11",
+  "youtubeUrl": "https://youtu.be/EcbgbKtOELY?si=wR1g1rNBnt-lGXKw",
+  "tags": ["ui design", "ux design", "basics", "typography", "hierarchy", "layouts"],
+  "content": `
+    <p style="font-size: 1.05rem; margin-bottom: 25px;">
+      If you want to get genuinely good at UI/UX design, you have got to stop guessing and start mastering the fundamentals. You don't need a four-year degree to build clean interfaces—you just need to understand how the human brain processes visual information.
+    </p>
+    <p style="font-size: 1.05rem; margin-bottom: 35px;">
+      Today, we are stripping away the fluff and breaking down <strong>every major UI/UX concept</strong> into plain, actionable rules. From typography hacks to dark mode depth, let's get right into it! 👇
+    </p>
+
+    <h3>1. Signifiers & Affordances</h3>
+    <p style="margin-bottom: 15px;">
+      Let’s start with a quick experiment. If you see three text-and-icon items, but two of them are grouped inside a subtle container, your brain instantly knows they are related. If one container is highlighted, you know it’s selected. If a piece of text is grayed out, you know it's inactive and clicking it won't do anything. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      Nobody had to write an instruction manual for you to figure that out, right? That is because the UI was using <strong>signifiers</strong> to tell you what the interface <strong>affords</strong> (what it can do). Great UI relies heavily on things like button press states, active navigation highlights, hover states, and tooltips. If a user has to ask "How do I click this?", your signifiers failed.
+    </p>
+
+    <h3>2. Visual Hierarchy (The Anti-Spreadsheet Rule)</h3>
+    <p style="margin-bottom: 15px;">
+      If you display all your data in a perfectly uniform, repeating format, it doesn't look like a product design—it looks like a Microsoft Excel spreadsheet. To fix this, you have three massive levers to pull: <strong>Size, Position, and Color</strong>.
+    </p>
+    <p style="margin-bottom: 15px;">
+      Always lead with an image if possible—it adds an immediate pop of color and makes scanning effortless. Put the most critical data (like a product title) large, bold, and right at the top. Use contrast to create depth; make supporting details like times or dates significantly smaller and muted. Drop secondary details like price or locations in distinct positions (like right-aligned or colored accent chips) to draw the eye precisely where it needs to go.
+    </p>
+
+    <h3>3. Grids vs. White Space</h3>
+    <p style="margin-bottom: 15px;">
+      There is a massive misconception out there that every single piece of content needs to align perfectly to a rigid 12-column layout. That is just not true, especially for custom landing pages. Grids are mostly guidelines to help organize highly repetitive layouts like blog structures, image galleries, or responsive breakpoints (e.g., switching from 8 columns on tablet to 4 on mobile).
+    </p>
+    <p style="margin-bottom: 15px;">
+      What matters a million times more than excessive grids is <strong>white space</strong>. Let your design breathe! When grouping text and buttons, establish a consistent rhythm—like utilizing a 4-point or 8-point grid system. Why? Not because it magically looks better, but because keeping spacing values as multiples of 4 or 8 means you can always cleanly split elements in half, which creates flawless visual consistency across your product.
+    </p>
+
+    <h3>4. The Pro Typography "Hack"</h3>
+    <p style="margin-bottom: 15px;">
+      Typography is everything because digital design is mostly just text. Here is a rule that will save you days of overthinking: <strong>you almost unilaterally never need more than one font family for an entire design</strong>. Find one beautiful, reliable sans-serif (like Inter, Inter Tight, or Robust Grotesk variants) and stick to it. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      Now, if you want to make your larger headers instantly look like they were designed by a high-end agency, apply this literal cheat code: **Tighten up the letter spacing (tracking) by about -2% to -3%, and drop the line-height down to around 110% or 120%**. It brings the heavy letters together, cuts out awkward gaps, and makes your hero text look incredibly sharp and premium real fast.
+    </p>
+
+    <h3>5. Master the Color Ramp (Semantic Colors)</h3>
+    <p style="margin-bottom: 15px;">
+      Stop guessing random hex codes. The easiest way to build a clean color palette is to pick one single primary brand color. To create contrast, simply lighten that base shade to generate your background tints, and darken it to create your high-readability text colors. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      More importantly, always use color for <em>purpose</em>, never just for random decoration. This is called **semantic coloring**, where colors carry universal functionality:
+    </p>
+    <ul style="margin-bottom: 25px; padding-left: 20px;">
+      <li style="margin-bottom: 8px;"><strong>Blue:</strong> Evokes trust, informational updates, or interactive focus states.</li>
+      <li style="margin-bottom: 8px;"><strong>Red:</strong> Destructive actions, urgent errors, or system danger.</li>
+      <li style="margin-bottom: 8px;"><strong>Yellow:</strong> Warnings or system status delays.</li>
+      <li style="margin-bottom: 8px;"><strong>Green:</strong> Success, completion, or positive metric changes.</li>
+    </ul>
+
+    <h3>6. The Golden Rule of Dark Mode</h3>
+    <p style="margin-bottom: 15px;">
+      Designing for dark mode isn't just about flipping a white background to pure black. In fact, pure black often creates a harsh contrast that causes serious eye strain. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      In light mode, we use drop shadows to indicate that an element is floating closer to the user. But in dark mode, shadows disappear into the void. To create depth in the dark, **the closer an element sits to the user, the lighter its background surface needs to be**. Your main background should be your darkest shade, and cards or modals floating on top should step up to slightly lighter shades of gray, charcoal, or deep navy. Also, make sure to dim down the saturation of accent color chips so they don't blindingly burn the user's retinas!
+    </p>
+
+    <h3>7. Drop Shadows Done Right</h3>
+    <p style="margin-bottom: 15px;">
+      Shadows are a fantastic tool to create realism, but 90% of beginners make their shadows way too dark and muddy. It ruins the layout.
+    </p>
+    <p style="margin-bottom: 15px;">
+      The secret to a beautiful shadow is to drop the opacity down significantly (think 5% to 10% max) and dial the blur radius way up to let it spread softly. Minor page components like cards need very little drop shadow, while elements that physically overlap other content—like dropdown menus or popup modals—need a wider, stronger shadow to establish that distinct separation. Remember: if the shadow is the very first thing you notice when looking at a card, it is way too heavy.
+    </p>
+
+    <h3>8. Icon Scaling & Ghost Buttons</h3>
+    <p style="margin-bottom: 15px;">
+      Icons are essential context clues, but they are frequently oversized. A foolproof trick to make them look perfectly proportional is to match the icon's bounding box exactly to the **line-height of the text** it sits next to (for example, if your body text line-height is 24px, scale your icon box to exactly 24px).
+    </p>
+    <p style="margin-bottom: 15px;">
+      When building navigation elements or sidebars, these link rows are essentially just buttons without backgrounds—often referred to as **ghost buttons**—until you hover over them. When placing a primary and secondary call-to-action (CTA) side by side, use a solid filled button for your primary action, and a clean ghost button for the secondary option. A solid benchmark for button padding is making the overall width double the height.
+    </p>
+
+    <h3>9. Every Action Needs a Response</h3>
+    <p style="margin-bottom: 15px;">
+      When a user interacts with a digital product, the system must talk back immediately. Every single button you design requires at least four interactive states: **Default, Hovered, Active (Pressed), and Disabled**. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      Forms and inputs are even more critical. Users need an obvious focus state when clicking into a text field, clear error states with red borders and micro-copy when a validation fails, and loading spinners when data is fetching in the background. Never leave a user wondering, "Did the app crash or did it register my click?"
+    </p>
+
+    <h3>10. Micro-Interactions & Overlays</h3>
+    <p style="margin-bottom: 15px;">
+      Micro-interactions take system feedback to the next level. Think about a simple "Copy to Clipboard" button. If you click it and nothing changes, it feels broken. But if a little success toast smoothly slides up from the bottom confirming it was copied, that is a micro-interaction. It moves an interface from feeling clunky to incredibly premium and satisfying.
+    </p>
+    <p style="margin-bottom: 15px;">
+      Finally, watch out for text overlays on top of background images. If you just slap white text on a photo, changes in the image's lighting will completely break readability. Instead, don't use full dark overlays that ruin the photo—apply a sleek **linear gradient** that smoothly shifts from transparent to a dark tinted background right behind where the text sits. For an ultra-modern look, stack a progressive blur (glassmorphism) on top of the gradient.
+    </p>
+
+    <p style="margin-top: 30px; margin-bottom: 15px;">
+      That is UI/UX design essentials packed down to the pure bones. Stop guessing where to put elements, start applying these fundamental structural laws, and watch your product designs look instantly professional. Go build something clean! 🧑‍💻✨
+    </p>
+  `,
+},
+
+
+  {
+  "id": "2026-graphic-design-trends",
+  "subcategoryId": "trends",
+  "categoryId": "graphic-design",
+  "title": "The 10 Graphic Design Trends You Need to Know for 2026",
+  "youtubeUrl": "https://youtu.be/OcOQQlfDVsI?si=mRxITZ97_ATpXBoF",
+  "description": "Scoured from the depths of Pinterest, design blogs, and creator feeds—here are the styles about to dominate your timeline.",
+  "date": "2026-06-11",
+  "tags": ["graphic design", "trends", "2026", "ui design", "inspiration"],
+  "content": `
+    <p style="font-size: 1.05rem; margin-bottom: 25px;">
+      The team and I have spent the last several weeks scouring design blogs, Pinterest feeds, and a whole lot more to come up with the core design styles we see trending straight upward. Look, you might have seen some stuff that looks like what we are about to talk about, but that is why it’s called a trend, okay? It comes, it goes, and it usually comes back in a completely different way than you remember it. 
+    </p>
+    <p style="font-size: 1.05rem; margin-bottom: 35px;">
+      I guarantee there are at least a few on this list you haven’t considered yet—not to mention three honorable mentions we are cooking on the back burner that we'll touch on later. Let’s kick things off!
+    </p>
+
+    <h3>1. Naive Design (Childish Design)</h3>
+    <p style="margin-bottom: 15px;">
+      First up is Naive Design, or what you might just call childish design. This style embraces the super raw charm of children's drawings, doodles, and scribbles, but it throws them right into a professional design context. Instead of striving for a perfectly polished graphic, it completely welcomes the imperfections.
+    </p>
+    <p style="margin-bottom: 15px;">
+      Think shaky handwriting, uneven shapes, and messed-up proportions. It’s honestly like taking those little scribbles from the margins of your school notebook and putting them into a proper brand identity. It works so well because it connects you to pure emotion and vulnerability rather than stiff, technical perfection. 
+    </p>
+
+    <h3>2. Trinket Design (Collection Catalog)</h3>
+    <p style="margin-bottom: 15px;">
+      Next up is what we are calling Trinket Design. You might also see this floating around online as collection catalog, index, or archive design. This is where objects, images, or little artifacts are presented as if they are specimens laid out in an archive or textbook grid. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      The objects are usually flattened, isolated from their original backgrounds, and arranged symmetrically side-by-side. The wild part? Everything gets equal weighting—meaning things are often shown at the exact same size even if one object is clearly way bigger than the other in real life. It feels incredibly nostalgic and playful.
+    </p>
+
+    <h3>3. The Grainy Blur Family</h3>
+    <p style="margin-bottom: 15px;">
+      Okay, stay with me here. I know grain, blurs, and gradients have been around for a minute, but there is a massive mega-trend happening with four distinct sub-styles that are popping up everywhere:
+    </p>
+    <ul style="margin-bottom: 25px; padding-left: 20px;">
+      <li style="margin-bottom: 8px;"><strong>Gradient Layouts:</strong> Gradients aren't just a background anymore; they act as the actual dividers and structural blocks organizing your typography.</li>
+      <li style="margin-bottom: 8px;"><strong>Fuzzy Amorphous Creatures:</strong> This turns gradients into literal characters. Think strange, soft, blobby silhouettes with googly eyes and a squiggly smile. Half plush, half psychedelic.</li>
+      <li style="margin-bottom: 8px;"><strong>Acid Blur:</strong> The most raw version. Hazy, speckled, airbrushed textures with a high-energy spray-paint vibe using harsh neons or dreamy pastels.</li>
+      <li style="margin-bottom: 8px;"><strong>Ethereal Florals:</strong> Soft, natural flower motifs that completely dissolve into a glowy pastel gradient where mood matters way more than sharp detail.</li>
+    </ul>
+
+    <h3>4. Type Collage</h3>
+    <p style="margin-bottom: 15px;">
+      Number four is Type Collage, where typography doesn't just support the design—it literally <em>is</em> the design. Forget clean grids and careful hierarchy. This style is all about mutated, oversized text that overlaps, warps, stretches, and layers in a way that feels beautifully chaotic and noisy.
+    </p>
+    <p style="margin-bottom: 15px;">
+      It pulls heavily from the cut-and-paste zine culture of the past, but it’s been elevated into a contemporary, eye-grabbing graphic style for fashion campaigns, streetwear branding, and music posters. The text becomes the texture, the rhythm, and the attitude.
+    </p>
+
+    <h3>5. Punk Grunge (Grunge Revival)</h3>
+    <p style="margin-bottom: 15px;">
+      This style revives the messy, DIY energy of the 1990s—think Xerox flyers, skate zines, and alternative rock album covers. It feels deliberately unpolished, jagged, and raw as a direct reaction against the hyper-clean, corporate digital looks we see everywhere now. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      Expect high-contrast grayscale palettes, messy handwriting, graffiti marks, and distorted stencils with just an occasional pop of neon to break things up. It’s all about urgency and defiance.
+    </p>
+
+    <h3>6. Signal Graphics</h3>
+    <p style="margin-bottom: 15px;">
+      If you remember MTV’s late '80s and '90s golden era of experimental motion design, this one is going to hit home. Unlike punk grunge which has a rough photocopy edge, Signal Graphics are hyper-saturated, cartoonish, and loud. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      We are talking exploding or morphing logos, electric color palettes, squiggles, and clunky early 3D graphics like tubes and orbs. It’s a total reminder that design can embrace randomness, anti-seriousness, and pure pop-culture energy.
+    </p>
+
+    <h3>7. Blueprint Design (Technical Schematics)</h3>
+    <p style="margin-bottom: 15px;">
+      This is one of my personal favorites on the list. Blueprint Design takes the precise visual language of technical schematics, patents, and architectural plans and repurposes it as a graphic style. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      Instead of sleek branding, you are leaning on detailed line drawings, strong grids, annotations, and labels. Designers are breaking down everyday objects—like cameras, sandwiches, or cars—into precise diagrams. It looks incredible on a classic monochrome blue, black, or cream parchment texture paired with monospaced typography.
+    </p>
+
+    <h3>8. Distorted Portraiture</h3>
+    <p style="margin-bottom: 15px;">
+      This trend takes the human face and body and completely warps, stretches, or exaggerates it into something surreal, funny, or just flat-out uncanny. We are talking enlarged heads, stretched limbs, and caricature-like features.
+    </p>
+    <p style="margin-bottom: 15px;">
+      It pulls inspiration from late-90s collage magazines mixed with today’s wacky AR filters on apps like TikTok or Instagram. It completely interrupts your expectation of traditional beauty and results in a highly memorable, humorous graphic.
+    </p>
+
+    <h3>9. Future Medieval</h3>
+    <p style="margin-bottom: 15px;">
+      I felt this one coming for a while! Future Medieval fuses sacred, archaic visuals from the Middle Ages with modern, futuristic aesthetics. Think heavy black letter type, runes, illuminated borders, and mythic beasts like dragons—but re-imagined with digital distressing, halftone textures, and organic AI-inspired patterns. 
+    </p>
+    <p style="margin-bottom: 15px;">
+      It’s a wild mashup because it looks backward to ancient mysticism and folklore as a unique way to visualize the future. It ends up looking incredibly ceremonial, apocalyptic, and cool.
+    </p>
+
+    <h3>10. Surveillance Design</h3>
+    <p style="margin-bottom: 15px;">
+      The final trend on our main list is Surveillance Design. This gives you a raw, functional look pulled straight from control systems. Think CCTV overlays, biometric scans, x-ray effects, timestamped data grids, and infrared thermal pallets.
+    </p>
+    <p style="margin-bottom: 15px;">
+      It completely ignores traditional prettiness to focus on machine vision, vulnerability, and machine-readable text. It’s pixelated, low-res, and meant to feel a little bit unsettling or futuristic on purpose.
+    </p>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 40px 0;" />
+
+    <h3>🎁 The 3 Rising Honorable Mentions</h3>
+    <p style="margin-bottom: 15px;">
+      Before we wrap up, there are three fast-rising trends hanging out on the back burner that didn’t quite hit the top 10 but are absolutely worth keeping an eye on:
+    </p>
+    <p style="margin-bottom: 15px;">
+      <strong>1. Kid Core:</strong> A total revival of explosive '90s toy culture graphic energy. Think Tamagotchis, plastic shines, comic starburst backgrounds, bubble fonts, and sticker-like layouts that bring childlike joy to design.
+    </p>
+    <p style="margin-bottom: 15px;">
+      <strong>2. AI Abstract Art:</strong> Instead of using AI to make hyper-realistic corporate renders, designers are leaning directly into the machine's natural glitchiness. It embraces warped anatomy, fluid shapes, and painterly, unresolved textures to create something alien and experimental.
+    </p>
+    <p style="margin-bottom: 15px;">
+      <strong>3. Frutiger Arrow:</strong> That glossy, techno-utopian aesthetic from the Windows Vista and Office 2007 era. It's making a massive comeback for the meme of it—combining glassy buttons, aqua blues, and tech layers with elements of nature like water splashes, green leaves, and blue skies.
+    </p>
+
+    <p style="margin-top: 30px; margin-bottom: 15px;">
+      Trends come and go, and maybe this list will look completely different in another seven months, but hopefully, this gives you a killer set of terms and references to level up your next project. Go build something awesome, and I'll catch you later!
+    </p>
+  `,
+},
 
 
 
