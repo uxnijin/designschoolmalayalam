@@ -1,0 +1,344 @@
+{
+  "design-communities": [
+    {
+      "title": "Design Buddies",
+      "link": "https://www.designbuddies.community/",
+      "desc": "Improve your design craft, land jobs, and make friends.",
+      "price": "Free"
+    },
+    {
+      "title": "Designer Slack Communities",
+      "link": "https://www.designerslack.community/",
+      "desc": "A collection of Slack communities for designers around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Designed",
+      "link": "https://www.designed.org/",
+      "desc": "A diverse design community and platform of educational tools and mentoring.",
+      "price": "Free"
+    },
+    {
+      "title": "Reddit",
+      "link": "https://www.reddit.com/search/?q=digital+design&amp;type=communities",
+      "desc": "Explore various design communities on Reddit.",
+      "price": "Free"
+    },
+    {
+      "title": "DesignX",
+      "link": "https://designx.community/",
+      "desc": "A Community for designers by designers.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Muzli Me",
+      "link": "https://me.muz.li/",
+      "desc": "A place to showcase your identity, share your work, and gain the recognition you deserve.",
+      "price": "Free"
+    },
+    {
+      "title": "10x Designers",
+      "link": "https://10x.framer.website/",
+      "desc": "Expand your design skillset.",
+      "price": "Paid"
+    },
+    {
+      "title": "Thousand Faces Club",
+      "link": "https://www.thousandfaces.club/",
+      "desc": "A community to empower creators to make a living out of their passion.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Glass",
+      "link": "https://glass.photo/",
+      "desc": "Photo sharing app and community for professionals and amateurs alike.",
+      "price": "Free"
+    },
+    {
+      "title": "todays.design",
+      "link": "https://todays.design/",
+      "desc": "A space where designers can showcase their work, engage in conversations, and connect with their peers.",
+      "price": "Free"
+    },
+    {
+      "title": "Graphic Design Forum",
+      "link": "https://www.graphicdesignforum.com/",
+      "desc": "A place for graphic designers to discuss work and life.",
+      "price": "Free"
+    },
+    {
+      "title": "Drr.",
+      "link": "https://drawerrr.com/",
+      "desc": "Community to develop innovative solutions that enable companies and governments to adopt sustainable practices.",
+      "price": "Free"
+    },
+    {
+      "title": "Meet Your Legend",
+      "link": "https://meetyourlegend.com/",
+      "desc": "Expert mentorship and consulting in VFX, Animation and video game.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Designshot",
+      "link": "https://www.designshot.co/",
+      "desc": "A (not so) secret society of design-driven transformation.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "CreativePro",
+      "link": "https://creativepro.com/",
+      "desc": "A trusted resource for graphic design professionals.",
+      "price": "Free"
+    },
+    {
+      "title": "MakerThrive",
+      "link": "https://makerthrive.com/",
+      "desc": "A vibrant community for creators & makers to connect, share projects, and grow together.",
+      "price": "Free"
+    },
+    {
+      "title": "ArtNetwork",
+      "link": "https://artnetwork.io/",
+      "desc": "Leading social network for artists and art collectors.",
+      "price": "Free"
+    }
+  ],
+  "design-meetups": [
+    {
+      "title": "Creative Mornings",
+      "link": "https://creativemornings.com/",
+      "desc": "The world\u2019s largest face-to-face creative community.",
+      "price": "Free"
+    },
+    {
+      "title": "IxDF Community Meetups",
+      "link": "https://ixdf.org/community?ep=tooolsdesign",
+      "desc": "A community with heart and soul, so you never have to face the job market alone.",
+      "price": "Free"
+    },
+    {
+      "title": "Creative Lunch Club",
+      "link": "https://www.creativelunchclub.com/",
+      "desc": "Meet other creatives for lunch.",
+      "price": "Free"
+    },
+    {
+      "title": "Meetup",
+      "link": "https://www.meetup.com/topics/designers/all/",
+      "desc": "All designers groups on Meetup.",
+      "price": "Free"
+    }
+  ],
+  "design-conferences-events": [
+    {
+      "title": "Neon Moir\u00e9",
+      "link": "https://www.neonmoire.com/",
+      "desc": "The best online design conferences and events on our digitalized world.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Events Guide",
+      "link": "https://designevents.guide/",
+      "desc": "The best UX/UI, motion, and graphic design events around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Dezeen Events Guide",
+      "link": "https://www.dezeen.com/eventsguide/type/conferences/",
+      "desc": "The leading architecture, interior and design events around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Berlin Design Conferences",
+      "link": "https://berlin-design-network.org/events/conferences",
+      "desc": "A non-profit association and Design unity to create a shared culture for exchange and collaboration.",
+      "price": "Free"
+    }
+  ],
+  "design-awards": [
+    {
+      "title": "iF Design Award",
+      "link": "https://ifdesign.com/",
+      "desc": "One of the most important and prestigious design awards in the world.",
+      "price": "Paid"
+    },
+    {
+      "title": "Red Dot Award",
+      "link": "https://www.red-dot.org/",
+      "desc": "An international design competition for product design, communication design and design concepts.",
+      "price": "Paid"
+    },
+    {
+      "title": "The Webby Awards",
+      "link": "https://www.webbyawards.com/",
+      "desc": "Honoring the best of the internet since \u00a91997.",
+      "price": "Paid"
+    },
+    {
+      "title": "Awwwards",
+      "link": "https://www.awwwards.com/websites/",
+      "desc": "Recognizing the talent and effort of the best designers, web developers and digital agencies.",
+      "price": "Paid"
+    },
+    {
+      "title": "European Design Awards",
+      "link": "https://europeandesign.org/",
+      "desc": "Celebrating design: A european community of excellence.",
+      "price": "Paid"
+    },
+    {
+      "title": "The FWA Awards",
+      "link": "https://thefwa.com/",
+      "desc": "Showcasing web innovation every day since 2000.",
+      "price": "Paid"
+    }
+  ],
+  "job-boards": [
+    {
+      "title": "Dribbble Job Board",
+      "link": "https://dribbble.com/jobs",
+      "desc": "The #1 job board for graphic design jobs.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Design Jobs Board",
+      "link": "https://www.designjobsboard.com/",
+      "desc": "Connecting the best creative talent with the most respected agencies.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Behance Creative Jobs",
+      "link": "https://www.behance.net/joblist",
+      "desc": "Browse and discover your next opportunity.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "AIGA Design Jobs",
+      "link": "https://designjobs.aiga.org/",
+      "desc": "The first place AIGA members turn to find their next job.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "If You Could Jobs",
+      "link": "https://www.ifyoucouldjobs.com/",
+      "desc": "The place to find jobs in the creative industry.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Authentic Jobs",
+      "link": "https://authenticjobs.com/",
+      "desc": "The leading job board for designers, developers, and creative pros.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "UI/UX Jobs Board",
+      "link": "https://uiuxjobsboard.com/",
+      "desc": "Find design jobs at startups and large companies.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Open Doors",
+      "link": "https://www.opendoorscareers.com/",
+      "desc": "Discover the best entry-level design jobs all in one place.",
+      "price": "Free"
+    },
+    {
+      "title": "UI & UX Designer Jobs",
+      "link": "https://uiuxdesignerjobs.com/",
+      "desc": "Browse hand-picked designer job listings lead straight to the company website.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Jobs",
+      "link": "https://designjobs.careers/",
+      "desc": "Find your dream design job and browse thousands of opportunities.",
+      "price": "Free"
+    },
+    {
+      "title": "WeLoveProduct",
+      "link": "https://weloveproduct.co/",
+      "desc": "Find your next dream job in product.",
+      "price": "Free"
+    },
+    {
+      "title": "Mockin",
+      "link": "https://mockin.work/",
+      "desc": "An AI toolkit helping designers get clarity, feedback, and interview confidence.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Design Engineer IO",
+      "link": "https://designengineer.io/",
+      "desc": "Job board dedicated to design engineering positions.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Gigs",
+      "link": "https://uxgigs.co",
+      "desc": "UK-focused job board for UX, UI, and product design roles.",
+      "price": "Free"
+    }
+  ],
+  "professional-networks": [
+    {
+      "title": "LinkedIn",
+      "link": "https://www.linkedin.com/",
+      "desc": "Manage your professional identity.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Dribbble",
+      "link": "https://dribbble.com/for-designers",
+      "desc": "Build your brand, grow your skills, and land your dream projects.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Fiverr",
+      "link": "https://pro.fiverr.com/cp/pro-freelancers",
+      "desc": "Professional freelancer platform.",
+      "price": "Paid"
+    },
+    {
+      "title": "Behance",
+      "link": "https://www.behance.net/joblist",
+      "desc": "A comprehensive community to share work and connect with one another.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "99designs",
+      "link": "https://99designs.com/designers",
+      "desc": "Find awesome clients and become a part of a global community of talented designers.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Upwork",
+      "link": "https://www.upwork.com/i/how-it-works/freelancer/",
+      "desc": "Find the right work for you, with great clients, at the world\u2019s work marketplace.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Freelancer",
+      "link": "https://www.freelancer.com/",
+      "desc": "Find freelance jobs online.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Malt",
+      "link": "https://www.malt.com/",
+      "desc": "Everything you need to run your freelance business.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Contra",
+      "link": "https://www.contra.com/",
+      "desc": "A new professional network for your independent journey.",
+      "price": "Free"
+    },
+    {
+      "title": "Academy",
+      "link": "https://www.academyux.com/careers",
+      "desc": "A UX talent network for flexible work, amazing freelance and full-time job opportunities and free UX resources.",
+      "price": "Free"
+    }
+  ]
+}

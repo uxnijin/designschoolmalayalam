@@ -2,7 +2,7 @@
    DESIGN SCHOOL MALAYALAM — STYLES
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Google+Sans+Display:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Google+Sans+Display:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap');
 
 /* ── DARK ── */
 :root {
@@ -69,6 +69,7 @@ body {
   color: var(--text);
   font-size: 16px;
   line-height: 1.6;
+  font-weight: 600;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -895,6 +896,7 @@ ol {
   color: var(--text-2);
   line-height: 1.85;
   margin-bottom: 20px;
+  font-weight: 400;
 }
 
 .article-body ul,
@@ -916,11 +918,12 @@ ol {
   color: var(--text-2);
   line-height: 1.75;
   margin-bottom: 6px;
+  font-weight: 400;
 }
 
 .article-body strong {
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .article-body code {
@@ -935,6 +938,11 @@ ol {
 .article-body a[style*="background-color"] {
   border-radius: 99px !important;
   transition: background var(--transition), transform var(--transition) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 @media (hover: hover) {

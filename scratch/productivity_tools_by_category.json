@@ -1,0 +1,586 @@
+{
+  "whiteboard-tools": [
+    {
+      "title": "FigJam",
+      "link": "https://www.figma.com/figjam/",
+      "desc": "FigJam empowers teams to build better products, together.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Notion",
+      "link": "https://affiliate.notion.so/toools",
+      "desc": "A workspace that adapts to your needs.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Miro",
+      "link": "https://miro.com/",
+      "desc": "Collaborative whiteboard platform to bring teams together, anytime, anywhere.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Coda",
+      "link": "https://coda.partnerlinks.io/via-toools",
+      "desc": "All-in-one collaborative workspace for a more organized work day.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Mural",
+      "link": "https://www.mural.co/",
+      "desc": "Digital workspace for visual collaboration.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Milanote",
+      "link": "https://milanote.com/",
+      "desc": "Easy-to-use tool to organize your ideas and projects into visual boards.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Canva Whiteboards",
+      "link": "https://www.canva.com/online-whiteboard/",
+      "desc": "Create, brainstorm and collaborate with Canva Whiteboards.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Obsidian Canvas",
+      "link": "https://obsidian.md/canvas",
+      "desc": "An infinite space to visualize and make sense of your ideas.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Fabrie",
+      "link": "https://www.fabrie.com/",
+      "desc": "A collaborative whiteboard powered by Chatgpt and Stable Diffusion.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Fabric",
+      "link": "https://fabric.so/?via=toools",
+      "desc": "A universal workspace and smart organizer for all your notes, files, links and screenshots.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Infinity Maps",
+      "link": "https://infinitymaps.io/",
+      "desc": "Create infinite maps to help you organize, structure, and share your knowledge.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Visualist",
+      "link": "https://www.visualistapp.com/",
+      "desc": "Organise visual inspiration, make moodboards or mix colour palettes in one workspace.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Ditto",
+      "link": "http://dittowords.com/",
+      "desc": "Collaborate on copy across your team\u2019s product from design to production.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Playbook",
+      "link": "https://www.playbook.com/",
+      "desc": "Dropbox for creatives to see everything, find anything.",
+      "price": "Freemium"
+    },
+    {
+      "title": "AFFiNE",
+      "link": "https://affine.pro/",
+      "desc": "A workspace with fully merged docs, whiteboards and databases, powered by AI.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Walling",
+      "link": "https://walling.app/",
+      "desc": "Visually organize all your ideas and tasks in one place.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Creately",
+      "link": "https://creately.com/",
+      "desc": "Data-connected visual workspace to brainstorm, plan, and capture knowledge.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Integrity",
+      "link": "https://integrity.sh/",
+      "desc": "Notes, canvases and AI chats in one connected workspace.",
+      "price": "Beta"
+    },
+    {
+      "title": "Craft",
+      "link": "https://www.craft.do/",
+      "desc": "Your space for notes, tasks, and big ideas.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Infinite Canvas",
+      "link": "https://infinitecanvas.tools/",
+      "desc": "Tools that work the way we think.",
+      "price": "Free"
+    },
+    {
+      "title": "Arky",
+      "link": "https://arky.so/",
+      "desc": "AI visual canvas that turns messy ideas into clear knowledge structures.",
+      "price": "Beta"
+    }
+  ],
+  "ai-productivity-agents": [
+    {
+      "title": "Revo",
+      "link": "https://www.revo.ai/",
+      "desc": "The intelligence OS for your company.",
+      "price": "Paid"
+    },
+    {
+      "title": "Eden",
+      "link": "https://eden.so/",
+      "desc": "AI-powered creative workspace with custom agents and canvas.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Liveblocks",
+      "link": "https://liveblocks.io/",
+      "desc": "Ready-made AI copilots and collaboration for your product.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Nuraform",
+      "link": "https://www.nuraform.com/",
+      "desc": "Stunning, AI-powered forms in seconds.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Viktor",
+      "link": "https://ref.getviktor.com/toools",
+      "desc": "An AI coworker that connects to your tools and delivers real work outputs.",
+      "price": "Freemium"
+    },
+    {
+      "title": "GalaxyBrain",
+      "link": "https://galaxybrain.com/",
+      "desc": "Local first information OS where pages work like docs and spreadsheets.",
+      "price": "Beta"
+    },
+    {
+      "title": "Tines",
+      "link": "https://tines.com/",
+      "desc": "Intelligent workflow platform that integrates AI agents, automation, and teams.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Paperclip",
+      "link": "https://paperclip.ing/",
+      "desc": "Open source platform for orchestrating AI agents as companies.",
+      "price": "Free"
+    },
+    {
+      "title": "Wispr Flow",
+      "link": "https://ref.wisprflow.ai/toools",
+      "desc": "Voice-to-text AI that turns speech into polished writing in any app.",
+      "price": "Freemium"
+    },
+    {
+      "title": "OpenClaw",
+      "link": "https://openclaw.ai/",
+      "desc": "Open source personal AI assistant that runs on your machine.",
+      "price": "Free"
+    },
+    {
+      "title": "Hermes Agent",
+      "link": "https://hermes-agent.nousresearch.com/",
+      "desc": "Open source AI agent that learns your projects over time.",
+      "price": "Free"
+    },
+    {
+      "title": "CrewAI",
+      "link": "https://crewai.com/",
+      "desc": "Multi-agent platform for building autonomous AI workflows.",
+      "price": "Freemium"
+    },
+    {
+      "title": "LobeHub",
+      "link": "https://lobehub.com/",
+      "desc": "AI platform for organizing, hiring, and scheduling agent teammates around the clock.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Rezonant",
+      "link": "https://www.rezonant.app/",
+      "desc": "AI product workspace that turns intent into shaped tickets for Jira, Linear, or a coding agent.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Honen",
+      "link": "https://honen.com/",
+      "desc": "AI tool that turns your docs and videos into real courses.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Conductor",
+      "link": "https://www.conductor.build/",
+      "desc": "A Mac app for running parallel AI coding agents in isolated workspaces.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Tendem",
+      "link": "https://tendem.ai/for/design",
+      "desc": "Hand off design tasks to AI agents reviewed by vetted human experts.",
+      "price": "Paid"
+    }
+  ],
+  "timezone-tools": [
+    {
+      "title": "Every Time Zone",
+      "link": "https://everytimezone.com/",
+      "desc": "Easily find the exact time difference with the visual Time Zone Converter.",
+      "price": "Free"
+    },
+    {
+      "title": "World Time Buddy",
+      "link": "https://www.worldtimebuddy.com/",
+      "desc": "Convenient world clock, a time zone converter, and an online meeting scheduler.",
+      "price": "Free"
+    },
+    {
+      "title": "Quick Time Converter",
+      "link": "https://quicktimeconverter.com",
+      "desc": "Visual timezone comparison tool with interactive slider.",
+      "price": "Free"
+    }
+  ],
+  "video-communication-screen-sharing": [
+    {
+      "title": "Zoom",
+      "link": "https://zoom.us/",
+      "desc": "Video conferencing with real-time messaging and content sharing.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Orbital",
+      "link": "https://orbital.chat/",
+      "desc": "Virtual work (and play) that feels more natural, more productive, more human.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Tuple",
+      "link": "https://tuple.app/",
+      "desc": "A remote pair programming app.",
+      "price": "Paid"
+    },
+    {
+      "title": "Otter",
+      "link": "https://otter.ai/",
+      "desc": "The #1 AI meeting agent.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Bubbles",
+      "link": "https://www.usebubbles.com/",
+      "desc": "AI notetaker that turns every meeting into action and helps you skip the unnecessary ones.",
+      "price": "Freemium"
+    },
+    {
+      "title": "PliimPRO",
+      "link": "https://pliim.app/",
+      "desc": "Safely share your screen with one click.",
+      "price": "Paid"
+    },
+    {
+      "title": "Qudemo",
+      "link": "https://qudemo.com/",
+      "desc": "AI video call agents that feel like your best employee is always available.",
+      "price": "Beta"
+    },
+    {
+      "title": "Zuddl Studio",
+      "link": "https://www.zuddl.com/studio",
+      "desc": "Produce and stream studio quality video content for events and webinars.",
+      "price": "Paid"
+    },
+    {
+      "title": "Audionotes",
+      "link": "https://www.audionotes.app/",
+      "desc": "Turn your voice recordings, text notes, images, audio files, and YouTube videos into perfect notes.",
+      "price": "Paid"
+    }
+  ],
+  "screen-recording": [
+    {
+      "title": "Screen Studio",
+      "link": "https://screenstudio.lemonsqueezy.com?aff=kzPjR",
+      "desc": "A professional screen recorder for macOS.",
+      "price": "Paid"
+    },
+    {
+      "title": "FocuSee",
+      "link": "https://focusee.imobie.com/",
+      "desc": "Turn screen recordings into eye-catching videos automatically.",
+      "price": "Paid"
+    },
+    {
+      "title": "Clueso",
+      "link": "https://www.clueso.io/",
+      "desc": "Product videos in minutes with AI.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Mockoops",
+      "link": "https://mockoops.mohitya.dev/",
+      "desc": "Convert your boring screen recording into life-like mockups.",
+      "price": "Free"
+    },
+    {
+      "title": "Filmify",
+      "link": "https://filmify.app/",
+      "desc": "Create stunning video mockups.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Presenting",
+      "link": "https://presenting.app/",
+      "desc": "Animate your screen recordings and create slick presentations.",
+      "price": "Paid"
+    },
+    {
+      "title": "DreamCut",
+      "link": "https://dreamcut.ai/",
+      "desc": "AI video editor and screen recorder that works right from your browser.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Motion",
+      "link": "https://www.motion.software/",
+      "desc": "Elevate your videos by creating professional modern animated recordings.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Boom",
+      "link": "https://www.boomvideo.app/",
+      "desc": "Live presentations and screen recordings that look produced.",
+      "price": "Paid"
+    },
+    {
+      "title": "Guideless",
+      "link": "https://r.guideless.ai/toools",
+      "desc": "AI tool that turns click-through workflows into narrated video guides.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Pane Studio",
+      "link": "https://pane.studio/",
+      "desc": "Windows screen recorder for polished product demos with cursor effects.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Dina",
+      "link": "https://dina.so/",
+      "desc": "macOS screen recorder with automatic zoom and cinematic effects.",
+      "price": "Paid"
+    }
+  ],
+  "screenshot-tools": [
+    {
+      "title": "Xnapper",
+      "link": "https://xnapper.com/",
+      "desc": "Take beautiful screenshots instantly. Just Snap \u2192 Preview \u2192 Share!",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "CleanShot",
+      "link": "https://cleanshot.com/",
+      "desc": "The ultimate screen capturing tool.",
+      "price": "Paid"
+    },
+    {
+      "title": "Applaunchpad",
+      "link": "https://theapplaunchpad.com/",
+      "desc": "Create beautiful customized screenshots for your App Store page.",
+      "price": "Freemium"
+    },
+    {
+      "title": "BrandBird",
+      "link": "https://www.brandbird.app/",
+      "desc": "A smart image editor for busy SaaS founders, who build in public.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Wrap",
+      "link": "https://wrap.so/",
+      "desc": "Capture and edit beautiful, shareable screenshots.",
+      "price": "Paid"
+    },
+    {
+      "title": "Slantt",
+      "link": "https://slantt.co/",
+      "desc": "Create stunning isometric graphics in minutes.",
+      "price": "Free"
+    },
+    {
+      "title": "3D Tranformer",
+      "link": "https://www.3dtransformer.com/",
+      "desc": "Turn your frame into a beautiful 3D mockup online & in Figma.",
+      "price": "Free"
+    },
+    {
+      "title": "Launch Shots",
+      "link": "https://www.launchshots.com/",
+      "desc": "Design stunning app screenshots in seconds.",
+      "price": "Free Trial"
+    }
+  ],
+  "freelancer-tools": [
+    {
+      "title": "Desqk",
+      "link": "https://www.desqk.com/",
+      "desc": "An app for the future of freelancing.",
+      "price": "Beta"
+    },
+    {
+      "title": "flussstudio",
+      "link": "https://flussstudio.com/",
+      "desc": "A project management app that brings together client communication, task tracking, and invoicing.",
+      "price": "Beta"
+    },
+    {
+      "title": "Celaro",
+      "link": "https://celaro.co/",
+      "desc": "Plan, organize, and track your projects effortlessly.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Stop Selling Time",
+      "link": "https://www.stopsellingtime.com/",
+      "desc": "Value-based pricing tool for freelancers and design teams.",
+      "price": "Free"
+    },
+    {
+      "title": "MonoDesk",
+      "link": "https://www.monodesk.com/",
+      "desc": "Calm workspace built for freelance creative professionals.",
+      "price": "Beta"
+    }
+  ],
+  "messaging-collaboration": [
+    {
+      "title": "Slack",
+      "link": "https://slack.com/",
+      "desc": "AI-powered messenger platform for work.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Twist",
+      "link": "https://www.twist.com/",
+      "desc": "Async messaging for teams burned out by real-time, all-the-time communication.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Loom",
+      "link": "https://www.loom.com/",
+      "desc": "Record and share quick video messages to replace unnecessary meetings.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Proton Meet",
+      "link": "https://proton.me/meet",
+      "desc": "End-to-end encrypted video conferencing by Proton.",
+      "price": "Freemium"
+    }
+  ],
+  "work-platforms": [
+    {
+      "title": "Linear",
+      "link": "https://linear.app/",
+      "desc": "A purpose-built tool for planning and building products.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Asana",
+      "link": "https://asana.com/",
+      "desc": "Organize projects, manage shifting priorities, and get work done remotely.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Monday",
+      "link": "https://www.monday.com/",
+      "desc": "One AI work platform for any kind of work.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Basecamp",
+      "link": "https://basecamp.com/",
+      "desc": "All-in-one toolkit for working remotely.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Jira",
+      "link": "https://www.atlassian.com/software/jira",
+      "desc": "Issue and project tracking software.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Confluence",
+      "link": "https://www.atlassian.com/software/confluence",
+      "desc": "A remote-friendly team workspace for documentation.",
+      "price": "Freemium"
+    },
+    {
+      "title": "ProofHub",
+      "link": "https://www.proofhub.com/",
+      "desc": "All-in-one project management and team collaboration.",
+      "price": "Paid"
+    },
+    {
+      "title": "Weje",
+      "link": "https://weje.io/",
+      "desc": "A new native-agile project management method specifically designed for horizontal teams.",
+      "price": "Free"
+    }
+  ],
+  "project-management": [
+    {
+      "title": "Outlign",
+      "link": "https://outlign.co/?via=toools",
+      "desc": "A new way for agencies to manage creative projects.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Air",
+      "link": "https://air.inc/",
+      "desc": "One platform to seamlessly manage and scale creative operations.",
+      "price": "Freemium"
+    },
+    {
+      "title": "hello ivy",
+      "link": "https://helloivy.co/",
+      "desc": "A project management tool for creative teams.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Superlist",
+      "link": "https://www.superlist.com/?via=toools",
+      "desc": "Beautiful to-do app for tasks, notes, and projects.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Planable",
+      "link": "https://planable.io/universal-content",
+      "desc": "The one place to create, plan, & approve all your marketing content.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Orchestra",
+      "link": "https://getorchestra.com/",
+      "desc": "Create, manage and grow digital agencies.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Honter",
+      "link": "https://honterapp.com/",
+      "desc": "Run design projects like a studio with client workspaces.",
+      "price": "Freemium"
+    }
+  ]
+}

@@ -1,0 +1,535 @@
+(() => {
+// ============================================================
+//  ARTICLE: Free Stock Images & Videos | TOOOLS.design
+// ============================================================
+
+const stockSites = {
+  "free-stock-photos": [
+    {
+      "title": "Unsplash",
+      "link": "https://unsplash.com",
+      "desc": "Over 2 million free high-resolution images by the world’s most generous community of photographers.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Pixabay",
+      "link": "https://pixabay.com/",
+      "desc": "Over 1 million+ free stock photos and videos shared by a talented community.",
+      "price": "Free"
+    },
+    {
+      "title": "Freepik",
+      "link": "https://www.freepik.com/stock",
+      "desc": "Free and premium stock content made for creators.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Pexels",
+      "link": "https://www.pexels.com",
+      "desc": "Big collection of free stock photos and videos.",
+      "price": "Free"
+    },
+    {
+      "title": "Burst",
+      "link": "https://burst.shopify.com/",
+      "desc": "Free stock photos for websites and commercial use.",
+      "price": "Free"
+    },
+    {
+      "title": "Barnimages",
+      "link": "https://barnimages.com/",
+      "desc": "Beautiful high-resolution photography for everyone.",
+      "price": "Free"
+    },
+    {
+      "title": "Openverse",
+      "link": "https://openverse.org/",
+      "desc": "An extensive library of free stock photos, images, and audio.",
+      "price": "Free"
+    },
+    {
+      "title": "picjumbo",
+      "link": "https://picjumbo.com/",
+      "desc": "Elephantastic free visuals, images and backgrounds. Totally free.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Nappy",
+      "link": "https://www.nappy.co/",
+      "desc": "Beautiful photos of Black and Brown people, for free.",
+      "price": "Free"
+    },
+    {
+      "title": "Public Work",
+      "link": "https://public.work/",
+      "desc": "A search engine for public domain content.",
+      "price": "Free"
+    },
+    {
+      "title": "Negative Space",
+      "link": "https://negativespace.co/",
+      "desc": "Beautiful free stock photos in high resolution.",
+      "price": "Free"
+    },
+    {
+      "title": "Noun Project Photos",
+      "link": "https://thenounproject.com/photos/",
+      "desc": "Art-quality photos that celebrate diversity and inclusion.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Moveast",
+      "link": "https://moveast.me/",
+      "desc": "This is a journey of a Portuguese guy moving that decided that every photo should be used for free.",
+      "price": "Free"
+    },
+    {
+      "title": "Gratisography",
+      "link": "https://gratisography.com/",
+      "desc": "Free use-as-you-please pictures that stand out.",
+      "price": "Free"
+    },
+    {
+      "title": "Little Visuals",
+      "link": "https://littlevisuals.co/",
+      "desc": "Free, high resolution images.",
+      "price": "Free"
+    },
+    {
+      "title": "Styled Stock",
+      "link": "https://styledstock.co/",
+      "desc": "Beautiful and free feminine styled images for your projects.",
+      "price": "Free"
+    },
+    {
+      "title": "Kaboompics",
+      "link": "https://kaboompics.com",
+      "desc": "Free stock images and curated photoshoots.",
+      "price": "Free"
+    },
+    {
+      "title": "LibreStock",
+      "link": "https://librestock.com/",
+      "desc": "LibreStock scans and index the best free stock photos from various stock sites so that you can search them all at once.",
+      "price": "Free"
+    },
+    {
+      "title": "ShotStash",
+      "link": "https://shotstash.com/",
+      "desc": "Free stock photos for creative professionals.",
+      "price": "Free"
+    },
+    {
+      "title": "FOCA",
+      "link": "https://focastock.com/",
+      "desc": "Free photos, videos, and templates for commercial use.",
+      "price": "Free"
+    }
+  ],
+  "ai-generated-stock": [
+    {
+      "title": "Lummi",
+      "link": "https://www.lummi.ai/",
+      "desc": "Free stock photos powered by humans and AI everywhere.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Artlist Stock Footage",
+      "link": "https://artlist.io/stock-footage",
+      "desc": "Premium AI stock footage and videos.",
+      "price": "Paid"
+    },
+    {
+      "title": "Impossible Images",
+      "link": "https://impossibleimages.ai/explore/",
+      "desc": "A library of 1000s of AI generated images.",
+      "price": "Free"
+    },
+    {
+      "title": "Stockimg.ai",
+      "link": "https://stockimg.ai/?via=toools",
+      "desc": "Generate stock photos, logos, wallpapers, illustrations and more.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Generated Photos",
+      "link": "https://generated.photos/",
+      "desc": "Unique, worry-free model photos generated by AI.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Neurascapes",
+      "link": "https://www.neurascapes.com/",
+      "desc": "Beautiful AI generated images free for everyone.",
+      "price": "Free"
+    },
+    {
+      "title": "StockCake",
+      "link": "https://stockcake.com/",
+      "desc": "Free AI stock images and editing tools.",
+      "price": "Free + Paid"
+    }
+  ],
+  "free-stock-videos": [
+    {
+      "title": "Mixkit",
+      "link": "https://mixkit.co/",
+      "desc": "High quality HD videos and art to use free of charge.",
+      "price": "Free"
+    },
+    {
+      "title": "Coverr",
+      "link": "https://coverr.co/",
+      "desc": "Free stock videos you can recreate with AI.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Freepik Videos",
+      "link": "https://www.freepik.com/videos",
+      "desc": "Free stock video footage.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Vidsplay",
+      "link": "https://www.vidsplay.com/",
+      "desc": "Free stock footage in high definition.",
+      "price": "Free"
+    },
+    {
+      "title": "Videezy",
+      "link": "https://www.videezy.com/",
+      "desc": "Free HD stock footage and 4K videos.",
+      "price": "Free + Paid"
+    }
+  ],
+  "high-quality-stock": [
+    {
+      "title": "Stills",
+      "link": "https://www.stills.com/",
+      "desc": "A photo licensing platform for exceptional designers.",
+      "price": "Paid"
+    },
+    {
+      "title": "Death to Stock",
+      "link": "https://www.deathtothestockphoto.com/",
+      "desc": "A visual playground for discovering emerging visuals and locking in a clear creative direction.",
+      "price": "Paid"
+    },
+    {
+      "title": "Adobe Stock",
+      "link": "https://stock.adobe.com/",
+      "desc": "Unlock your creativity with stock images, stock videos, stock photos, and more.",
+      "price": "Paid"
+    },
+    {
+      "title": "Shutterstock",
+      "link": "https://shutterstock.7eer.net/rEQ6P5",
+      "desc": "High quality stock images, photos, vectors, video and music.",
+      "price": "Paid"
+    },
+    {
+      "title": "Getty Images",
+      "link": "https://www.gettyimages.com/",
+      "desc": "A stock media platform for creators.",
+      "price": "Paid"
+    },
+    {
+      "title": "Rawpixel",
+      "link": "https://www.rawpixel.com/",
+      "desc": "Premium stock photos, illustrations and other resources that step out of the mainstream.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Artlist",
+      "link": "https://artlist.io/stock-footage",
+      "desc": "Unlimited stock footage.",
+      "price": "Paid"
+    },
+    {
+      "title": "Storyblocks",
+      "link": "https://www.storyblocks.com/",
+      "desc": "A stock media platform for creators.",
+      "price": "Paid"
+    },
+    {
+      "title": "Pond5",
+      "link": "https://www.pond5.com/?ref=productdesignresources",
+      "desc": "Large collection of royalty-free stock video, music, motion graphics and more.",
+      "price": "Paid"
+    },
+    {
+      "title": "Stocksy",
+      "link": "https://www.stocksy.com/",
+      "desc": "Easy to browse stock images with an artsy touch.",
+      "price": "Paid"
+    },
+    {
+      "title": "DepositPhotos",
+      "link": "https://depositphotos.com/",
+      "desc": "Royalty-free stock photos, vector images, videos and music.",
+      "price": "Paid"
+    },
+    {
+      "title": "Moose",
+      "link": "https://photos.icons8.com/",
+      "desc": "Stock photos by a movie-scale crew.",
+      "price": "Paid"
+    },
+    {
+      "title": "Colorful",
+      "link": "https://www.colorful.app/",
+      "desc": "Create jaw-dropping photo scenes with the power of 3D.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Alamy",
+      "link": "https://www.alamy.com/",
+      "desc": "A diverse stock collection to find the right asset for your next project.",
+      "price": "Paid"
+    },
+    {
+      "title": "iStock",
+      "link": "https://www.istockphoto.com",
+      "desc": "High quality images, illustrations, videos and audio for every budget.",
+      "price": "Paid"
+    },
+    {
+      "title": "CreatorStock",
+      "link": "https://creatorstock.io/",
+      "desc": "A marketplace for the everyday creator to find authentic raw content.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Vecteezy",
+      "link": "https://www.vecteezy.com",
+      "desc": "Quality creative resources to get your projects done faster.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Packsia",
+      "link": "https://www.packsia.com/",
+      "desc": "An all-vertical stock video library built for brands and optimized for socials.",
+      "price": "Paid"
+    }
+  ],
+  "stock-sound-music": [
+    {
+      "title": "Epidemic Sound",
+      "link": "https://www.epidemicsound.com",
+      "desc": "Royalty-free music and sound effects platform for video creators.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Artlist SFX",
+      "link": "https://artlist.io/sfx",
+      "desc": "Unlimited royalty-free sound effects library for video creators.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Soundstripe",
+      "link": "https://www.soundstripe.com",
+      "desc": "Royalty-free music and sound effects for video creators and brands.",
+      "price": "Paid"
+    },
+    {
+      "title": "Musicbed",
+      "link": "https://www.musicbed.com",
+      "desc": "Premium curated music licensing platform for filmmakers and brands.",
+      "price": "Paid"
+    },
+    {
+      "title": "PremiumBeat",
+      "link": "https://www.premiumbeat.com",
+      "desc": "Curated royalty-free music and sound effects by Shutterstock.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "MotionSound",
+      "link": "https://motionsound.io",
+      "desc": "Comprehensive sound effects library designed for motion designers.",
+      "price": "Paid"
+    },
+    {
+      "title": "Uppbeat",
+      "link": "https://uppbeat.io/",
+      "desc": "Free music for creators.",
+      "price": "Free"
+    },
+    {
+      "title": "Freesound",
+      "link": "https://freesound.org/",
+      "desc": "Collaborative database of over 700k creative commons sound samples.",
+      "price": "Free"
+    },
+    {
+      "title": "BOOM Library",
+      "link": "https://www.boomlibrary.com",
+      "desc": "Professional royalty-free sound effects for film, games, and media.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Motion Array",
+      "link": "https://motionarray.com",
+      "desc": "All-in-one platform for video templates, footage, music, and plugins.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Pond5 Sound Effects",
+      "link": "https://www.pond5.com/sound-effects/?ref=productdesignresources",
+      "desc": "Large marketplace for royalty-free sound effects and audio clips.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Mixkit Sound Effects",
+      "link": "https://mixkit.co/free-sound-effects/",
+      "desc": "Free high-quality sound effects and music by Envato.",
+      "price": "Free"
+    },
+    {
+      "title": "ZapSplat",
+      "link": "https://www.zapsplat.com",
+      "desc": "Free sound effects library with over 160k royalty-free sounds.",
+      "price": "Freemium"
+    }
+  ],
+  "user-images-faces-avatars": [
+    {
+      "title": "UI Faces",
+      "link": "https://www.uifaces.co/",
+      "desc": "Free AI-generated avatars for your creative projects.",
+      "price": "Free"
+    },
+    {
+      "title": "Avaaatars",
+      "link": "https://www.avaaatars.com/",
+      "desc": "A large library of customizable and commercially free avatars.",
+      "price": "Free"
+    },
+    {
+      "title": "Diverse UI",
+      "link": "https://diverseui.com/",
+      "desc": "Free set of user images that can be used in personal or commercial projects.",
+      "price": "Free"
+    },
+    {
+      "title": "Avvvatars",
+      "link": "https://avvvatars.com/",
+      "desc": "Free placeholder avatars unique to your user.",
+      "price": "Free"
+    },
+    {
+      "title": "Boring Avatars",
+      "link": "https://boringavatars.com/",
+      "desc": "A tiny JavaScript library to generate SVG avatars based on text.",
+      "price": "Free"
+    },
+    {
+      "title": "User Persona",
+      "link": "https://userpersona.dev/",
+      "desc": "Generate comprehensive user personas with the help of AI.",
+      "price": "Free"
+    },
+    {
+      "title": "Face Generator",
+      "link": "https://generated.photos/face-generator",
+      "desc": "Create a unique person with your parameters in one click.",
+      "price": "Free + Paid"
+    }
+  ]
+};
+
+const categories = {
+  "free-stock-photos": {
+    title: "Free Stock Photos",
+    desc: "High-resolution stock photography platforms that are completely free to use for personal and commercial projects."
+  },
+  "ai-generated-stock": {
+    title: "AI Stock Photos & Videos",
+    desc: "Next-generation stock media collections generated or enhanced by artificial intelligence."
+  },
+  "free-stock-videos": {
+    title: "Free Stock Videos",
+    desc: "High-quality, royalty-free HD and 4K stock video footage for creators."
+  },
+  "high-quality-stock": {
+    title: "Premium Stock Images & Videos",
+    desc: "Professional, high-end licensing libraries for commercial designs and cinematic media productions."
+  },
+  "stock-sound-music": {
+    title: "Stock Sound & Music",
+    desc: "Royalty-free music, ambient tracks, and sound effects for video creators and digital experiences."
+  },
+  "user-images-faces-avatars": {
+    title: "User Images, Faces & Avatars",
+    desc: "Cohesive avatar kits, user persona headshots, and generated faces for mockup screens and UI profile cards."
+  }
+};
+
+let htmlContent = `
+  <p style="font-size: 1.05rem; margin-bottom: 25px; line-height: 1.85;">
+    Finding beautiful, high-resolution stock photography, cinematic video footage, clear sound assets, or realistic user avatars can make all the difference in modern UI/UX design. Good visual storytelling adds premium quality and credibility to any project.
+  </p>
+  <p style="font-size: 1.05rem; margin-bottom: 35px; line-height: 1.85;">
+    To save you from jumping between websites, this catalog brings together the best <strong>70 free and premium stock media directories, AI assets, audio libraries, and avatar tools</strong> available to creators worldwide.
+  </p>
+`;
+
+for (const [key, catInfo] of Object.entries(categories)) {
+  const catItems = stockSites[key];
+  
+  htmlContent += `
+    <h2 style="font-size: 1.55rem; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; margin-top: 48px; margin-bottom: 12px; font-weight: 700;">${catInfo.title}</h2>
+    <p style="font-size: 0.95rem; color: var(--text-3); margin-bottom: 24px; line-height: 1.6;">${catInfo.desc}</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px;">
+  `;
+  
+  catItems.forEach(item => {
+    let badgeColor = "#FF6F2C"; // fallback orange
+    let bgOpacity = "rgba(255, 111, 44, 0.1)";
+    if (item.price.toLowerCase() === "free") {
+      badgeColor = "#10B981"; // green
+      bgOpacity = "rgba(16, 185, 129, 0.1)";
+    } else if (item.price.toLowerCase().includes("paid")) {
+      badgeColor = "#3B82F6"; // blue
+      bgOpacity = "rgba(59, 130, 246, 0.1)";
+    } else if (item.price.toLowerCase().includes("attribution")) {
+      badgeColor = "#F59E0B"; // yellow
+      bgOpacity = "rgba(245, 158, 11, 0.1)";
+    } else if (item.price.toLowerCase().includes("freemium") || item.price.toLowerCase().includes("beta") || item.price.toLowerCase().includes("trial")) {
+      badgeColor = "#8B5CF6"; // purple
+      bgOpacity = "rgba(139, 92, 246, 0.1)";
+    }
+
+    htmlContent += `
+      <div style="background: var(--bg-2); border: 1px solid var(--border); padding: 18px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, border-color 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text);">${item.title}</div>
+            <span style="font-size: 10px; font-weight: 700; color: #FFFFFF; background: ${badgeColor}; padding: 3px 10px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.03em;">${item.price}</span>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-2); margin-top: 0; margin-bottom: 16px; line-height: 1.6;">${item.desc}</p>
+        </div>
+        <div>
+          <a href="${item.link}" target="_blank" style="display: inline-block; color: #FFFFFF; background-color: #FF6F2C; padding: 7px 16px; border-radius: var(--radius-sm); font-weight: 700; text-decoration: none; font-size: 0.8rem; transition: background 0.2s; box-shadow: 0 2px 4px rgba(255, 111, 44, 0.2); letter-spacing: 0.2px;">Explore ${item.title}</a>
+        </div>
+      </div>
+    `;
+  });
+  
+  htmlContent += `</div>`;
+}
+
+ARTICLE_REGISTRY["free-stock-images-videos"] = {
+  id: "free-stock-images-videos",
+  subcategoryId: ["stock-media", "web-ui"],
+  categoryId: ["tools", "ui-design"],
+  title: "Free Stock Images & Videos",
+  description: "Curated collection of 70 free and premium stock media directories, AI assets, video footage websites, sound catalogs, and avatar tools.",
+  date: "2026-06-17",
+  thumbnail: "", // empty to use document fallback icon
+  youtubeUrl: "", // no video
+  tags: ["ui design", "stock photo", "stock video", "avatars", "resources", "tools"],
+  content: htmlContent
+};
+})();

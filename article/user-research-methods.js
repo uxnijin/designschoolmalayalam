@@ -13,7 +13,15 @@ ARTICLE_REGISTRY["user-research-methods"] = {
   
   tags: ["ux design", "user research", "research methods", "qualitative", "quantitative"],
   content: `
-    
+    <h2>What is User Research?</h2>
+    <p>User research focuses on understanding user behaviors, needs, and motivations through observation techniques, task analysis, and other feedback methodologies.</p>
+
+    <h2>Key Research Methods</h2>
+    <p>UX research methods are typically split into two main dimensions:</p>
+    <ul>
+      <li><strong>Qualitative vs. Quantitative:</strong> Qualitative research gathers insights about user opinions and motivations, while quantitative research collects measurable, numerical data.</li>
+      <li><strong>Attitudinal vs. Behavioral:</strong> Attitudinal methods measure what people say (e.g., in surveys or interviews), while behavioral methods measure what they actually do (e.g., in usability tests).</li>
+    </ul>
     
     <hr style="border: 0; border-top: 1px solid var(--border); margin: 40px 0;" />
     

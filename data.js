@@ -83,6 +83,27 @@ const CATEGORIES = [
       { id: "trends", title: "Trends", description: "Latest Design Trends" },
     ],
   },
+  {
+    id: "tools",
+    title: "Tools & Resources",
+    description: "Curated catalogs of design tools, assets, books, and resources",
+    subcategories: [
+      { id: "design-utilities", title: "Design Tools", description: "Visual editors, vector tools, and prototyping platforms" },
+      { id: "ux-utilities", title: "UX Tools", description: "UX research, testing, user flows, and dummy content" },
+      { id: "ai-utilities", title: "AI Design Tools", description: "Generative AI, image generation, and design helpers" },
+      { id: "website-builders", title: "Web Builders", description: "No-code site builders, CMS tools, and web app creators" },
+      { id: "typography-fonts", title: "Typography", description: "Font libraries, pairings, foundries, and font managers" },
+      { id: "color-palettes", title: "Color Tools", description: "Palette generators, contrast checkers, and color systems" },
+      { id: "design-inspiration", title: "Inspiration", description: "UI design galleries, landing page showcases, and design vibes" },
+      { id: "mockups-assets", title: "Mockups & Assets", description: "Mockup generators, UI kits, templates, and libraries" },
+      { id: "icons-illustrations", title: "Icons & Graphics", description: "Free icon sets, graphics, and visual elements" },
+      { id: "stock-media", title: "Stock Media", description: "Free stock photography, video libraries, and audio clips" },
+      { id: "learning-education", title: "Learning", description: "Design courses, books, tutorials, and guidelines" },
+      { id: "communities-jobs", title: "Community & Jobs", description: "Job boards, conferences, meetups, and designer networks" },
+      { id: "podcasts-blogs", title: "Podcasts & Blogs", description: "Design podcasts, magazines, blogs, and creator content" },
+      { id: "productivity-teams", title: "Productivity", description: "Workplace tools, task trackers, and collaboration helpers" }
+    ],
+  },
 ];
 
 // ── ARTICLES ─────────────────────────────────────────────────
@@ -90,6 +111,22 @@ const CATEGORIES = [
 const ARTICLE_REGISTRY = {};
 const ARTICLES = [];
 const ARTICLE_IDS = [
+  "best-no-code-website-builders",
+  "best-color-inspiration-tools",
+  "productivity-tools-for-design-and-product-teams",
+  "best-design-podcasts",
+  "best-design-blogs-and-magazines",
+  "design-communities",
+  "learn-ui-ux-design",
+  "ui-web-design-inspiration-websites",
+  "ai-design-tools",
+  "best-ux-tools",
+  "best-design-tools",
+  "font-library-and-inspiration",
+  "books-for-designers",
+  "free-stock-images-videos",
+  "best-mockup-sites",
+  "free-open-source-icon-libraries",
   "best-3-malayalam-fonts",
   "every-ui-ux-concept-explained",
   "2026-graphic-design-trends",

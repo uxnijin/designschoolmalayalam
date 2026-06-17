@@ -1,0 +1,1424 @@
+(() => {
+// ============================================================
+//  ARTICLE: Best UI & Web Design Inspiration Websites | TOOOLS.design
+// ============================================================
+
+const toolsData = {
+  "ui": [
+    {
+      "title": "Mobbin",
+      "link": "https://mobbin.com/explore/mobile/ui-elements?via=toools",
+      "desc": "Save hours of UI research with a library of 600,000+ fully searchable screenshots.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Behance",
+      "link": "https://www.behance.net/",
+      "desc": "Adobes Design Community sharing design projects.",
+      "price": "Free"
+    },
+    {
+      "title": "Dribbble",
+      "link": "https://dribbble.com/shots/popular",
+      "desc": "Community of designers sharing screenshots of their work, process, and projects.",
+      "price": "Free"
+    },
+    {
+      "title": "Collect UI",
+      "link": "http://collectui.com/",
+      "desc": "Daily inspiration collected from daily ui archive and beyond. Hand picked, updating daily.",
+      "price": "Free"
+    },
+    {
+      "title": "SaaSFrame",
+      "link": "https://www.saasframe.io/?aff=kzPjR",
+      "desc": "Create product interfaces faster than ever with this large UI library.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Design Spells",
+      "link": "https://www.designspells.com/",
+      "desc": "Design details that feel like magic.",
+      "price": "Free"
+    },
+    {
+      "title": "Pageflows",
+      "link": "https://pageflows.com/",
+      "desc": "Explore real-world user flows and design patterns from leading apps and websites.",
+      "price": "Paid"
+    },
+    {
+      "title": "Viewport UI",
+      "link": "https://viewport-ui.design/",
+      "desc": "UI curated experiences for your inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Lookup.design",
+      "link": "https://lookup.design/",
+      "desc": "Find realistic design examples.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Vault",
+      "link": "https://designvault.io/",
+      "desc": "UI patterns & design inspiration from real products.",
+      "price": "Free"
+    },
+    {
+      "title": "Pttrns",
+      "link": "https://pttrns.com",
+      "desc": "App screenshots for various platforms easily browsable by tons of categories.",
+      "price": "Paid"
+    },
+    {
+      "title": "Interface Index",
+      "link": "https://interface-index.com/",
+      "desc": "Interface elements from the best B2B, SaaS and desktop apps and services.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Bites",
+      "link": "https://builtformars.com/ux-bites",
+      "desc": "A collection of bitesized UX interactions, curated to inspire.",
+      "price": "Free"
+    },
+    {
+      "title": "Recent Design",
+      "link": "https://recent.design/",
+      "desc": "The best of recent web, interface and interaction design.",
+      "price": "Free"
+    },
+    {
+      "title": "Unsection",
+      "link": "https://www.unsection.com/",
+      "desc": "An extensive, focused library of website section designs.",
+      "price": "Free"
+    },
+    {
+      "title": "Details Matter",
+      "link": "https://detailsmatter.framer.website/",
+      "desc": "A gallery full of the finest micro interactions out there.",
+      "price": "Free"
+    },
+    {
+      "title": "Drams",
+      "link": "https://drams.framer.website/",
+      "desc": "Framer components inspired by Dieter Rams' design principles.",
+      "price": "Free"
+    },
+    {
+      "title": "UIBits.co",
+      "link": "https://uibits.co/",
+      "desc": "A curated UI inspiration library, updated daily.",
+      "price": "Free"
+    },
+    {
+      "title": "Detail",
+      "link": "https://detail.design/",
+      "desc": "A collection of small details that make big difference.",
+      "price": "Free"
+    },
+    {
+      "title": "BentoGrids",
+      "link": "https://bentogrids.com/",
+      "desc": "A curated collection of beautiful tiles-based layouts.",
+      "price": "Free"
+    },
+    {
+      "title": "Ripplix",
+      "link": "https://www.ripplix.com/",
+      "desc": "Discover 7,000+ UI animations from 1,000+ real apps across mobile, web, smartwatch, and AR.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "UI.live",
+      "link": "https://ui.live/",
+      "desc": "Share and discover top design work.",
+      "price": "Free"
+    }
+  ],
+  "web": [
+    {
+      "title": "awwwards",
+      "link": "https://www.awwwards.com/",
+      "desc": "Browse through tons of the most innovative, creative and eye candy websites.",
+      "price": "Free"
+    },
+    {
+      "title": "Godly",
+      "link": "https://godly.website/",
+      "desc": "The most godlike web design inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Mobbin",
+      "link": "https://mobbin.com/explore/sites?via=toools",
+      "desc": "Save hours of research with a library of 600,000+ fully searchable website screenshots.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Websitevice",
+      "link": "https://websitevice.com/",
+      "desc": "Casual website examples for real world design inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Httpster",
+      "link": "https://httpster.net",
+      "desc": "Inspiration resource and showcase of totally rocking websites made by heaps of peeps from all over the world.",
+      "price": "Free"
+    },
+    {
+      "title": "SiteInspire",
+      "link": "https://www.siteinspire.com/",
+      "desc": "Showcase of the finest web and interactive design.",
+      "price": "Free"
+    },
+    {
+      "title": "The FWA",
+      "link": "https://thefwa.com/",
+      "desc": "Cutting-edge innovation in web design and development.",
+      "price": "Free"
+    },
+    {
+      "title": "SaaSFrame",
+      "link": "https://www.saasframe.io/websites/pages?aff=kzPjR",
+      "desc": "Create websites faster than ever with this large UX/UI library.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Pixelfika",
+      "link": "https://pixelfika.com/",
+      "desc": "Kick-ass web designs and copywriting inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "MaxiBestOf",
+      "link": "https://maxibestof.one/",
+      "desc": "Inspirational feed of websites & fonts.",
+      "price": "Free"
+    },
+    {
+      "title": "The Whimsical Web",
+      "link": "https://whimsical.club/",
+      "desc": "A curated list of sites with an extra bit of fun.",
+      "price": "Free"
+    },
+    {
+      "title": "Dark Mode Design",
+      "link": "https://www.darkmodedesign.com/",
+      "desc": "Showcase of beautifully designed dark mode websites.",
+      "price": "Free"
+    },
+    {
+      "title": "Siiimple",
+      "link": "https://siiimple.com/",
+      "desc": "Hand-picked, obsessively curated collection of the most beautiful websites.",
+      "price": "Free"
+    },
+    {
+      "title": "SiteSee",
+      "link": "https://sitesee.co/",
+      "desc": "A curated gallery of beautiful, modern websites.",
+      "price": "Free"
+    },
+    {
+      "title": "Hoverstates",
+      "link": "https://www.hoverstat.es/",
+      "desc": "The home of alternative design, code and content on the world wide web.",
+      "price": "Free"
+    },
+    {
+      "title": "OGimage.gallery",
+      "link": "https://www.ogimage.gallery/",
+      "desc": "Gallery with the best and most carefully collected OG images.",
+      "price": "Free"
+    },
+    {
+      "title": "Minimal Gallery",
+      "link": "https://minimal.gallery/",
+      "desc": "Hand-picked web design inspiration of beautiful, clean and functional websites.",
+      "price": "Free"
+    },
+    {
+      "title": "Landing Love",
+      "link": "https://www.landing.love/",
+      "desc": "Showcase of the best 272 animation websites.",
+      "price": "Free"
+    },
+    {
+      "title": "DoingCoolStuff",
+      "link": "https://www.doingcoolstuff.xyz/",
+      "desc": "A directory of brand and product design studios doing cool stuff.",
+      "price": "Free"
+    },
+    {
+      "title": "Best Website Gallery",
+      "link": "https://bestwebsite.gallery",
+      "desc": "The most beautiful websites handpicked for you.",
+      "price": "Free"
+    },
+    {
+      "title": "Dark",
+      "link": "https://www.dark.design/",
+      "desc": "The best hand-picked dark themed websites on the internet.",
+      "price": "Free"
+    },
+    {
+      "title": "Footer",
+      "link": "https://www.footer.design/",
+      "desc": "The only footer gallery on earth.",
+      "price": "Free"
+    },
+    {
+      "title": "DSS Dead Simple Sites",
+      "link": "https://deadsimplesites.com/",
+      "desc": "The most minimal sites on the web, curated in one place.",
+      "price": "Free"
+    },
+    {
+      "title": "Navbar Gallery",
+      "link": "https://www.navbar.gallery/",
+      "desc": "Home to the best navbars on the internet.",
+      "price": "Free"
+    },
+    {
+      "title": "404s",
+      "link": "https://www.404s.design/",
+      "desc": "A place to find all those lost pages worth finding.",
+      "price": "Free"
+    },
+    {
+      "title": "Site of Sites",
+      "link": "https://www.siteofsites.co/",
+      "desc": "A growing collection of go-to web design inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Browsing Mode",
+      "link": "https://browsingmode.com/",
+      "desc": "A curated collection of websites from the internet, thoughtfully picked for their design and functionality.",
+      "price": "Free"
+    },
+    {
+      "title": "3D Websites",
+      "link": "https://3dwebsites.design/",
+      "desc": "Explore the magic of 3D design for the web.",
+      "price": "Free"
+    },
+    {
+      "title": "SEESAW",
+      "link": "https://www.seesaw.website/",
+      "desc": "Hand-picked website inspiration, updated daily.",
+      "price": "Free"
+    },
+    {
+      "title": "Web Interactions Gallery",
+      "link": "https://www.webinteractions.gallery/",
+      "desc": "A collection of animated elements from all over the web.",
+      "price": "Free"
+    },
+    {
+      "title": "Nordic Design Gallery",
+      "link": "https://www.nordicdesign.gallery/",
+      "desc": "Gorgeous web design from the Nordics and their neighbors.",
+      "price": "Free"
+    },
+    {
+      "title": "A fresh website",
+      "link": "https://a-fresh.website/",
+      "desc": "Out-of-this-world web design inspiration gallery.",
+      "price": "Free"
+    },
+    {
+      "title": "Supahero",
+      "link": "https://www.supahero.io/",
+      "desc": "Curated collection of beautiful website hero sections.",
+      "price": "Free"
+    },
+    {
+      "title": "Daily Delights",
+      "link": "https://delights.design/",
+      "desc": "A curation of links about art, design and development picked somewhat daily.",
+      "price": "Free"
+    },
+    {
+      "title": "CTA Gallery",
+      "link": "https://www.cta.gallery/",
+      "desc": "A curated gallery of call-to-action section to inspire web designs.",
+      "price": "Free"
+    },
+    {
+      "title": "A1",
+      "link": "https://www.a1.gallery/",
+      "desc": "A gallery of the best websites on the web.",
+      "price": "Free"
+    },
+    {
+      "title": "Social Proof Examples",
+      "link": "https://socialproofexamples.com/",
+      "desc": "Disover strategies to build trust, drive conversions, and grow your brand.",
+      "price": "Free"
+    },
+    {
+      "title": "Loadmore",
+      "link": "https://loadmo.re/",
+      "desc": "Personal selection of unconventional mobile web experiences.",
+      "price": "Free"
+    },
+    {
+      "title": "Pricing pages",
+      "link": "https://pricingpages.design/",
+      "desc": "A curated collection of the best pricing page examples.",
+      "price": "Free"
+    },
+    {
+      "title": "inspo.page",
+      "link": "https://www.inspo.page/",
+      "desc": "The website inspo library \u2014 curated at the component level.",
+      "price": "Free"
+    },
+    {
+      "title": "Dragdropship",
+      "link": "https://dragdropship.com",
+      "desc": "Curated showcase of websites built with no-code builders.",
+      "price": "Free"
+    },
+    {
+      "title": "Webzooo",
+      "link": "https://webzooo.com",
+      "desc": "Hand-curated web design inspiration gallery, organized by brand color",
+      "price": "Free"
+    }
+  ],
+  "vibe-coding": [
+    {
+      "title": "MadeWithVibe",
+      "link": "https://www.madewithvibe.com/projects",
+      "desc": "A showcase of vibe-coded projects to inspire your next build.",
+      "price": "Free"
+    },
+    {
+      "title": "Varchive",
+      "link": "https://varchive.ai/",
+      "desc": "A directory for AI-assisted products, itself assisted by AI.",
+      "price": "Free"
+    }
+  ],
+  "portfolio": [
+    {
+      "title": "Bestfolios",
+      "link": "https://www.bestfolios.com/",
+      "desc": "A gallery featuring 1,000+ portfolios, 200+ resumes and many more design inspirations.",
+      "price": "Free"
+    },
+    {
+      "title": "Pafolios",
+      "link": "https://www.pafolios.com/",
+      "desc": "Awesome portfolio inspirations for UX & Product Designer.",
+      "price": "Free"
+    },
+    {
+      "title": "Sapiens",
+      "link": "https://sapiens.website/",
+      "desc": "A curated collection of unique individuals across the internet.",
+      "price": "Free"
+    },
+    {
+      "title": "Prettyfolio",
+      "link": "https://www.prettyfolio.com/",
+      "desc": "Discover the best designer and developer portfolios.",
+      "price": "Free"
+    },
+    {
+      "title": "Gallereee",
+      "link": "https://www.gallereee.com/",
+      "desc": "Curated collection of the best portfolio websites for creative inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "PFolios",
+      "link": "https://pfolios.net/",
+      "desc": "Bringing you the most inspirational portfolios around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Wall of portfolios",
+      "link": "https://www.wallofportfolios.in",
+      "desc": "A curated showcase of portfolios from top designers.",
+      "price": "Free"
+    },
+    {
+      "title": "Just a Design List",
+      "link": "https://www.justadesignlist.com/",
+      "desc": "Curated directory of design studios and independent practices.",
+      "price": "Free"
+    }
+  ],
+  "saas": [
+    {
+      "title": "SaaSFrame",
+      "link": "https://www.saasframe.io/?aff=kzPjR",
+      "desc": "Create websites, product interfaces and email sequences for your SaaS faster than ever.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "SaaS Interface",
+      "link": "https://saasinterface.com/?ref=toools",
+      "desc": "Larges gallery of SaaS app UI and UX design examples.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Nicelydone",
+      "link": "https://nicelydone.club/apps?via=toools",
+      "desc": "Save hundred hours of research with a library of screenshots from the best in class web apps.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Mobbin",
+      "link": "https://mobbin.com/explore/web?via=toools",
+      "desc": "Save hours of UI & UX research with a library of 600,000+ web app and saas screenshots.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "SaaS Websites",
+      "link": "https://saaswebsites.com/",
+      "desc": "Library of screenshots built to inspire UX/UI designers and product managers with the best SaaS websites around.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "SaaS Pages",
+      "link": "https://saaspages.xyz/",
+      "desc": "A collection of the best landing pages with a focus on copywriting and design.",
+      "price": "Free"
+    },
+    {
+      "title": "SaaS Examples",
+      "link": "https://divbyzero.com/tools/saas/",
+      "desc": "Inspiration gallery for your SaaS website, product & emails.",
+      "price": "Free"
+    },
+    {
+      "title": "SaaSpo",
+      "link": "https://www.saaspo.com/",
+      "desc": "A curated collection of the best SaaS websites on the web.",
+      "price": "Free"
+    },
+    {
+      "title": "Glance",
+      "link": "https://www.glance.fyi/",
+      "desc": "See what top SaaS companies are testing and changing on their websites.",
+      "price": "Free"
+    },
+    {
+      "title": "Crypto Design Club",
+      "link": "https://cryptodesign.club/",
+      "desc": "A database of best-in-class handpicked crypto designs.",
+      "price": "Free"
+    },
+    {
+      "title": "Webframe",
+      "link": "https://webframe.xyz/",
+      "desc": "Discover and be inspired by beautiful webapp designs.",
+      "price": "Free"
+    }
+  ],
+  "lp": [
+    {
+      "title": "Landbook",
+      "link": "https://land-book.com/",
+      "desc": "Find the best hand-picked landing page inspiration, updated daily.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Landingfolio",
+      "link": "https://www.landingfolio.com/",
+      "desc": "The best landing page design inspiration, templates and more.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Lapa Ninja",
+      "link": "https://www.lapa.ninja/",
+      "desc": "A gallery featuring the best landing page examples from around the web.",
+      "price": "Free"
+    },
+    {
+      "title": "One Page Love",
+      "link": "https://onepagelove.com/",
+      "desc": "One Page websites, templates and resources.",
+      "price": "Free"
+    },
+    {
+      "title": "Landings",
+      "link": "https://landings.dev/",
+      "desc": "Discover hundreds of landing pages for your design inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "SaaSFrame",
+      "link": "https://www.saasframe.io/categories/landing-page?aff=kzPjR",
+      "desc": "Create landing pages faster than ever with this UX/UI library.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "SaaS Landing Page",
+      "link": "https://saaslandingpage.com/",
+      "desc": "Discover the best landing page examples created by top-class SaaS companies and get inspired.",
+      "price": "Free"
+    }
+  ],
+  "mobile": [
+    {
+      "title": "Mobbin",
+      "link": "https://mobbin.com/explore/mobile?via=toools",
+      "desc": "Save hours of UI/UX research with a library of 600,000+ mobile app screenshots.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "60FPS",
+      "link": "https://60fps.design/",
+      "desc": "An endless collection of delightful details from best-in-class apps.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Appshots",
+      "link": "https://appshots.design/",
+      "desc": "A library including 100+ screenshots of world's best iOS and Android apps.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Spotted in Prod",
+      "link": "https://www.spottedinprod.com/",
+      "desc": "Discover great iOS apps.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Scrnshts",
+      "link": "https://scrnshts.club/",
+      "desc": "Curated collection of the most awesome app store design screenshots.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Pushkeen",
+      "link": "https://pushkeen.ai/",
+      "desc": "Curated collection of the latest push notifications patterns from mobile apps.",
+      "price": "Free"
+    },
+    {
+      "title": "PaywallPro",
+      "link": "https://www.paywallpro.app",
+      "desc": "Subscription intelligence with 46,000+ iOS paywall screenshots.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Laudable Apps",
+      "link": "https://laudableapps.com/",
+      "desc": "Independent showcase for beautiful iOS apps.",
+      "price": "Free"
+    },
+    {
+      "title": "iOS Icon Gallery",
+      "link": "https://www.iosicongallery.com/",
+      "desc": "iOS, macOS, and watchOS icon inspiration.",
+      "price": "Free"
+    }
+  ],
+  "product-startup": [
+    {
+      "title": "Product Hunt",
+      "link": "https://www.producthunt.com/",
+      "desc": "Product Hunt is a curation of the best new products, every day.",
+      "price": "Free"
+    },
+    {
+      "title": "BetaList",
+      "link": "https://betalist.com/",
+      "desc": "Discover tomorrow's startups, today.",
+      "price": "Free"
+    },
+    {
+      "title": "PitchWall",
+      "link": "https://pitchwall.co/",
+      "desc": "Community of tech lovers and early adopters.",
+      "price": "Free"
+    },
+    {
+      "title": "Steemhunt",
+      "link": "https://steemhunt.com/",
+      "desc": "Discover cool products and get rewards.",
+      "price": "Free"
+    },
+    {
+      "title": "Startups Gallery",
+      "link": "https://startups.gallery/",
+      "desc": "A curated gallery of outstanding early-stage startups.",
+      "price": "Free"
+    },
+    {
+      "title": "Product Launch Videos",
+      "link": "https://www.flowjam.com/library",
+      "desc": "A collection of the best Startup launch videos.",
+      "price": "Free"
+    },
+    {
+      "title": "Ideabrowser",
+      "link": "https://www.ideabrowser.com/",
+      "desc": "Get ideas for profitable startups, trending keywords, and go-to-market tactics, powered by data.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Boring Websites",
+      "link": "https://www.boringwebsites.info/",
+      "desc": "Underrated profitable websites with simple online business ideas.",
+      "price": "Free"
+    }
+  ],
+  "ecommerce-ad": [
+    {
+      "title": "Commerce Cream",
+      "link": "https://commercecream.com/",
+      "desc": "Curating the best of Shopify.",
+      "price": "Free"
+    },
+    {
+      "title": "ecomm.design",
+      "link": "https://ecomm.design",
+      "desc": "E-commerce website design gallery & tech inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Steep",
+      "link": "https://steep.design/",
+      "desc": "Massive collection of sponsored Instagram stories.",
+      "price": "Free"
+    },
+    {
+      "title": "GoodCart",
+      "link": "https://www.goodcart.design/",
+      "desc": "Explore the best-designed ecommerce websites in one place.",
+      "price": "Free"
+    },
+    {
+      "title": "Tiny Blocks",
+      "link": "https://tinyblocks.cc/",
+      "desc": "A growing collection of notable and inspiring user interfaces from the web.",
+      "price": "Free"
+    },
+    {
+      "title": "LoveTheWorkMore",
+      "link": "https://lovetheworkmore.com/",
+      "desc": "A not-so-microsite that compiles and constantly updates all Lions-winning creative works.",
+      "price": "Free"
+    },
+    {
+      "title": "Adfolio",
+      "link": "https://www.adfolio.design/",
+      "desc": "Hand-picked Meta & LinkedIn ads for design and copy inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Marketing Examples",
+      "link": "https://marketingexamples.com/",
+      "desc": "A gallery of real world marketing examples from successful companies.",
+      "price": "Free"
+    },
+    {
+      "title": "Socialmon",
+      "link": "https://www.socialmon.ai/",
+      "desc": "Get inspired by real-world viral marketing ideas.",
+      "price": "Paid"
+    },
+    {
+      "title": "Ads of the World",
+      "link": "https://www.adsoftheworld.com/",
+      "desc": "Ad inspiration platform showcasing creative campaigns worldwide.",
+      "price": "Free"
+    }
+  ],
+  "email-inspo": [
+    {
+      "title": "Really Good Emails",
+      "link": "https://reallygoodemails.com/",
+      "desc": "Discover the best email examples to help build your next campaign.",
+      "price": "Free"
+    },
+    {
+      "title": "Inboxflows",
+      "link": "https://inboxflows.com/",
+      "desc": "Search through carefully catalogued emails from 350+ brands.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Email Love",
+      "link": "https://emaillove.com/inspiration",
+      "desc": "The best email designs from the brands you admire.",
+      "price": "Free"
+    },
+    {
+      "title": "SaaSFrame",
+      "link": "https://www.saasframe.io/email/emails?aff=kzPjR",
+      "desc": "Create email sequences for your SaaS faster than ever.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Mailboard",
+      "link": "https://mailboard.com/",
+      "desc": "Email marketing moodboard to find, save and analyze brand emails.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Milled",
+      "link": "https://milled.com/",
+      "desc": "Search engine for email newsletters with 48M+ emails from 98K+ brands.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Email Gallery",
+      "link": "https://email-gallery.com/",
+      "desc": "Curated collection of email designs for newsletter inspiration.",
+      "price": "Free"
+    }
+  ],
+  "photography": [
+    {
+      "title": "Behance Photography",
+      "link": "https://www.behance.net/galleries/photography",
+      "desc": "Browse the best photography, retouching and photojournalism today.",
+      "price": "Free"
+    },
+    {
+      "title": "500px",
+      "link": "https://500px.com/popular",
+      "desc": "Get inspired with incredible photos from diverse styles and genres around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Flickr",
+      "link": "https://www.flickr.com/",
+      "desc": "The home to tens of billions of photos and 2 million groups.",
+      "price": "Free"
+    },
+    {
+      "title": "YouPic",
+      "link": "https://youpic.com/inspiration",
+      "desc": "A human curation of truly inspirational photos to reflect on your own creativity and technique.",
+      "price": "Free"
+    },
+    {
+      "title": "Viewbug",
+      "link": "https://www.viewbug.com/fame",
+      "desc": "Explore inspiring photography hand-picked from the community.",
+      "price": "Free"
+    },
+    {
+      "title": "Unsplash",
+      "link": "https://unsplash.com/",
+      "desc": "The internet\u2019s source for visuals. Powered by creators everywhere.",
+      "price": "Free + Paid"
+    }
+  ],
+  "video": [
+    {
+      "title": "Frame Rate",
+      "link": "https://framerate.tv/",
+      "desc": "Home of the best video and filmmakers.",
+      "price": "Free"
+    },
+    {
+      "title": "Brands in Motion",
+      "link": "https://www.brandsinmotion.xyz/",
+      "desc": "A central hub for motion design within branding.",
+      "price": "Free"
+    },
+    {
+      "title": "Art of the Title",
+      "link": "https://www.artofthetitle.com/titles/",
+      "desc": "An inspiration collection dedicated to title sequence design in film, TV, and beyond.",
+      "price": "Free"
+    },
+    {
+      "title": "Stash",
+      "link": "https://www.stashmedia.tv/archive/",
+      "desc": "Go-to reference for motion projects.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Eyecandy",
+      "link": "https://eycndy.com/",
+      "desc": "A visual technique library for visual technique lovers to get lost.",
+      "price": "Free"
+    },
+    {
+      "title": "Motion Folios",
+      "link": "https://www.motionfolios.com/",
+      "desc": "Step inside the portfolios of the world's finest motion designers.",
+      "price": "Free"
+    },
+    {
+      "title": "Behance Motion",
+      "link": "https://www.behance.net/galleries/motion",
+      "desc": "Amazing short films, motion graphics reels, and endlessly entertaining animated GIFs.",
+      "price": "Free"
+    },
+    {
+      "title": "Dribbble Animation",
+      "link": "https://dribbble.com/shots/popular/animation",
+      "desc": "Trending animations, motion graphics, and 3D designs.",
+      "price": "Free"
+    },
+    {
+      "title": "Vidclue",
+      "link": "https://vidclue.com/",
+      "desc": "Large library of short-form video inspiration for brands and businesses.",
+      "price": "Free"
+    },
+    {
+      "title": "Kisto",
+      "link": "https://kisto.app",
+      "desc": "Curated motion design and animation inspiration gallery.",
+      "price": "Free"
+    }
+  ],
+  "logo": [
+    {
+      "title": "Logo System",
+      "link": "https://logosystem.co/",
+      "desc": "Get inspired by exploring a library of real and fictional logos.",
+      "price": "Free"
+    },
+    {
+      "title": "LogoLounge",
+      "link": "https://www.logolounge.com/",
+      "desc": "Logo ideas and inspiration for logo designers.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Logobook",
+      "link": "http://www.logobook.com/",
+      "desc": "Discover the worlds finest logos, symbols & trademarks.",
+      "price": "Free"
+    },
+    {
+      "title": "Branition",
+      "link": "https://branition.com/",
+      "desc": "Browse the best unused logos.",
+      "price": "Free"
+    },
+    {
+      "title": "Logggos",
+      "link": "https://www.logggos.club",
+      "desc": "A curated catalog to discover well-designed logos.",
+      "price": "Free"
+    },
+    {
+      "title": "Logofolio",
+      "link": "https://logofolio.com",
+      "desc": "Logo inspiration gallery organized by style, industry, and color.",
+      "price": "Free"
+    }
+  ],
+  "branding": [
+    {
+      "title": "BrandNew",
+      "link": "https://www.underconsideration.com/brandnew/",
+      "desc": "Opinions on corporate and brand identity work.",
+      "price": "Free"
+    },
+    {
+      "title": "The Brand Identity",
+      "link": "https://the-brandidentity.com/",
+      "desc": "Platform to inspire and inform creativity through graphic design.",
+      "price": "Free"
+    },
+    {
+      "title": "Identity Designed",
+      "link": "https://identitydesigned.com/",
+      "desc": "Visual branding from around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Daily Branding",
+      "link": "https://www.dailybranding.co/",
+      "desc": "Daily dose of branding design.",
+      "price": "Free"
+    },
+    {
+      "title": "Schema",
+      "link": "https://www.schema.supply/inspiration",
+      "desc": "Discover high-quality branding inspiration to elevate your creative projects.",
+      "price": "Free"
+    },
+    {
+      "title": "Rebrand",
+      "link": "https://www.rebrand.gallery/",
+      "desc": "A stellar visual identity inspiration gallery.",
+      "price": "Free"
+    },
+    {
+      "title": "BX Museum",
+      "link": "https://www.bxmuseum.com/",
+      "desc": "A curation of rare media from iconic brands in different domains.",
+      "price": "Free"
+    },
+    {
+      "title": "Branding Guidelines Archive",
+      "link": "https://brandingstyleguides.com/",
+      "desc": "An archive collecting branding & style guide documents from around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Deck.gallery",
+      "link": "https://deck.gallery/",
+      "desc": "A curated collection of beautifully designed decks, slides, keynotes, guidelines.",
+      "price": "Free"
+    },
+    {
+      "title": "BrandGuidelines",
+      "link": "https://www.brandguidelines.net/",
+      "desc": "Handpicked curated brand guidelines from around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Visuelle",
+      "link": "https://visuelle.co.uk/",
+      "desc": "A creative showcase of graphic design, illustration, motion, photography, and typography.",
+      "price": "Free"
+    },
+    {
+      "title": "abdz.do",
+      "link": "https://abduzeedo.com/",
+      "desc": "Collective of individual writers sharing articles about graphic design, branding, and UI.",
+      "price": "Free"
+    },
+    {
+      "title": "World Brand Design Society",
+      "link": "https://worldbranddesign.com/",
+      "desc": "A professional community that benchmarks and awards creatives in the fields of corporate.",
+      "price": "Free"
+    },
+    {
+      "title": "Looks Like Good Design",
+      "link": "https://www.lookslikegooddesign.com/",
+      "desc": "The best design from all around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Trending Design",
+      "link": "https://trending.design/",
+      "desc": "The best design inspiration on X.",
+      "price": "Free"
+    },
+    {
+      "title": "Brandfetch",
+      "link": "https://brandfetch.io/",
+      "desc": "The brand search engine.",
+      "price": "Free"
+    },
+    {
+      "title": "The Index",
+      "link": "https://theindex.website/",
+      "desc": "A curated gallery of the best design studios, foundries, and more.",
+      "price": "Free"
+    },
+    {
+      "title": "Brand Archive",
+      "link": "https://brandarchive.xyz/",
+      "desc": "Discover logos, art direction and fonts from hundreds of brands past and present.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Visual Journal",
+      "link": "https://visualjournal.it/",
+      "desc": "Curated blog featuring the best branding, editorial, and graphic design projects.",
+      "price": "Free"
+    }
+  ],
+  "graphic-design": [
+    {
+      "title": "Searchsystem",
+      "link": "https://searchsystem.co/",
+      "desc": "An ever-growing collection of references and tools for graphic designers.",
+      "price": "Free"
+    },
+    {
+      "title": "AIGA Eye on Design",
+      "link": "https://eyeondesign.aiga.org/",
+      "desc": "Well trained eye on the best new work from the world's most exciting graphic designers.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Everywhere",
+      "link": "https://designeverywhere.co/",
+      "desc": "An ever-growing library of carefully curated graphic design works.",
+      "price": "Free"
+    },
+    {
+      "title": "typo/graphic posters",
+      "link": "https://www.typographicposters.com/",
+      "desc": "An inspiration platform on behalf of design through the poster medium.",
+      "price": "Free"
+    },
+    {
+      "title": "Archives.design",
+      "link": "https://archives.design/",
+      "desc": "A digital archive of graphic design related items.",
+      "price": "Free"
+    },
+    {
+      "title": "TYPE01",
+      "link": "https://type-01.com/",
+      "desc": "News and inspiration across type design, branding, graphics, digital, motion, 3D and more.",
+      "price": "Free"
+    },
+    {
+      "title": "Mindsparkle Mag",
+      "link": "https://mindsparklemag.com/",
+      "desc": "The best of beautiful graphic design, branding, website and video projects.",
+      "price": "Free"
+    },
+    {
+      "title": "Book Cover Archive",
+      "link": "https://bookcoverarchive.com/",
+      "desc": "An archive of excellent book cover designs.",
+      "price": "Free"
+    },
+    {
+      "title": "Inspiration Grid",
+      "link": "https://theinspirationgrid.com/",
+      "desc": "Daily design inspiration for creatives.",
+      "price": "Free"
+    },
+    {
+      "title": "Peoples Graphic Design Archive",
+      "link": "https://peoplesgdarchive.org/",
+      "desc": "A crowd-sourced archive aiming to expand, diversify, and preserve graphic design history.",
+      "price": "Free"
+    },
+    {
+      "title": "Museo",
+      "link": "https://museo.app/",
+      "desc": "Search for free images from some of the best museums in the world.",
+      "price": "Free"
+    }
+  ],
+  "illustration": [
+    {
+      "title": "Illustration.lol",
+      "link": "https://www.illustration.lol/",
+      "desc": "Editorial illustrations from around the world.",
+      "price": "Free"
+    },
+    {
+      "title": "Getillustra",
+      "link": "https://getillustra.com/",
+      "desc": "A curated collection of the best web illustrations.",
+      "price": "Free"
+    },
+    {
+      "title": "Modern Illustration",
+      "link": "https://www.modernillustration.org/",
+      "desc": "An archive of printed illustrations from 1950 - 1975.",
+      "price": "Free"
+    },
+    {
+      "title": "Pattern Club",
+      "link": "https://patternclub.io/",
+      "desc": "A curated gallery of patterns, textures and visuals by awesome designers.",
+      "price": "Free"
+    }
+  ],
+  "data-visualization": [
+    {
+      "title": "Data Viz Project",
+      "link": "https://datavizproject.com/",
+      "desc": "A website trying to present all relevant data visualizations.",
+      "price": "Free"
+    },
+    {
+      "title": "SveltePlot",
+      "link": "https://svelteplot.dev/why-svelteplot",
+      "desc": "A visualization framework for Svelte.",
+      "price": "Free"
+    },
+    {
+      "title": "EvilCharts",
+      "link": "https://evilcharts.com/",
+      "desc": "Explore animated and interactive charts for your next project.",
+      "price": "Free"
+    }
+  ],
+  "inspiration-search-and-organization": [
+    {
+      "title": "Pinterest",
+      "link": "https://www.pinterest.com",
+      "desc": "Find and collect inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Eagle",
+      "link": "https://eagle.sjv.io/toools",
+      "desc": "Eagle is a new way to collect, search and organize your image files in a logical way and all in one place.",
+      "price": "Paid"
+    },
+    {
+      "title": "Mymind",
+      "link": "https://mymind.com/",
+      "desc": "AI enhanced private place to save your notes, images, quotes and highlights.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Fabric",
+      "link": "https://fabric.so/?via=toools",
+      "desc": "A universal workspace and smart organizer for all your notes, files, links and screenshots.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Savee",
+      "link": "https://savee.it/",
+      "desc": "Save and share the best inspiration on the web.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Muzli",
+      "link": "https://search.muz.li/",
+      "desc": "Web-wide search engine for design inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Designinspiration",
+      "link": "https://www.designspiration.com/",
+      "desc": "Image & color search engine for creating mood boards and finding inspiration.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Freeform",
+      "link": "https://apps.apple.com/de/app/freeform/id6443742539",
+      "desc": "Creative brainstorming and moodboards app by Apple.",
+      "price": "Free"
+    },
+    {
+      "title": "Same Energy",
+      "link": "https://same.energy/",
+      "desc": "A visual search engine using deep learning.",
+      "price": "Free"
+    },
+    {
+      "title": "Cosmos",
+      "link": "https://www.cosmos.so/",
+      "desc": "A discovery engine for creatives.",
+      "price": "Free"
+    },
+    {
+      "title": "Raster",
+      "link": "https://raster.app/",
+      "desc": "A digital asset manager to organize, edit, and host photography.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Picflow",
+      "link": "https://picflow.com/",
+      "desc": "A modern image gallery and collaboration platform for creative professionals.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Substratum",
+      "link": "https://substratum.app/",
+      "desc": "Collect, organize and share your images and videos.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Moss",
+      "link": "https://mossworkspace.com/",
+      "desc": "Inspiration meets organization in a new visual workspace built for ideas.",
+      "price": "Beta"
+    },
+    {
+      "title": "Collecta",
+      "link": "https://collecta.space/",
+      "desc": "Capture and upload your inspiration.",
+      "price": "Paid"
+    },
+    {
+      "title": "Poly",
+      "link": "https://withpoly.com/",
+      "desc": "A smarter way to store, browse, search, and share your images \u2014 built for the generative age.",
+      "price": "Beta"
+    },
+    {
+      "title": "Pics.io",
+      "link": "https://pics.io/",
+      "desc": "World-class digital asset management platform.",
+      "price": "Free Trial"
+    },
+    {
+      "title": "Mindly",
+      "link": "https://www.mindly-ai.com/",
+      "desc": "Organize your thoughts. Create your second brain.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Resurf",
+      "link": "https://resurf.so",
+      "desc": "A local-first personal library for inspirations which are worth keeping.",
+      "price": "Freemium"
+    },
+    {
+      "title": "Reference Board",
+      "link": "https://www.referenceboard.app/",
+      "desc": "Native moodboard app for iPhone, iPad, and Mac with visual search and auto-tagging.",
+      "price": "Paid"
+    },
+    {
+      "title": "SOOT Spiral",
+      "link": "https://spiral.soot.com/",
+      "desc": "Visual search engine that turns a prompt into a layered moodboard of real images.",
+      "price": "Free"
+    }
+  ]
+};
+
+const categories = {
+  "ui": {
+    title: "UI Design Inspiration",
+    desc: "Curated galleries showcasing interface design components, layouts, and interactive design patterns."
+  },
+  "web": {
+    title: "Web Design Inspiration",
+    desc: "Websites and showreels featuring award-winning designs, creative layouts, and immersive interactions."
+  },
+  "vibe-coding": {
+    title: "Vibe Coding & Interactive Inspo",
+    desc: "Creative code showcases, interactive UI prototypes, and experimental frontend animations."
+  },
+  "portfolio": {
+    title: "Creative Portfolios",
+    desc: "Exceptional design and developer portfolios featuring visual layouts and narrative case studies."
+  },
+  "saas": {
+    title: "SaaS & App Layouts",
+    desc: "Real-world examples of SaaS web apps, pricing matrices, onboarding flows, and customer dashboards."
+  },
+  "lp": {
+    title: "Landing Pages",
+    desc: "Galleries dedicated to high-converting landing pages, structured layout conversions, and SaaS homepages."
+  },
+  "mobile": {
+    title: "Mobile UI & App Flows",
+    desc: "Screen flows, transition states, and interface patterns compiled from top iOS and Android apps."
+  },
+  "product-startup": {
+    title: "Product & Startup Design",
+    desc: "Showcases highlighting beautiful startup landing pages, product interactions, and hardware showcases."
+  },
+  "ecommerce-ad": {
+    title: "E-Commerce & Advertising",
+    desc: "Visual inspiration for e-commerce checkouts, product listings, and digital advertising layouts."
+  },
+  "email-inspo": {
+    title: "Email Marketing Inspiration",
+    desc: "Exceptional design examples of onboarding sequences, newsletters, and transactional emails."
+  },
+  "photography": {
+    title: "Photography Inspiration",
+    desc: "Stunning photographic portfolios, editorial style frames, and visual lookbooks."
+  },
+  "video": {
+    title: "Video & Motion Inspiration",
+    desc: "Cinematic videos, 3D motion design showreels, and UI micro-animations."
+  },
+  "logo": {
+    title: "Logo & Brand Mark Inspo",
+    desc: "Curated vector logos, clean logotypes, and icon marks from top visual designers."
+  },
+  "branding": {
+    title: "Branding & Identity Showcases",
+    desc: "Comprehensive brand identity packages, physical packaging designs, and typography guidelines."
+  },
+  "graphic-design": {
+    title: "Graphic Design Inspiration",
+    desc: "Print layout design, posters, editorial typesetting, and conceptual packaging."
+  },
+  "illustration": {
+    title: "Illustration Inspiration",
+    desc: "Beautiful digital paintings, vector artwork, character design, and 2D compositions."
+  },
+  "data-visualization": {
+    title: "Data Visualization & Infographics",
+    desc: "Creative data plots, map-based designs, and complex interactive diagrams."
+  },
+  "inspiration-search-and-organization": {
+    title: "Inspiration Search & Organization Tools",
+    desc: "Search engines, browser extensions, and mood-boarding tools to organize your visual swipe file."
+  }
+};
+
+let htmlContent = `
+  <p style="font-size: 1.05rem; margin-bottom: 25px; line-height: 1.85;">
+    Developing a strong visual library is key to becoming a top-tier designer. Rather than designing from a blank canvas, studying real-world UI design layouts, award-winning SaaS websites, startup portfolios, and brand guides can inspire your next creative breakthrough.
+  </p>
+  <p style="font-size: 1.05rem; margin-bottom: 35px; line-height: 1.85;">
+    Here is a curated directory of the best <strong>206 design inspiration websites</strong> categorized by discipline. Discover landing page galleries, mobile design pattern search engines, interactive portfolio showcases, and typography databases.
+  </p>
+`;
+
+for (const [key, catInfo] of Object.entries(categories)) {
+  const catItems = toolsData[key];
+  if (!catItems || catItems.length === 0) continue;
+  
+  htmlContent += `
+    <h2 style="font-size: 1.55rem; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; margin-top: 48px; margin-bottom: 12px; font-weight: 700;">${catInfo.title}</h2>
+    <p style="font-size: 0.95rem; color: var(--text-3); margin-bottom: 24px; line-height: 1.6;">${catInfo.desc}</p>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-bottom: 32px;">
+  `;
+  
+  catItems.forEach(item => {
+    let badgeColor = "#FF6F2C"; // fallback orange
+    let bgOpacity = "rgba(255, 111, 44, 0.1)";
+    if (item.price.toLowerCase() === "free") {
+      badgeColor = "#10B981"; // green
+      bgOpacity = "rgba(16, 185, 129, 0.1)";
+    } else if (item.price.toLowerCase().includes("paid")) {
+      badgeColor = "#3B82F6"; // blue
+      bgOpacity = "rgba(59, 130, 246, 0.1)";
+    } else if (item.price.toLowerCase().includes("attribution")) {
+      badgeColor = "#F59E0B"; // yellow
+      bgOpacity = "rgba(245, 158, 11, 0.1)";
+    } else if (item.price.toLowerCase().includes("freemium") || item.price.toLowerCase().includes("beta") || item.price.toLowerCase().includes("trial")) {
+      badgeColor = "#8B5CF6"; // purple
+      bgOpacity = "rgba(139, 92, 246, 0.1)";
+    }
+
+    htmlContent += `
+      <div style="background: var(--bg-2); border: 1px solid var(--border); padding: 18px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s, border-color 0.2s; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="margin: 0; font-size: 1.05rem; font-weight: 700; color: var(--text);">${item.title}</div>
+            <span style="font-size: 10px; font-weight: 700; color: #FFFFFF; background: ${badgeColor}; padding: 3px 10px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.03em;">${item.price}</span>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--text-2); margin-top: 0; margin-bottom: 16px; line-height: 1.6;">${item.desc}</p>
+        </div>
+        <div>
+          <a href="${item.link}" target="_blank" style="display: inline-block; color: #FFFFFF; background-color: #FF6F2C; padding: 7px 16px; border-radius: var(--radius-sm); font-weight: 700; text-decoration: none; font-size: 0.8rem; transition: background 0.2s; box-shadow: 0 2px 4px rgba(255, 111, 44, 0.2); letter-spacing: 0.2px;">Explore ${item.title}</a>
+        </div>
+      </div>
+    `;
+  });
+  
+  htmlContent += `</div>`;
+}
+
+ARTICLE_REGISTRY["ui-web-design-inspiration-websites"] = {
+  id: "ui-web-design-inspiration-websites",
+  subcategoryId: ["design-inspiration", "web-ui"],
+  categoryId: ["tools", "ui-design"],
+  title: "Best UI & Web Design Inspiration Websites",
+  description: "Curated catalog of 206 design inspiration websites covering landing pages, mobile flows, portfolio showcases, branding, illustration, and graphic layouts.",
+  date: "2026-06-17",
+  thumbnail: "", // empty to use document fallback icon
+  youtubeUrl: "", // no video
+  tags: ["ui design", "web design", "inspiration", "portfolio", "branding", "resources", "layouts"],
+  content: htmlContent
+};
+})();

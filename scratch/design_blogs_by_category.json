@@ -1,0 +1,430 @@
+{
+  "design-blogs": [
+    {
+      "title": "Creative Boom",
+      "link": "https://www.creativeboom.com/",
+      "desc": "Art and design magazine for the creative industries.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Observer",
+      "link": "https://designobserver.com/",
+      "desc": "Sparking vital conversations about design and its role in shaping culture, commerce, society, and the planet.",
+      "price": "Free"
+    },
+    {
+      "title": "AIGA Eye on Design",
+      "link": "https://eyeondesign.aiga.org/",
+      "desc": "The best new work by the world\u2019s most exciting designers.",
+      "price": "Free"
+    },
+    {
+      "title": "Dezeen",
+      "link": "https://www.dezeen.com/",
+      "desc": "The world's most influential architecture, interior and design magazine.",
+      "price": "Free"
+    },
+    {
+      "title": "Communication Arts",
+      "link": "https://www.commarts.com/",
+      "desc": "Exceptional Design, Advertising, Illustration, Photography, Interactive and Typography, since 1959.",
+      "price": "Free"
+    },
+    {
+      "title": "Creative Bloq",
+      "link": "https://www.creativebloq.com/",
+      "desc": "Where creativity meets technology.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Week",
+      "link": "https://www.designweek.co.uk/",
+      "desc": "Discover the latest across branding, digital, product, and interiors.",
+      "price": "Free"
+    },
+    {
+      "title": "DIELINE",
+      "link": "https://thedieline.com/",
+      "desc": "A creative platform dedicated to serving the global packaging community.",
+      "price": "Free"
+    },
+    {
+      "title": "Adweek",
+      "link": "https://www.adweek.com/",
+      "desc": "News, insights and inspiration you need to know in advertising, marketing and media.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "BP&O Articles",
+      "link": "https://bpando.org/articles/",
+      "desc": "Publication on brand identity design and packaging.",
+      "price": "Free + Paid"
+    },
+    {
+      "title": "Typeroom",
+      "link": "https://www.typeroom.eu",
+      "desc": "An online platform for the typophile generation.",
+      "price": "Free"
+    },
+    {
+      "title": "The Design Blog",
+      "link": "https://thedsgnblog.com/",
+      "desc": "A carefully curated platform for design and creative inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "It\u2019s Nice That",
+      "link": "https://www.itsnicethat.com/",
+      "desc": "Inspiring the global creative community.",
+      "price": "Free"
+    },
+    {
+      "title": "Creative Review",
+      "link": "https://www.creativereview.co.uk/",
+      "desc": "The sharpest opinion, analysis and advice on life in the commercial creative industries.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Milk",
+      "link": "https://design-milk.com/",
+      "desc": "Contemporary design publication covering architecture, furniture, art, and modern lifestyle.",
+      "price": "Free"
+    }
+  ],
+  "ux-design-blogs": [
+    {
+      "title": "UX Collective",
+      "link": "https://uxdesign.cc/",
+      "desc": "The best stories about user experience, usability and product design.",
+      "price": "Free"
+    },
+    {
+      "title": "Nielsen Norman Group",
+      "link": "https://www.nngroup.com/articles/",
+      "desc": "World Leaders in Research-Based User Experience.",
+      "price": "Free"
+    },
+    {
+      "title": "Growth Design",
+      "link": "https://growth.design/case-studies/",
+      "desc": "Learn how the best companies design and grow products users love.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Planet",
+      "link": "https://uxplanet.org/",
+      "desc": "One-stop resource for everything related to user experience.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Magazine",
+      "link": "https://uxmag.com/",
+      "desc": "Defining and informing the complex field of user experience (UX) through frequent publication.",
+      "price": "Free"
+    },
+    {
+      "title": "UX matters",
+      "link": "https://www.uxmatters.com/",
+      "desc": "Insights and inspiration for the user experience community.",
+      "price": "Free"
+    },
+    {
+      "title": "IxDF Blog",
+      "link": "https://ixdf.org/library?ep=tooolsdesign",
+      "desc": "The world\u2019s largest free online resource on UX design.",
+      "price": "Free"
+    },
+    {
+      "title": "Usability Geek",
+      "link": "https://usabilitygeek.com",
+      "desc": "Practical and useful insights into topics like usability, user experience, interface design and related fields.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Mastery",
+      "link": "https://uxmastery.com/",
+      "desc": "Community of user experience designers interested in human-centred design.",
+      "price": "Free"
+    },
+    {
+      "title": "Little Big Details",
+      "link": "https://littlebigdetails.com/",
+      "desc": "Funny glitches, mistakes and nice little details observed in digital products we all know.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Myths",
+      "link": "https://uxmyths.com/",
+      "desc": "UX Myths collects the most frequent user experience misconceptions and explains why they don't hold true.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Movement",
+      "link": "https://uxmovement.com/",
+      "desc": "Blog about good vs. bad user experience and how to design good products.",
+      "price": "Free"
+    },
+    {
+      "title": "Apple & Banana",
+      "link": "https://www.appleandbanana.org/",
+      "desc": "If you do user research, you have a place here.",
+      "price": "Free"
+    },
+    {
+      "title": "Academy Resources",
+      "link": "https://blog.academyux.com/",
+      "desc": "Tools, resources, and industry expertise on all things UX.",
+      "price": "Free"
+    }
+  ],
+  "ui-digital-product-design-blogs": [
+    {
+      "title": "Courtside",
+      "link": "https://dribbble.com/stories",
+      "desc": "Stories about inspiring designers, freelancing, product design, and everything else design related.",
+      "price": "Free"
+    },
+    {
+      "title": "DOC",
+      "link": "https://www.doc.cc/",
+      "desc": "An experimental publication by the team behind the UX Collective.",
+      "price": "Free"
+    },
+    {
+      "title": "Design Systems",
+      "link": "https://www.designsystems.com/",
+      "desc": "A Figma publication for design systems creators, designers, developers, and managers.",
+      "price": "Free"
+    },
+    {
+      "title": "Lenny's Newsletter",
+      "link": "https://www.lennysnewsletter.com/",
+      "desc": "Deeply researched advice about building product, driving growth, and advancing your career.",
+      "price": "Free"
+    },
+    {
+      "title": "DESK Magazine",
+      "link": "https://vanschneider.com/blog/",
+      "desc": "A design publication written by designers, for designers \u2014 by Tobias van Schneider.",
+      "price": "Free"
+    },
+    {
+      "title": "Sidebar",
+      "link": "https://sidebar.io/",
+      "desc": "The five best design links, every weekday.",
+      "price": "Free"
+    },
+    {
+      "title": "Muzli",
+      "link": "https://medium.muz.li/",
+      "desc": "The freshest links about design and interactive, from around the web.",
+      "price": "Free"
+    }
+  ],
+  "web-design-blogs": [
+    {
+      "title": "Smashing Magazine",
+      "link": "https://www.smashingmagazine.com/articles/",
+      "desc": "Reliable, useful, but most importantly practical articles to web designers and developers.",
+      "price": "Free"
+    },
+    {
+      "title": "Awwwards Blog",
+      "link": "https://www.awwwards.com/blog/",
+      "desc": "A blog for web designers and developers covering a wide range of topics.",
+      "price": "Free"
+    },
+    {
+      "title": "Codrops",
+      "link": "https://tympanus.net/codrops/",
+      "desc": "A destination for web design and development enthusiasts.",
+      "price": "Free"
+    },
+    {
+      "title": "WebDesignerDepot",
+      "link": "https://webdesignerdepot.com/",
+      "desc": "Trusted resource for all things web design, development, and creative inspiration.",
+      "price": "Free"
+    },
+    {
+      "title": "Webdesigner News",
+      "link": "https://webdesignernews.com/category/design/",
+      "desc": "A curated collection of the best news for web designers each day.",
+      "price": "Free"
+    },
+    {
+      "title": "Webbed Briefs \ud83d\ude02",
+      "link": "https://briefs.video/",
+      "desc": "Brief videos about the web, its technologies, and how to make the most of them.",
+      "price": "Free"
+    },
+    {
+      "title": "A List Apart",
+      "link": "https://alistapart.com/articles/",
+      "desc": "Magazine for people who make websites.",
+      "price": "Free"
+    }
+  ],
+  "motion-design-blogs": [
+    {
+      "title": "Motionographer",
+      "link": "https://motionographer.com",
+      "desc": "Curated showcase and editorial platform for motion design work.",
+      "price": "Free"
+    },
+    {
+      "title": "School of Motion",
+      "link": "https://www.schoolofmotion.com/blog",
+      "desc": "In-depth articles on motion design techniques, tools, and careers.",
+      "price": "Free"
+    },
+    {
+      "title": "Motion Design School",
+      "link": "https://motiondesign.school/blog",
+      "desc": "Educational blog with motion design tutorials and creative insights.",
+      "price": "Free"
+    }
+  ],
+  "company-blogs": [
+    {
+      "title": "Shortcut",
+      "link": "https://www.figma.com/blog/",
+      "desc": "Figma\u2019s blog for telling stories about people and discoveries along the path of bringing new ideas to life.",
+      "price": "Free"
+    },
+    {
+      "title": "Webflow Blog",
+      "link": "https://webflow.partnerlinks.io/blog-toools",
+      "desc": "Tips, insights, best practices and inspiration for designer's.",
+      "price": "Free"
+    },
+    {
+      "title": "Slack Design",
+      "link": "https://slack.design/",
+      "desc": "Design knowledge from the Slack team.",
+      "price": "Free"
+    },
+    {
+      "title": "Motto Blog",
+      "link": "https://wearemotto.com/blog",
+      "desc": "Blog on vision, strategy, culture, and brand and how to apply it.",
+      "price": "Free"
+    },
+    {
+      "title": "Tubik Blog",
+      "link": "https://blog.tubikstudio.com/",
+      "desc": "Articles and case studies about design.",
+      "price": "Free"
+    },
+    {
+      "title": "IDEO Blog",
+      "link": "https://www.ideo.com/blog",
+      "desc": "The Octopus \u2013 A designer's view of the universe.",
+      "price": "Free"
+    },
+    {
+      "title": "Shakuro",
+      "link": "https://shakuro.com/blog",
+      "desc": "Stories about design and development, some are entertaining.",
+      "price": "Free"
+    },
+    {
+      "title": "UX Studio",
+      "link": "https://uxstudioteam.com/ux-blog/",
+      "desc": "Company blog about UI and UX design, user research and product management.",
+      "price": "Free"
+    },
+    {
+      "title": "Inside Intercom",
+      "link": "https://www.intercom.com/blog/product-and-design/",
+      "desc": "Intercoms latest thoughts on building and designing great products.",
+      "price": "Free"
+    },
+    {
+      "title": "ustwo",
+      "link": "https://www.ustwo.com/blog/",
+      "desc": "Company blog about business, culture, design, development, and innovation.",
+      "price": "Free"
+    },
+    {
+      "title": "Adobe Blog",
+      "link": "https://blog.adobe.com/",
+      "desc": "Latest news from the Adobe universe.",
+      "price": "Free"
+    },
+    {
+      "title": "Linear Blog",
+      "link": "https://linear.app/now",
+      "desc": "Upates from the Linear Team.",
+      "price": "Free"
+    },
+    {
+      "title": "Designing Atlassian",
+      "link": "https://medium.com/designing-atlassian",
+      "desc": "Tales from the Atlassian design team.",
+      "price": "Free"
+    },
+    {
+      "title": "Notion Blog",
+      "link": "https://www.notion.com/blog",
+      "desc": "Notion's blog: Tools & Craft.",
+      "price": "Free"
+    },
+    {
+      "title": "Google Design",
+      "link": "https://design.google/",
+      "desc": "Cooperative effort led by a group of designers, writers, and developers at Google.",
+      "price": "Free"
+    },
+    {
+      "title": "Adobe Design",
+      "link": "https://adobe.design/",
+      "desc": "Stories from the team designing Creative Cloud, Document Cloud, and Experience Cloud.",
+      "price": "Free"
+    }
+  ],
+  "stories-and-peoples": [
+    {
+      "title": "Made by Folk",
+      "link": "https://www.madebyfolk.com/",
+      "desc": "Conversations with the people behind the design.",
+      "price": "Free"
+    },
+    {
+      "title": "Lovers Magazine",
+      "link": "https://www.loversmagazine.com/",
+      "desc": "A diverse and inclusive online community for creative professionals.",
+      "price": "Free"
+    },
+    {
+      "title": "Wepresent",
+      "link": "https://wepresent.wetransfer.com/",
+      "desc": "Unexpected stories about creativity.",
+      "price": "Free"
+    },
+    {
+      "title": "Path to Design",
+      "link": "https://www.pathtodesign.com/",
+      "desc": "A directory of designers, for designers.",
+      "price": "Free"
+    },
+    {
+      "title": "Designer Founders",
+      "link": "https://designerfounders.com/",
+      "desc": "Inspiring the next generation of ambitious designers to take the leap of entrepreneurship.",
+      "price": "Free"
+    },
+    {
+      "title": "Maker Stations",
+      "link": "https://www.makerstations.io/",
+      "desc": "Explore home office setups from makers across the globe.",
+      "price": "Free"
+    },
+    {
+      "title": "Playlists",
+      "link": "https://playlists.design/",
+      "desc": "Discover what designers are listening to.",
+      "price": "Free"
+    }
+  ]
+}

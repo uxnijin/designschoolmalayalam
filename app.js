@@ -17,9 +17,15 @@ const formatDate = s => s ? new Date(s).toLocaleDateString('en-IN', { year: 'num
 
 const getCategoryById = id => CATEGORIES.find(c => c.id === id);
 const getSubcategoryById = (c, s) => getCategoryById(c)?.subcategories.find(x => x.id === s);
-const getArticlesBySubcat = subId => ARTICLES.filter(a => a.subcategoryId === subId);
-const getArticlesByCategory = catId => ARTICLES.filter(a => a.categoryId === catId);
-const countInCategory = catId => ARTICLES.filter(a => a.categoryId === catId).length;
+const getArticlesBySubcat = subId => ARTICLES.filter(a => 
+  a._subcategories ? a._subcategories.includes(subId) : a.subcategoryId === subId
+);
+const getArticlesByCategory = catId => ARTICLES.filter(a => 
+  a._categories ? a._categories.includes(catId) : a.categoryId === catId
+);
+const countInCategory = catId => ARTICLES.filter(a => 
+  a._categories ? a._categories.includes(catId) : a.categoryId === catId
+).length;
 
 function getTrendingArticles() {
   const trendingIds = ['every-ui-ux-concept-explained', 'best-3-malayalam-fonts', '2026-graphic-design-trends'];
@@ -32,7 +38,7 @@ function getBestReads(categoryId, limit = 3) {
 }
 
 function extractHeadings(html) {
-  const regex = /<h([23])>(.*?)<\/h\1>/g;
+  const regex = /<h([23])\b[^>]*>(.*?)<\/h\1>/g;
   const headings = [];
   let match;
   let idCounter = 1;
@@ -46,8 +52,8 @@ function extractHeadings(html) {
 
 function injectHeadingIds(html) {
   let idCounter = 1;
-  return html.replace(/<h([23])>(.*?)<\/h\1>/g, (match, level, text) => {
-    return `<h${level} id="heading-${idCounter++}">${text}</h${level}>`;
+  return html.replace(/<h([23])\b([^>]*)>(.*?)<\/h\1>/g, (match, level, attrs, text) => {
+    return `<h${level} id="heading-${idCounter++}"${attrs}>${text}</h${level}>`;
   });
 }
 
@@ -1488,7 +1494,36 @@ function loadArticles() {
   return Promise.all(promises).then(() => {
     ARTICLE_IDS.forEach(id => {
       if (ARTICLE_REGISTRY[id] && !ARTICLES.some(a => a.id === id)) {
-        ARTICLES.push(ARTICLE_REGISTRY[id]);
+        const art = ARTICLE_REGISTRY[id];
+        if (Array.isArray(art.categoryId)) {
+          art._categories = art.categoryId;
+          Object.defineProperty(art, 'categoryId', {
+            get: () => {
+              const hashState = parseHash();
+              if (hashState.catId && art._categories.includes(hashState.catId)) {
+                return hashState.catId;
+              }
+              return art._categories[0] || '';
+            },
+            configurable: true,
+            enumerable: true
+          });
+        }
+        if (Array.isArray(art.subcategoryId)) {
+          art._subcategories = art.subcategoryId;
+          Object.defineProperty(art, 'subcategoryId', {
+            get: () => {
+              const hashState = parseHash();
+              if (hashState.subId && art._subcategories.includes(hashState.subId)) {
+                return hashState.subId;
+              }
+              return art._subcategories[0] || '';
+            },
+            configurable: true,
+            enumerable: true
+          });
+        }
+        ARTICLES.push(art);
       }
     });
   });
