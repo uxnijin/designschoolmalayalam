@@ -700,13 +700,13 @@ const ARTICLES = [
 // Shown at the bottom of every article page
 const TRAINING = {
   badge: "Personal Training",           // small label above the title
-  title: "Learn UI/UX 1-on-1",
-  description: "1-on-1 mentorship in UI/UX Design, Figma, and portfolio building. Learn at your own pace in Malayalam.",
+  title: "Learn UI/UX 1 on 1",
+  description: "1 on 1 mentorship in UI/UX Design, Figma, and portfolio building. Learn at your own pace in Malayalam.",
   features: [
-    "1-on-1 classes in Malayalam",
-    "Figma + UX + Portfolio",
-    "Job-ready curriculum",
-    "Flexible timing",
+    "1 on 1 classes in Malayalam",
+    "UX, UI, Figma & Portfolio",
+    "Job ready curriculum",
+    "Flexible timing"
   ],
   useWhatsapp: true,     // true = WhatsApp button | false = contact form
   formFields: ["name", "phone", "message"],  // "message" is optional; remove to hide

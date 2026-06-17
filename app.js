@@ -204,7 +204,7 @@ function renderCategorySkeleton(catId) {
     <div class="page-wide">
       ${breadcrumbHtml}
       
-      <div class="section-title">${cat ? cat.title : ''} — Subcategories</div>
+      <div class="section-title">${cat ? cat.title : ''}</div>
       
       <div class="sub-grid">
         ${Array(4).fill(0).map(() => `
@@ -282,10 +282,6 @@ function renderArticleSkeleton(catId, subId, articleId) {
           <div class="shimmer" style="width: 92%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
           <div class="shimmer" style="width: 75%; height: 16px; border-radius: 4px; margin-bottom: 24px;"></div>
         </div>
-      </div>
-      
-      <div class="training-inline">
-        <div class="shimmer" style="width: 100%; height: 160px; border-radius: var(--radius);"></div>
       </div>
     </div>
   `;
@@ -384,7 +380,7 @@ function renderCategoryPage(catId) {
     { label: cat.title }
   ], 0)}
 
-      <div class="section-title stagger-item" style="--stagger: 1">${cat.title} — Subcategories</div>
+      <div class="section-title stagger-item" style="--stagger: 1">${cat.title}</div>
       <div class="sub-grid">
         ${cat.subcategories.map((sub, idx) => `
           <div class="sub-card stagger-item" style="--stagger: ${2 + idx}" onclick="navigate('subcategory','${catId}','${sub.id}')">
@@ -498,10 +494,6 @@ function renderArticlePage(catId, subId, articleId) {
             </div>
           </div>
         ` : ''}
-      </div>
-
-      <div class="training-inline stagger-item" style="--stagger: 5">
-        ${renderTrainingCard()}
       </div>
     </div>
   `;
