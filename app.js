@@ -25,6 +25,8 @@ const countInCategory = catId => ARTICLES.filter(a => a.categoryId === catId).le
 // Each navigate() call pushes a state; popstate restores it.
 
 let _rendering = false; // guard against double-render during popstate
+let activeRenderTimeout = null;
+let isInitialLoad = true;
 
 function stateKey(page, catId, subId, articleId) {
   return JSON.stringify({ page, catId: catId || null, subId: subId || null, articleId: articleId || null });
@@ -81,17 +83,212 @@ function renderPage(state) {
   const { page, catId, subId, articleId } = state;
   const content = document.getElementById('content');
 
-
-  switch (page) {
-    case 'home': content.innerHTML = renderHome(); break;
-    case 'category': content.innerHTML = renderCategoryPage(catId); break;
-    case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
-    case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId); break;
-    default: content.innerHTML = renderHome();
+  // Cancel any pending render
+  if (activeRenderTimeout) {
+    clearTimeout(activeRenderTimeout);
+    activeRenderTimeout = null;
   }
 
-  updateNavActive(catId);
-  initEmptyStateLottie();
+  if (isInitialLoad) {
+    // 1. Immediately render page skeleton on first load (app initial boot)
+    renderSkeletonForPage(state, content);
+    updateNavActive(catId);
+
+    // 2. Schedule final render after a small delay
+    activeRenderTimeout = setTimeout(() => {
+      switch (page) {
+        case 'home': content.innerHTML = renderHome(); break;
+        case 'category': content.innerHTML = renderCategoryPage(catId); break;
+        case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
+        case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId); break;
+        default: content.innerHTML = renderHome();
+      }
+      initEmptyStateLottie();
+      activeRenderTimeout = null;
+    }, 400);
+
+    isInitialLoad = false;
+  } else {
+    // Render immediately for subsequent internal navigations since items are loaded
+    switch (page) {
+      case 'home': content.innerHTML = renderHome(); break;
+      case 'category': content.innerHTML = renderCategoryPage(catId); break;
+      case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
+      case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId); break;
+      default: content.innerHTML = renderHome();
+    }
+    updateNavActive(catId);
+    initEmptyStateLottie();
+  }
+}
+
+// ── SKELETON LOADERS ─────────────────────────────────────────
+
+function renderSkeletonForPage(state, content) {
+  if (!content) return;
+  const { page, catId, subId, articleId } = state;
+  switch (page) {
+    case 'home': content.innerHTML = renderHomeSkeleton(); break;
+    case 'category': content.innerHTML = renderCategorySkeleton(catId); break;
+    case 'subcategory': content.innerHTML = renderSubcategorySkeleton(catId, subId); break;
+    case 'article': content.innerHTML = renderArticleSkeleton(catId, subId, articleId); break;
+    default: content.innerHTML = renderHomeSkeleton();
+  }
+}
+
+function renderArticleListSkeleton(count = 4) {
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    html += `
+      <div class="shimmer-article-item">
+        <div class="shimmer-article-info">
+          <div class="shimmer" style="width: 60px; height: 11px; margin-bottom: 8px; border-radius: 4px;"></div>
+          <div class="shimmer" style="width: 80%; height: 18px; margin-bottom: 8px; border-radius: 4px;"></div>
+          <div class="shimmer" style="width: 95%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></div>
+          <div class="shimmer" style="width: 70%; height: 14px; margin-bottom: 10px; border-radius: 4px;"></div>
+          <div class="shimmer" style="width: 80px; height: 12px; border-radius: 4px;"></div>
+        </div>
+        <div class="shimmer shimmer-thumb"></div>
+      </div>
+    `;
+  }
+  return html;
+}
+
+function renderHomeSkeleton() {
+  return `
+    <div class="channel-banner">
+      <div class="channel-inner">
+        <div class="shimmer" style="width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0;"></div>
+        <div class="channel-info" style="width: 100%;">
+          <div class="shimmer" style="width: 200px; height: 26px; border-radius: 6px; margin-bottom: 8px;"></div>
+          <div class="shimmer" style="width: 80%; height: 16px; border-radius: 4px; margin-bottom: 16px;"></div>
+          <div class="channel-meta" style="margin-bottom: 20px;">
+            <div class="shimmer" style="width: 80px; height: 14px; border-radius: 4px;"></div>
+            <div class="shimmer" style="width: 80px; height: 14px; border-radius: 4px;"></div>
+            <div class="shimmer" style="width: 80px; height: 14px; border-radius: 4px;"></div>
+          </div>
+          <div class="channel-actions">
+            <div class="shimmer" style="width: 120px; height: 38px; border-radius: 22px;"></div>
+            <div class="shimmer" style="width: 120px; height: 38px; border-radius: 22px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="page-wide">
+      <div class="section-title">${HOME.browseSectionTitle}</div>
+      <div class="category-grid">
+        ${Array(3).fill(0).map(() => `
+          <div class="shimmer-category-card shimmer"></div>
+        `).join('')}
+      </div>
+
+      <div class="section-title-article" style="margin-top:24px">${HOME.latestSectionTitle}</div>
+      <div class="section-divider"></div>
+      <div class="article-list">
+        ${renderArticleListSkeleton(4)}
+      </div>
+    </div>
+  `;
+}
+
+function renderCategorySkeleton(catId) {
+  const cat = getCategoryById(catId);
+  const breadcrumbHtml = cat ? renderBreadcrumb([
+    { label: 'Home', action: `navigate('home')` },
+    { label: cat.title }
+  ], 0) : '';
+
+  return `
+    <div class="page-wide">
+      ${breadcrumbHtml}
+      
+      <div class="section-title">${cat ? cat.title : ''} — Subcategories</div>
+      
+      <div class="sub-grid">
+        ${Array(4).fill(0).map(() => `
+          <div class="shimmer-sub-card shimmer"></div>
+        `).join('')}
+      </div>
+      
+      <div class="section-title-article" style="margin-top:24px">All Articles</div>
+      <div class="section-divider"></div>
+      
+      <div class="article-list">
+        ${renderArticleListSkeleton(3)}
+      </div>
+    </div>
+  `;
+}
+
+function renderSubcategorySkeleton(catId, subId) {
+  const cat = getCategoryById(catId);
+  const sub = getSubcategoryById(catId, subId);
+  const breadcrumbHtml = (cat && sub) ? renderBreadcrumb([
+    { label: 'Home', action: `navigate('home')` },
+    { label: cat.title, action: `navigate('category','${catId}')` },
+    { label: sub.title }
+  ], 0) : '';
+
+  return `
+    <div class="page-wide">
+      ${breadcrumbHtml}
+      
+      <div class="section-title">${sub ? sub.title : ''}</div>
+      <div class="section-divider"></div>
+      
+      <div class="article-list">
+        ${renderArticleListSkeleton(3)}
+      </div>
+    </div>
+  `;
+}
+
+function renderArticleSkeleton(catId, subId, articleId) {
+  const article = ARTICLES.find(a => a.id === articleId);
+  const cat = getCategoryById(catId);
+  const sub = getSubcategoryById(catId, subId);
+  const breadcrumbHtml = article ? renderBreadcrumb([
+    { label: 'Home', action: `navigate('home')` },
+    { label: cat?.title, action: `navigate('category','${catId}')` },
+    { label: sub?.title, action: `navigate('subcategory','${catId}','${subId}')` },
+    { label: article.title }
+  ], 0) : '';
+
+  return `
+    <div class="article-shell">
+      <div class="article-reading" style="width: 100%;">
+        ${breadcrumbHtml}
+        
+        <div class="article-header">
+          <div class="article-tag">${cat?.title || ''}</div>
+          <h1>${article ? article.title : ''}</h1>
+          <div class="article-meta-row" style="padding-bottom: 14px; border-bottom: 1px solid var(--border);">
+            <div class="shimmer" style="width: 100px; height: 12px; border-radius: 4px;"></div>
+          </div>
+        </div>
+        
+        <div class="shimmer" style="width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); margin: 16px 0 32px 0;"></div>
+        
+        <div class="article-body">
+          <div class="shimmer" style="width: 100%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
+          <div class="shimmer" style="width: 95%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
+          <div class="shimmer" style="width: 98%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
+          <div class="shimmer" style="width: 85%; height: 16px; border-radius: 4px; margin-bottom: 24px;"></div>
+          
+          <div class="shimmer" style="width: 40%; height: 20px; border-radius: 4px; margin: 32px 0 12px;"></div>
+          <div class="shimmer" style="width: 97%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
+          <div class="shimmer" style="width: 92%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
+          <div class="shimmer" style="width: 75%; height: 16px; border-radius: 4px; margin-bottom: 24px;"></div>
+        </div>
+      </div>
+      
+      <div class="training-inline">
+        <div class="shimmer" style="width: 100%; height: 160px; border-radius: var(--radius);"></div>
+      </div>
+    </div>
+  `;
 }
 
 // ── NAV ──────────────────────────────────────────────────────
@@ -137,7 +334,7 @@ function renderHome() {
     .slice(0, HOME.latestArticlesCount);
 
   return `
-    <div class="channel-banner">
+    <div class="channel-banner stagger-item" style="--stagger: 0">
       <div class="channel-inner">
         <img class="channel-avatar" src="${SITE.logo}" alt="Logo"
           onerror="this.style.background='var(--accent)';this.removeAttribute('src')">
@@ -156,10 +353,10 @@ function renderHome() {
     </div>
 
     <div class="page-wide">
-      <div class="section-title">${HOME.browseSectionTitle}</div>
+      <div class="section-title stagger-item" style="--stagger: 1">${HOME.browseSectionTitle}</div>
       <div class="category-grid">
-        ${CATEGORIES.map(cat => `
-          <div class="category-card" onclick="navigate('category','${cat.id}')">
+        ${CATEGORIES.map((cat, idx) => `
+          <div class="category-card stagger-item" style="--stagger: ${2 + idx}" onclick="navigate('category','${cat.id}')">
             <div class="category-title">${cat.title}</div>
             <div class="category-desc">${cat.description}</div>
             <div class="category-count">${countInCategory(cat.id)} articles</div>
@@ -167,9 +364,9 @@ function renderHome() {
         `).join('')}
       </div>
 
-      <div class="section-title-article" style="margin-top:12px">${HOME.latestSectionTitle}</div>
-      <div class="section-divider"></div>
-      ${renderArticleList(latestArticles)}
+      <div class="section-title-article stagger-item" style="--stagger: ${2 + CATEGORIES.length}; margin-top:12px">${HOME.latestSectionTitle}</div>
+      <div class="section-divider stagger-item" style="--stagger: ${3 + CATEGORIES.length}"></div>
+      ${renderArticleList(latestArticles, 4 + CATEGORIES.length)}
     </div>
   `;
 }
@@ -185,21 +382,21 @@ function renderCategoryPage(catId) {
       ${renderBreadcrumb([
     { label: 'Home', action: `navigate('home')` },
     { label: cat.title }
-  ])}
+  ], 0)}
 
-      <div class="section-title">${cat.title} — Subcategories</div>
+      <div class="section-title stagger-item" style="--stagger: 1">${cat.title} — Subcategories</div>
       <div class="sub-grid">
-        ${cat.subcategories.map(sub => `
-          <div class="sub-card" onclick="navigate('subcategory','${catId}','${sub.id}')">
+        ${cat.subcategories.map((sub, idx) => `
+          <div class="sub-card stagger-item" style="--stagger: ${2 + idx}" onclick="navigate('subcategory','${catId}','${sub.id}')">
             <div class="sub-card-title">${sub.title}</div>
             <div class="sub-card-desc">${sub.description}</div>
           </div>
         `).join('')}
       </div>
 
-      <div class="section-title-article" style="margin-top:8px">All Articles</div>
-      <div class="section-divider"></div>
-      ${renderArticleList(getArticlesByCategory(catId))}
+      <div class="section-title-article stagger-item" style="--stagger: ${2 + cat.subcategories.length}; margin-top:8px">All Articles</div>
+      <div class="section-divider stagger-item" style="--stagger: ${3 + cat.subcategories.length}"></div>
+      ${renderArticleList(getArticlesByCategory(catId), 4 + cat.subcategories.length)}
     </div>
   `;
 }
@@ -218,11 +415,11 @@ function renderSubcategoryPage(catId, subId) {
     { label: 'Home', action: `navigate('home')` },
     { label: cat.title, action: `navigate('category','${catId}')` },
     { label: sub.title }
-  ])}
+  ], 0)}
 
-      <div class="section-title">${sub.title}</div>
-      <div class="section-divider"></div>
-      ${articles.length ? renderArticleList(articles) : `<div class="empty-state">
+      <div class="section-title stagger-item" style="--stagger: 1">${sub.title}</div>
+      <div class="section-divider stagger-item" style="--stagger: 2"></div>
+      ${articles.length ? renderArticleList(articles, 3) : `<div class="empty-state">
         <div class="empty-state-lottie"></div>
         <p class="empty-state-text">No articles yet. Coming soon.</p>
       </div>`}
@@ -232,17 +429,17 @@ function renderSubcategoryPage(catId, subId) {
 
 // ── ARTICLE LIST ─────────────────────────────────────────────
 
-function renderArticleList(articles) {
+function renderArticleList(articles, startStaggerIdx = 0) {
   if (!articles.length) return `<div class="empty-state">
     <div class="empty-state-lottie"></div>
     <p class="empty-state-text">No articles yet.</p>
   </div>`;
   return `<div class="article-list">
-    ${articles.map(a => {
+    ${articles.map((a, idx) => {
     const cat = getCategoryById(a.categoryId);
     const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
     return `
-        <div class="article-item" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+        <div class="article-item stagger-item" style="--stagger: ${startStaggerIdx + idx}" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
           <div class="article-info">
             <div class="article-tag-sm">${cat?.title || ''}</div>
             <div class="article-title">${a.title}</div>
@@ -276,9 +473,9 @@ function renderArticlePage(catId, subId, articleId) {
     { label: cat?.title, action: `navigate('category','${catId}')` },
     { label: sub?.title, action: `navigate('subcategory','${catId}','${subId}')` },
     { label: article.title }
-  ])}
+  ], 0)}
 
-        <div class="article-header">
+        <div class="article-header stagger-item" style="--stagger: 1">
           <div class="article-tag">${cat?.title}</div>
           <h1>${article.title}</h1>
           <div class="article-meta-row">
@@ -287,15 +484,15 @@ function renderArticlePage(catId, subId, articleId) {
         </div>
 
         ${article.thumbnail && !embedUrl ? `
-          <div class="article-hero-image">
+          <div class="article-hero-image stagger-item" style="--stagger: 2">
             <img src="${article.thumbnail}" alt="${article.title}" loading="lazy">
           </div>
         ` : ''}
 
-        <div class="article-body">${article.content}</div>
+        <div class="article-body stagger-item" style="--stagger: 3">${article.content}</div>
 
         ${embedUrl ? `
-          <div class="yt-embed-section">
+          <div class="yt-embed-section stagger-item" style="--stagger: 4">
             <div class="yt-embed-wrapper">
               <iframe src="${embedUrl}" allowfullscreen loading="lazy" title="${article.title}"></iframe>
             </div>
@@ -303,7 +500,7 @@ function renderArticlePage(catId, subId, articleId) {
         ` : ''}
       </div>
 
-      <div class="training-inline">
+      <div class="training-inline stagger-item" style="--stagger: 5">
         ${renderTrainingCard()}
       </div>
     </div>
@@ -353,7 +550,7 @@ function submitTrainingForm() {
 
 // ── HELPERS ──────────────────────────────────────────────────
 
-function renderBreadcrumb(crumbs) {
+function renderBreadcrumb(crumbs, startStaggerIdx = 0) {
   const parts = crumbs.map((c, i) => {
     const isLast = i === crumbs.length - 1;
     if (isLast) return `<span class="breadcrumb-current">${c.label}</span>`;
@@ -364,7 +561,7 @@ function renderBreadcrumb(crumbs) {
     if (i < parts.length - 1) acc.push(`<span>›</span>`);
     return acc;
   }, []);
-  return `<div class="breadcrumb">${joined.join('')}</div>`;
+  return `<div class="breadcrumb stagger-item" style="--stagger: ${startStaggerIdx}">${joined.join('')}</div>`;
 }
 
 function emptyPage(msg) {
@@ -454,3 +651,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderPage(initialState);
 });
+

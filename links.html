@@ -18,8 +18,8 @@
     <div class="page-wide">
 
       <!-- PAGE HEADER -->
-      <div class="section-title">UI UX Works by Nijin</div>
-      <div class="section-divider"></div>
+      <div class="section-title stagger-item" style="--stagger: 0">UI UX Works by Nijin</div>
+      <div class="section-divider stagger-item" style="--stagger: 1"></div>
 
       <!-- LIST CONTAINER -->
       <div class="article-list" id="linksList">
@@ -145,6 +145,28 @@
       return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="${size}" height="${size}"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>`;
     }
 
+    function renderLinksSkeleton(count = 4) {
+      const container = document.getElementById('linksList');
+      if (!container) return;
+
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `
+          <div class="shimmer-article-item">
+            <div class="shimmer-article-info">
+              <div class="shimmer shimmer-line short" style="width: 60px; height: 11px; margin-bottom: 8px;"></div>
+              <div class="shimmer shimmer-line title" style="width: 80%; height: 18px; margin-bottom: 8px;"></div>
+              <div class="shimmer shimmer-line desc" style="width: 95%; height: 14px; margin-bottom: 6px;"></div>
+              <div class="shimmer shimmer-line desc" style="width: 70%; height: 14px; margin-bottom: 10px;"></div>
+              <div class="shimmer shimmer-line short" style="width: 80px; height: 12px;"></div>
+            </div>
+            <div class="shimmer shimmer-thumb"></div>
+          </div>
+        `;
+      }
+      container.innerHTML = html;
+    }
+
     function renderLinks() {
       const container = document.getElementById('linksList');
       if (!container) return;
@@ -154,9 +176,9 @@
         return;
       }
 
-      container.innerHTML = LINKS_DATA.map(item => {
+      container.innerHTML = LINKS_DATA.map((item, idx) => {
         return `
-          <a href="${item.link}" target="_blank" rel="noopener" class="article-item">
+          <a href="${item.link}" target="_blank" rel="noopener" class="article-item stagger-item" style="--stagger: ${2 + idx}">
             <div class="article-info">
               <div class="article-tag-sm">${item.category}</div>
               <div class="article-title">${item.title}</div>
@@ -171,7 +193,10 @@
       }).join('');
     }
 
-    document.addEventListener('DOMContentLoaded', renderLinks);
+    document.addEventListener('DOMContentLoaded', () => {
+      renderLinksSkeleton();
+      setTimeout(renderLinks, 500);
+    });
   </script>
 </body>
 

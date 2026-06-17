@@ -1109,3 +1109,126 @@ ol {
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================
+   STAGGERED APPEARING ANIMATION
+   ============================================================ */
+
+.stagger-item {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeInstagger 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: calc(var(--stagger, 0) * 0.1s);
+}
+
+@keyframes fadeInstagger {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   SKELETON LOADERS & SHIMMER EFFECT
+   ============================================================ */
+
+.shimmer {
+  background: var(--bg-3);
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08) 20%,
+    rgba(255, 255, 255, 0.16) 60%,
+    transparent
+  );
+  animation: shimmer-animation 1.6s infinite;
+}
+
+@media (prefers-color-scheme: light) {
+  .shimmer::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.5) 20%,
+      rgba(255, 255, 255, 0.7) 60%,
+      transparent
+    );
+  }
+}
+
+@keyframes shimmer-animation {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Shimmer layouts */
+.shimmer-article-item {
+  display: flex;
+  gap: 24px;
+  padding: 26px 16px;
+  margin: 0 -16px;
+  border-bottom: 1px solid var(--border);
+  align-items: flex-start;
+}
+
+.shimmer-article-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.shimmer-thumb {
+  width: 180px;
+  height: 101px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.shimmer-category-card {
+  height: 140px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.shimmer-sub-card {
+  height: 80px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.shimmer-breadcrumb {
+  height: 20px;
+  width: 150px;
+  margin: 28px 0 4px;
+  border-radius: 4px;
+}
+
+/* Make shimmer layout responsive */
+@media (max-width: 560px) {
+  .shimmer-article-item {
+    padding: 16px 0;
+    margin: 0;
+    border-radius: 0;
+    gap: 16px;
+  }
+
+  .shimmer-thumb {
+    width: 160px;
+    height: 90px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+}
