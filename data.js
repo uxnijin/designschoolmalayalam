@@ -22,7 +22,6 @@ const HOME = {
   stats: [
     { label: "Articles", valueKey: "articleCount" }, // dynamic from ARTICLES.length
     { label: "Topics", valueKey: "categoryCount" }, // dynamic from CATEGORIES.length
-    { label: " ", value: "Malayalam" },
     // { label: "Price", value: "Free" },
   ],
   latestArticlesCount: 8,   // how many articles to show in "Latest Articles"
