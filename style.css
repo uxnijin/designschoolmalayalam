@@ -475,8 +475,57 @@ ol {
 }
 
 /* ============================================================
-   BREADCRUMB
+   BREADCRUMB & BACK NAVIGATION ROW
    ============================================================ */
+.header-navigation-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-top: 28px;
+  margin-bottom: 8px;
+  min-width: 0;
+}
+
+.header-navigation-row .section-title {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--bg-2);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all var(--transition);
+  cursor: pointer;
+  margin-top: 0;
+  margin-bottom: 0;
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background: var(--bg-3);
+  color: var(--text);
+  border-color: var(--text-3);
+}
+
+.btn-back svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2.5;
+  transition: transform var(--transition);
+}
+
+.btn-back:hover svg {
+  transform: translateX(-3px);
+}
 
 .breadcrumb {
   display: flex;
@@ -487,8 +536,10 @@ ol {
   color: var(--text-3);
   white-space: nowrap;
   overflow: hidden;
-  padding-top: 28px;
-  padding-bottom: 4px;
+  padding-top: 0;
+  padding-bottom: 0;
+  flex: 1;
+  min-width: 0;
 }
 
 .breadcrumb>span {
@@ -646,93 +697,72 @@ ol {
 }
 
 .related-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 20px;
-}
-
-.related-card {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  cursor: pointer;
-  transition: border-color var(--transition), transform var(--transition), background var(--transition), box-shadow var(--transition);
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
 
-@media (hover: hover) {
-  .related-card:hover {
-    border-color: var(--accent);
-    background: var(--bg-3);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  }
+.related-card,
+.best-read-card {
+  display: flex;
+  gap: 12px;
+  cursor: pointer;
+  align-items: center;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
 }
 
-.related-card-thumb {
-  width: 100%;
-  aspect-ratio: 16 / 9;
+.related-card:hover,
+.best-read-card:hover {
+  background: var(--bg-3);
+}
+
+.related-card-thumb,
+.best-read-thumb {
+  width: 70px;
+  height: 42px;
+  border-radius: 6px;
   overflow: hidden;
   background: var(--bg-3);
-  border-bottom: 1px solid var(--border);
-  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.related-card-thumb img {
+.related-card-thumb img,
+.best-read-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
 }
 
-@media (hover: hover) {
-  .related-card:hover .related-card-thumb img {
-    transform: scale(1.04);
-  }
+.related-card-content,
+.best-read-content {
+  flex: 1;
+  min-width: 0;
 }
 
-.related-card-content {
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.related-card-tag {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--accent);
-}
-
-.related-card-title {
+.related-card-title,
+.best-read-title {
   font-family: var(--font-display);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.3;
   color: var(--text);
+  margin-bottom: 2px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  margin-top: 0;
 }
 
-.related-card-date {
-  font-size: 11px;
+.related-card-date,
+.best-read-date {
+  font-size: 10px;
   color: var(--text-3);
-  margin-top: auto;
-}
-
-.related-card-skeleton {
-  background: var(--bg-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
 }
 
 .article-header {
@@ -1650,43 +1680,220 @@ ol {
   }
 }
 
-/* Desktop Sidebar for Related Articles */
-@media (min-width: 821px) {
-  .article-shell {
-    max-width: 1100px;
-    display: flex;
-    gap: 48px;
+/* ============================================================
+   3-COLUMN LAYOUT SYSTEM (DESKTOP ONLY)
+   ============================================================ */
+
+.layout-container {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 18px 64px;
+}
+
+.layout-left,
+.layout-right {
+  display: none;
+}
+
+.layout-center {
+  width: 100%;
+}
+
+/* Desktop 3-Column Layout */
+@media (min-width: 1024px) {
+  .layout-container {
+    display: grid;
+    grid-template-columns: 240px 1fr 280px;
+    gap: 40px;
+    max-width: 1280px;
+    padding: 32px 24px 80px;
     align-items: flex-start;
   }
-  
-  .article-reading {
-    flex: 1;
-    min-width: 0;
-    max-width: 720px;
+
+  .layout-container.two-column {
+    grid-template-columns: 240px 1fr;
   }
-  
-  .related-articles-section {
-    width: 280px;
-    flex-shrink: 0;
+
+  .layout-left {
+    display: block;
     position: sticky;
     top: calc(var(--nav-h) + 32px);
     max-height: calc(100vh - var(--nav-h) - 64px);
     overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .layout-left::-webkit-scrollbar {
+    display: none;
+  }
+
+  .layout-right {
+    display: block;
+    position: sticky;
+    top: calc(var(--nav-h) + 32px);
+    max-height: calc(100vh - var(--nav-h) - 64px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .layout-right::-webkit-scrollbar {
+    display: none;
+  }
+
+  .layout-center {
+    min-width: 0;
+  }
+
+  /* Desktop layout hide/show overrides */
+  .home-categories-mobile-only,
+  .category-subgrid-mobile-only {
+    display: none;
+  }
+}
+
+/* Widgets Styling */
+.sidebar-widget {
+  margin-bottom: 36px;
+}
+
+.sidebar-widget:last-child {
+  margin-bottom: 0;
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+  margin-bottom: 16px;
+}
+
+/* Sidebar Menu & Table of Contents */
+.sidebar-menu,
+.toc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-left: 0;
+}
+
+.toc-item {
+  list-style: none;
+}
+
+.sidebar-menu-item,
+.toc-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: all var(--transition);
+  cursor: pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar-menu-item:hover,
+.toc-link:hover {
+  background: var(--bg-3);
+  color: var(--text);
+}
+
+.sidebar-menu-item.active,
+.toc-link.active {
+  background: var(--accent-tint);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.toc-level-2 {
+  padding-left: 0;
+}
+
+.toc-level-3 {
+  padding-left: 12px;
+}
+
+/* Trending List (Medium style) */
+.trending-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.trending-item {
+  display: flex;
+  gap: 16px;
+  cursor: pointer;
+  transition: opacity var(--transition);
+}
+
+.trending-item:hover {
+  opacity: 0.85;
+}
+
+.trending-number {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.8;
+  line-height: 1;
+  min-width: 32px;
+}
+
+.trending-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.trending-category {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+
+.trending-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.trending-date {
+  font-size: 11px;
+  color: var(--text-3);
+}
+
+/* Best Reads List */
+.best-reads-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Table of Contents (TOC) Widget consolidated under Sidebar Menu section */
+
+/* Related articles on desktop right sidebar override */
+@media (min-width: 1024px) {
+  .layout-right .related-articles-section {
     margin-top: 0;
     border-top: none;
     padding-top: 0;
-    /* Hide scrollbar */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-  }
-  
-  .related-articles-section::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
-  }
-  
-  .related-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
   }
 }

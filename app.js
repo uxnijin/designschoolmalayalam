@@ -21,6 +21,36 @@ const getArticlesBySubcat = subId => ARTICLES.filter(a => a.subcategoryId === su
 const getArticlesByCategory = catId => ARTICLES.filter(a => a.categoryId === catId);
 const countInCategory = catId => ARTICLES.filter(a => a.categoryId === catId).length;
 
+function getTrendingArticles() {
+  const trendingIds = ['every-ui-ux-concept-explained', 'best-3-malayalam-fonts', '2026-graphic-design-trends'];
+  const trending = ARTICLES.filter(a => trendingIds.includes(a.id));
+  return trending.length ? trending : ARTICLES.slice(0, 3);
+}
+
+function getBestReads(categoryId, limit = 3) {
+  return ARTICLES.filter(a => a.categoryId === categoryId).slice(0, limit);
+}
+
+function extractHeadings(html) {
+  const regex = /<h([23])>(.*?)<\/h\1>/g;
+  const headings = [];
+  let match;
+  let idCounter = 1;
+  while ((match = regex.exec(html)) !== null) {
+    const level = parseInt(match[1]);
+    const text = match[2].replace(/<[^>]*>/g, '').trim();
+    headings.push({ level, text, id: `heading-${idCounter++}` });
+  }
+  return headings;
+}
+
+function injectHeadingIds(html) {
+  let idCounter = 1;
+  return html.replace(/<h([23])>(.*?)<\/h\1>/g, (match, level, text) => {
+    return `<h${level} id="heading-${idCounter++}">${text}</h${level}>`;
+  });
+}
+
 // ── HISTORY / ROUTER ─────────────────────────────────────────
 // Each navigate() call pushes a state; popstate restores it.
 
@@ -41,13 +71,23 @@ function navigate(page, catId, subId, articleId, query = null, { replace = false
   const state = { page, catId, subId, articleId, query };
   const url = buildUrl(page, catId, subId, articleId, query);
 
-  if (replace) {
-    history.replaceState(state, '', url);
-  } else {
-    history.pushState(state, '', url);
+  try {
+    if (replace) {
+      history.replaceState(state, '', url);
+    } else {
+      history.pushState(state, '', url);
+    }
+    renderPage(state);
+  } catch (e) {
+    console.warn('History API not supported or blocked (e.g. file:// protocol):', e);
+    const hash = url.replace(/^\/\#/, '#');
+    if (location.hash !== hash) {
+      location.hash = hash;
+    } else {
+      renderPage(state);
+    }
   }
 
-  renderPage(state);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -108,6 +148,11 @@ function renderPage(state) {
         default: content.innerHTML = renderHome();
       }
       initEmptyStateLottie();
+      if (page === 'article') {
+        initTOCActiveTracker();
+      } else {
+        cleanupScrollListeners();
+      }
       activeRenderTimeout = null;
     }, 400);
 
@@ -124,6 +169,11 @@ function renderPage(state) {
     }
     updateNavActive(catId);
     initEmptyStateLottie();
+    if (page === 'article') {
+      initTOCActiveTracker();
+    } else {
+      cleanupScrollListeners();
+    }
   }
 }
 
@@ -204,26 +254,70 @@ function renderCategorySkeleton(catId) {
   const breadcrumbHtml = cat ? renderBreadcrumb([
     { label: 'Home', action: `navigate('home')` },
     { label: cat.title }
-  ], 0) : '';
+  ], 1) : '';
 
   return `
-    <div class="page-wide">
-      ${breadcrumbHtml}
-      
-      <div class="section-title">${cat ? cat.title : ''}</div>
-      
-      <div class="sub-grid">
-        ${Array(4).fill(0).map(() => `
-          <div class="shimmer-sub-card shimmer"></div>
-        `).join('')}
-      </div>
-      
-      <div class="section-title-article" style="margin-top:24px">All Articles</div>
-      <div class="section-divider"></div>
-      
-      <div class="article-list">
-        ${renderArticleListSkeleton(3)}
-      </div>
+    <div class="layout-container">
+      <!-- Left Column Skeleton -->
+      <aside class="layout-left">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 110px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="sidebar-menu">
+            ${Array(5).fill(0).map(() => `
+              <div class="shimmer" style="width: 80%; height: 32px; border-radius: 8px; margin-bottom: 6px;"></div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Column Skeleton -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+          ${breadcrumbHtml}
+        </div>
+        
+        <div class="section-title">${cat ? cat.title : ''}</div>
+        
+        <div class="category-subgrid-mobile-only">
+          <div class="sub-grid">
+            ${Array(4).fill(0).map(() => `
+              <div class="shimmer-sub-card shimmer"></div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <div class="section-title-article" style="margin-top:24px">All Articles</div>
+        <div class="section-divider"></div>
+        
+        <div class="article-list">
+          ${renderArticleListSkeleton(3)}
+        </div>
+      </main>
+
+      <!-- Right Column Skeleton -->
+      <aside class="layout-right">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 100px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="best-reads-list">
+            ${Array(3).fill(0).map(() => `
+              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                <div class="shimmer" style="width: 70px; height: 42px; border-radius: 6px; flex-shrink: 0;"></div>
+                <div style="flex: 1;">
+                  <div class="shimmer" style="width: 85%; height: 13px; margin-bottom: 6px; border-radius: 3px;"></div>
+                  <div class="shimmer" style="width: 60px; height: 9px; border-radius: 3px;"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
     </div>
   `;
 }
@@ -235,18 +329,42 @@ function renderSubcategorySkeleton(catId, subId) {
     { label: 'Home', action: `navigate('home')` },
     { label: cat.title, action: `navigate('category','${catId}')` },
     { label: sub.title }
-  ], 0) : '';
+  ], 1) : '';
 
   return `
-    <div class="page-wide">
-      ${breadcrumbHtml}
-      
-      <div class="section-title">${sub ? sub.title : ''}</div>
-      <div class="section-divider"></div>
-      
-      <div class="article-list">
-        ${renderArticleListSkeleton(3)}
-      </div>
+    <div class="layout-container two-column">
+      <!-- Left Column Skeleton -->
+      <aside class="layout-left">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 110px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="sidebar-menu">
+            ${Array(5).fill(0).map(() => `
+              <div class="shimmer" style="width: 80%; height: 32px; border-radius: 8px; margin-bottom: 6px;"></div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Column Skeleton -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back" onclick="navigate('category','${catId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+          ${breadcrumbHtml}
+        </div>
+        
+        <div class="section-title">${sub ? sub.title : ''}</div>
+        <div class="section-divider"></div>
+        
+        <div class="article-list">
+          ${renderArticleListSkeleton(3)}
+        </div>
+      </main>
     </div>
   `;
 }
@@ -257,12 +375,12 @@ function renderRelatedArticlesSkeleton() {
       <div class="shimmer" style="width: 140px; height: 20px; border-radius: 4px; margin-bottom: 20px;"></div>
       <div class="related-grid">
         ${[1, 2, 3].map(() => `
-          <div class="related-card-skeleton">
-            <div class="shimmer" style="width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); margin-bottom: 12px;"></div>
-            <div class="shimmer" style="width: 60px; height: 10px; border-radius: 4px; margin-bottom: 8px;"></div>
-            <div class="shimmer" style="width: 90%; height: 16px; border-radius: 4px; margin-bottom: 8px;"></div>
-            <div class="shimmer" style="width: 60%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
-            <div class="shimmer" style="width: 80px; height: 10px; border-radius: 4px;"></div>
+          <div class="related-card-skeleton" style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+            <div class="shimmer" style="width: 70px; height: 42px; border-radius: 6px; flex-shrink: 0;"></div>
+            <div style="flex: 1;">
+              <div class="shimmer" style="width: 85%; height: 13px; margin-bottom: 6px; border-radius: 3px;"></div>
+              <div class="shimmer" style="width: 60px; height: 9px; border-radius: 3px;"></div>
+            </div>
           </div>
         `).join('')}
       </div>
@@ -279,12 +397,34 @@ function renderArticleSkeleton(catId, subId, articleId) {
     { label: cat?.title, action: `navigate('category','${catId}')` },
     { label: sub?.title, action: `navigate('subcategory','${catId}','${subId}')` },
     { label: article.title }
-  ], 0) : '';
+  ], 1) : '';
 
   return `
-    <div class="article-shell">
-      <div class="article-reading">
-        ${breadcrumbHtml}
+    <div class="layout-container article-shell">
+      <!-- Left Column Skeleton -->
+      <aside class="layout-left">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 120px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="toc-list">
+            ${Array(4).fill(0).map(() => `
+              <div class="shimmer" style="width: 85%; height: 26px; border-radius: 6px; margin-bottom: 6px;"></div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Column Skeleton -->
+      <main class="layout-center article-reading">
+        <div class="header-navigation-row">
+          <button class="btn-back" onclick="navigate('subcategory','${catId}','${subId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+          ${breadcrumbHtml}
+        </div>
         
         <div class="article-header">
           <div class="article-tag">${cat?.title || ''}</div>
@@ -301,14 +441,13 @@ function renderArticleSkeleton(catId, subId, articleId) {
           <div class="shimmer" style="width: 95%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
           <div class="shimmer" style="width: 98%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
           <div class="shimmer" style="width: 85%; height: 16px; border-radius: 4px; margin-bottom: 24px;"></div>
-          
-          <div class="shimmer" style="width: 40%; height: 20px; border-radius: 4px; margin: 32px 0 12px;"></div>
-          <div class="shimmer" style="width: 97%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
-          <div class="shimmer" style="width: 92%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
-          <div class="shimmer" style="width: 75%; height: 16px; border-radius: 4px; margin-bottom: 24px;"></div>
         </div>
-      </div>
-      ${renderRelatedArticlesSkeleton()}
+      </main>
+
+      <!-- Right Column Skeleton -->
+      <aside class="layout-right">
+        ${renderRelatedArticlesSkeleton()}
+      </aside>
     </div>
   `;
 }
@@ -399,26 +538,85 @@ function renderCategoryPage(catId) {
   const cat = getCategoryById(catId);
   if (!cat) return emptyPage('Category not found.');
 
+  const bestReads = getBestReads(catId, 3);
+
   return `
-    <div class="page-wide">
-      ${renderBreadcrumb([
-    { label: 'Home', action: `navigate('home')` },
-    { label: cat.title }
-  ], 0)}
+    <div class="layout-container">
+      <!-- Left Column: Subcategories list on desktop -->
+      <aside class="layout-left stagger-item" style="--stagger: 1">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Subcategories</h3>
+          <nav class="sidebar-menu">
+            <a href="#cat=${catId}" class="sidebar-menu-item active" onclick="navigate('category','${catId}'); return false;">
+              All Articles
+            </a>
+            ${cat.subcategories.map(sub => `
+              <a href="#cat=${catId}&sub=${sub.id}" class="sidebar-menu-item" onclick="navigate('subcategory','${catId}','${sub.id}'); return false;">
+                ${sub.title}
+              </a>
+            `).join('')}
+          </nav>
+        </div>
+      </aside>
 
-      <div class="section-title stagger-item" style="--stagger: 1">${cat.title}</div>
-      <div class="sub-grid">
-        ${cat.subcategories.map((sub, idx) => `
-          <div class="sub-card stagger-item" style="--stagger: ${2 + idx}" onclick="navigate('subcategory','${catId}','${sub.id}')">
-            <div class="sub-card-title">${sub.title}</div>
-            <div class="sub-card-desc">${sub.description}</div>
+      <!-- Center Column: Articles -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back stagger-item" style="--stagger: 0" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+
+          ${renderBreadcrumb([
+            { label: 'Home', action: `navigate('home')` },
+            { label: cat.title }
+          ], 1)}
+        </div>
+
+        <div class="section-title stagger-item" style="--stagger: 2">${cat.title}</div>
+        
+        <!-- Subgrid: shown on mobile, hidden on desktop -->
+        <div class="category-subgrid-mobile-only">
+          <div class="sub-grid">
+            ${cat.subcategories.map((sub, idx) => `
+              <div class="sub-card stagger-item" style="--stagger: ${3 + idx}" onclick="navigate('subcategory','${catId}','${sub.id}')">
+                <div class="sub-card-title">${sub.title}</div>
+                <div class="sub-card-desc">${sub.description}</div>
+              </div>
+            `).join('')}
           </div>
-        `).join('')}
-      </div>
+        </div>
 
-      <div class="section-title-article stagger-item" style="--stagger: ${2 + cat.subcategories.length}; margin-top:8px">All Articles</div>
-      <div class="section-divider stagger-item" style="--stagger: ${3 + cat.subcategories.length}"></div>
-      ${renderArticleList(getArticlesByCategory(catId), 4 + cat.subcategories.length)}
+        <div class="section-title-article stagger-item" style="--stagger: ${3 + cat.subcategories.length}; margin-top:8px">All Articles</div>
+        <div class="section-divider stagger-item" style="--stagger: ${4 + cat.subcategories.length}"></div>
+        ${renderArticleList(getArticlesByCategory(catId), 5 + cat.subcategories.length)}
+      </main>
+
+      <!-- Right Column: Best Reads on desktop -->
+      <aside class="layout-right stagger-item" style="--stagger: 2">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Best Reads</h3>
+          <div class="best-reads-list">
+            ${bestReads.map(a => {
+              const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
+              return `
+                <div class="best-read-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+                  <div class="best-read-thumb">
+                    ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(16) : svgDoc(16)}</div>`}
+                  </div>
+                  <div class="best-read-content">
+                    <h4 class="best-read-title">${a.title}</h4>
+                    <div class="best-read-date">${formatDate(a.date)}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </aside>
     </div>
   `;
 }
@@ -432,19 +630,49 @@ function renderSubcategoryPage(catId, subId) {
 
   const articles = getArticlesBySubcat(subId);
   return `
-    <div class="page-wide">
-      ${renderBreadcrumb([
-    { label: 'Home', action: `navigate('home')` },
-    { label: cat.title, action: `navigate('category','${catId}')` },
-    { label: sub.title }
-  ], 0)}
+    <div class="layout-container two-column">
+      <!-- Left Column: Sibling subcategories on desktop -->
+      <aside class="layout-left stagger-item" style="--stagger: 1">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Subcategories</h3>
+          <nav class="sidebar-menu">
+            <a href="#cat=${catId}" class="sidebar-menu-item" onclick="navigate('category','${catId}'); return false;">
+              All Articles
+            </a>
+            ${cat.subcategories.map(s => `
+              <a href="#cat=${catId}&sub=${s.id}" class="sidebar-menu-item ${s.id === subId ? 'active' : ''}" onclick="navigate('subcategory','${catId}','${s.id}'); return false;">
+                ${s.title}
+              </a>
+            `).join('')}
+          </nav>
+        </div>
+      </aside>
 
-      <div class="section-title stagger-item" style="--stagger: 1">${sub.title}</div>
-      <div class="section-divider stagger-item" style="--stagger: 2"></div>
-      ${articles.length ? renderArticleList(articles, 3) : `<div class="empty-state">
-        <div class="empty-state-lottie"></div>
-        <p class="empty-state-text">No articles yet. Coming soon.</p>
-      </div>`}
+      <!-- Center Column: Articles -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back stagger-item" style="--stagger: 0" onclick="navigate('category','${catId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+
+          ${renderBreadcrumb([
+            { label: 'Home', action: `navigate('home')` },
+            { label: cat.title, action: `navigate('category','${catId}')` },
+            { label: sub.title }
+          ], 1)}
+        </div>
+
+        <div class="section-title stagger-item" style="--stagger: 2">${sub.title}</div>
+        <div class="section-divider stagger-item" style="--stagger: 3"></div>
+        ${articles.length ? renderArticleList(articles, 4) : `<div class="empty-state">
+          <div class="empty-state-lottie"></div>
+          <p class="empty-state-text">No articles yet. Coming soon.</p>
+        </div>`}
+      </main>
     </div>
   `;
 }
@@ -502,16 +730,14 @@ function renderRelatedArticles(articles) {
   if (!articles.length) return '';
   
   const itemsHtml = articles.map(a => {
-    const cat = getCategoryById(a.categoryId);
     const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
     return `
       <div class="related-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
         <div class="related-card-thumb">
-          ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(18) : svgDoc(18)}</div>`}
+          ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(16) : svgDoc(16)}</div>`}
         </div>
         <div class="related-card-content">
-          <div class="related-card-tag">${cat?.title || ''}</div>
-          <div class="related-card-title">${a.title}</div>
+          <h4 class="related-card-title">${a.title}</h4>
           <div class="related-card-date">${formatDate(a.date)}</div>
         </div>
       </div>
@@ -537,17 +763,57 @@ function renderArticlePage(catId, subId, articleId) {
   const embedUrl = getEmbedUrl(article.youtubeUrl);
   const relatedArticles = getRelatedArticles(article, 3);
 
-  return `
-    <div class="article-shell">
-      <div class="article-reading">
-        ${renderBreadcrumb([
-    { label: 'Home', action: `navigate('home')` },
-    { label: cat?.title, action: `navigate('category','${catId}')` },
-    { label: sub?.title, action: `navigate('subcategory','${catId}','${subId}')` },
-    { label: article.title }
-  ], 0)}
+  const headings = extractHeadings(article.content);
+  const bodyWithIds = injectHeadingIds(article.content);
 
-        <div class="article-header stagger-item" style="--stagger: 1">
+  return `
+    <div class="layout-container article-shell">
+      <!-- Left Column: Table of Contents -->
+      <aside class="layout-left stagger-item" style="--stagger: 1">
+        ${headings.length ? `
+          <div class="sidebar-widget toc-widget">
+            <h3 class="sidebar-title">Table of Contents</h3>
+            <ul class="toc-list">
+              ${headings.map(h => `
+                <li class="toc-item toc-level-${h.level}">
+                  <a href="#${h.id}" class="toc-link" onclick="scrollToHeading('${h.id}'); return false;">
+                    ${h.text}
+                  </a>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        ` : `
+          <div class="sidebar-widget">
+            <nav class="sidebar-menu">
+              <a href="#" class="sidebar-menu-item" onclick="navigate('category','${catId}'); return false;">
+                Back to ${cat?.title || 'Category'}
+              </a>
+            </nav>
+          </div>
+        `}
+      </aside>
+
+      <!-- Center Column: Article reading -->
+      <main class="layout-center article-reading">
+        <div class="header-navigation-row">
+          <button class="btn-back stagger-item" style="--stagger: 0" onclick="navigate('subcategory','${catId}','${subId}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+
+          ${renderBreadcrumb([
+            { label: 'Home', action: `navigate('home')` },
+            { label: cat?.title, action: `navigate('category','${catId}')` },
+            { label: sub?.title, action: `navigate('subcategory','${catId}','${subId}')` },
+            { label: article.title }
+          ], 1)}
+        </div>
+
+        <div class="article-header stagger-item" style="--stagger: 2">
           <div class="article-tag">${cat?.title}</div>
           <h1>${article.title}</h1>
           <div class="article-meta-row">
@@ -556,22 +822,26 @@ function renderArticlePage(catId, subId, articleId) {
         </div>
 
         ${article.thumbnail && !embedUrl ? `
-          <div class="article-hero-image stagger-item" style="--stagger: 2">
+          <div class="article-hero-image stagger-item" style="--stagger: 3">
             <img src="${article.thumbnail}" alt="${article.title}" loading="lazy">
           </div>
         ` : ''}
 
-        <div class="article-body stagger-item" style="--stagger: 3">${article.content}</div>
+        <div class="article-body stagger-item" style="--stagger: 4">${bodyWithIds}</div>
 
         ${embedUrl ? `
-          <div class="yt-embed-section stagger-item" style="--stagger: 4">
+          <div class="yt-embed-section stagger-item" style="--stagger: 5">
             <div class="yt-embed-wrapper">
               <iframe src="${embedUrl}" allowfullscreen loading="lazy" title="${article.title}"></iframe>
             </div>
           </div>
         ` : ''}
-      </div>
-      ${renderRelatedArticles(relatedArticles)}
+      </main>
+
+      <!-- Right Column: Related Articles on desktop -->
+      <aside class="layout-right stagger-item" style="--stagger: 6">
+        ${renderRelatedArticles(relatedArticles)}
+      </aside>
     </div>
   `;
 }
@@ -702,21 +972,72 @@ function renderSearchPage(query) {
   const breadcrumbHtml = renderBreadcrumb([
     { label: 'Home', action: `navigate('home')` },
     { label: `Search: ${query}` }
-  ], 0);
+  ], 1);
+
+  const trendingArticles = getTrendingArticles();
 
   return `
-    <div class="page-wide">
-      ${breadcrumbHtml}
-      
-      <div class="section-title stagger-item" style="--stagger: 1">Search Results for "${query}"</div>
-      <div class="section-divider stagger-item" style="--stagger: 2"></div>
-      
-      ${results.length ? renderArticleList(results, 3) : `
-        <div class="empty-state">
-          <div class="empty-state-lottie"></div>
-          <p class="empty-state-text">No articles found matching "${query}". Try searching for something else!</p>
+    <div class="layout-container">
+      <!-- Left Column: Topics menu on desktop -->
+      <aside class="layout-left stagger-item" style="--stagger: 1">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Explore Topics</h3>
+          <nav class="sidebar-menu">
+            <a href="#" class="sidebar-menu-item" onclick="navigate('home'); return false;">
+              Home
+            </a>
+            ${CATEGORIES.map(cat => `
+              <a href="#cat=${cat.id}" class="sidebar-menu-item" onclick="navigate('category','${cat.id}'); return false;">
+                ${cat.title}
+              </a>
+            `).join('')}
+          </nav>
         </div>
-      `}
+      </aside>
+
+      <!-- Center Column: Search Results -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back stagger-item" style="--stagger: 0" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+
+          ${breadcrumbHtml}
+        </div>
+        
+        <div class="section-title stagger-item" style="--stagger: 2">Search Results for "${query}"</div>
+        <div class="section-divider stagger-item" style="--stagger: 3"></div>
+        
+        ${results.length ? renderArticleList(results, 4) : `
+          <div class="empty-state">
+            <div class="empty-state-lottie"></div>
+            <p class="empty-state-text">No articles found matching "${query}". Try searching for something else!</p>
+          </div>
+        `}
+      </main>
+
+      <!-- Right Column: Trending articles on desktop -->
+      <aside class="layout-right stagger-item" style="--stagger: 2">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Trending on Design School</h3>
+          <div class="trending-list">
+            ${trendingArticles.map((a, idx) => `
+              <div class="trending-item" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+                <div class="trending-number">0${idx + 1}</div>
+                <div class="trending-content">
+                  <div class="trending-category">${getCategoryById(a.categoryId)?.title || ''}</div>
+                  <h4 class="trending-title">${a.title}</h4>
+                  <div class="trending-date">${formatDate(a.date)}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
     </div>
   `;
 }
@@ -724,15 +1045,58 @@ function renderSearchPage(query) {
 function renderSearchSkeleton(query) {
   const escapedQuery = query ? query.replace(/"/g, '&quot;') : '';
   return `
-    <div class="page-wide">
-      <div class="breadcrumb">
-        <span class="breadcrumb-current">Search</span>
-      </div>
-      <div class="section-title">Search Results for "${escapedQuery}"</div>
-      <div class="section-divider"></div>
-      <div class="article-list">
-        ${renderArticleListSkeleton(3)}
-      </div>
+    <div class="layout-container">
+      <!-- Left Column Skeleton -->
+      <aside class="layout-left">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 110px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="sidebar-menu">
+            ${Array(5).fill(0).map(() => `
+              <div class="shimmer" style="width: 80%; height: 32px; border-radius: 8px; margin-bottom: 6px;"></div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Column Skeleton -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+          <div class="breadcrumb">
+            <span class="breadcrumb-current">Search</span>
+          </div>
+        </div>
+        <div class="section-title">Search Results for "${escapedQuery}"</div>
+        <div class="section-divider"></div>
+        <div class="article-list">
+          ${renderArticleListSkeleton(3)}
+        </div>
+      </main>
+
+      <!-- Right Column Skeleton -->
+      <aside class="layout-right">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 130px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="trending-list">
+            ${Array(3).fill(0).map(() => `
+              <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                <div class="shimmer" style="width: 30px; height: 28px; border-radius: 4px;"></div>
+                <div style="flex: 1;">
+                  <div class="shimmer" style="width: 40px; height: 10px; margin-bottom: 6px; border-radius: 3px;"></div>
+                  <div class="shimmer" style="width: 90%; height: 14px; margin-bottom: 6px; border-radius: 4px;"></div>
+                  <div class="shimmer" style="width: 70px; height: 10px; border-radius: 3px;"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
     </div>
   `;
 }
@@ -967,6 +1331,62 @@ function initSearch() {
   });
 }
 
+function scrollToHeading(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    const yOffset = -85;
+    const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+}
+
+function initTOCActiveTracker() {
+  const headings = document.querySelectorAll('.article-body h2, .article-body h3');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  
+  if (!headings.length || !tocLinks.length) return;
+  
+  function updateActiveHeading() {
+    const yOffset = 100;
+    let activeId = null;
+    
+    for (let i = 0; i < headings.length; i++) {
+      const heading = headings[i];
+      const top = heading.getBoundingClientRect().top;
+      if (top <= yOffset) {
+        activeId = heading.getAttribute('id');
+      } else {
+        break;
+      }
+    }
+    
+    if (!activeId && headings.length) {
+      activeId = headings[0].getAttribute('id');
+    }
+    
+    tocLinks.forEach(link => {
+      const active = link.getAttribute('href') === `#${activeId}`;
+      link.classList.toggle('active', active);
+    });
+  }
+  
+  updateActiveHeading();
+  
+  window.addEventListener('scroll', updateActiveHeading, { passive: true });
+  
+  if (window._currentScrollListener) {
+    window.removeEventListener('scroll', window._currentScrollListener);
+  }
+  window._currentScrollListener = updateActiveHeading;
+}
+
+function cleanupScrollListeners() {
+  if (window._currentScrollListener) {
+    window.removeEventListener('scroll', window._currentScrollListener);
+    window._currentScrollListener = null;
+  }
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -985,9 +1405,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Restore state from URL hash on first load
   const initialState = history.state || parseHash();
   // Replace current history entry so back doesn't bounce out of site
-  history.replaceState(initialState, '', buildUrl(
-    initialState.page, initialState.catId, initialState.subId, initialState.articleId, initialState.query
-  ));
+  try {
+    history.replaceState(initialState, '', buildUrl(
+      initialState.page, initialState.catId, initialState.subId, initialState.articleId, initialState.query
+    ));
+  } catch (e) {
+    console.warn('Initial history replaceState blocked (e.g. file:// protocol):', e);
+  }
 
   renderPage(initialState);
 });
