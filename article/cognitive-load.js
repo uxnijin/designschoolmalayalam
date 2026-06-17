@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["cognitive-load"] = {
   id: "cognitive-load",
-  thumbnail: "assets/thumbnails/cognitive-load.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/coginitive-load.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Cognitive Load - Minimizing Mental Effort for Users",

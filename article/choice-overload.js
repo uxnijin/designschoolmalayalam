@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["choice-overload"] = {
   id: "choice-overload",
-  thumbnail: "assets/thumbnails/choice-overload.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/choise-overload.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Choice Overload - More Options Lead to Less Action",

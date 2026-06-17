@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["law-of-common-region"] = {
   id: "law-of-common-region",
-  thumbnail: "assets/thumbnails/law-of-common-region.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/law-of-common-region.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Law of Common Region - Grouping with Boundaries",

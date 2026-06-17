@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["jakobs-law"] = {
   id: "jakobs-law",
-  thumbnail: "assets/thumbnails/jakobs-law.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/jakobs-law.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Jakob's Law - Designing for Pre-Existing Mental Models",

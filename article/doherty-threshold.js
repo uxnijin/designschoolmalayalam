@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["doherty-threshold"] = {
   id: "doherty-threshold",
-  thumbnail: "assets/thumbnails/doherty-threshold.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/doherty-threshold.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Doherty Threshold - The 400ms Rule for Responsiveness",

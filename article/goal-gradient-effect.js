@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["goal-gradient-effect"] = {
   id: "goal-gradient-effect",
-  thumbnail: "assets/thumbnails/goal-gradient-effect.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/goal-gradient-effect.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Goal-Gradient Effect - Accelerating Towards Completion",

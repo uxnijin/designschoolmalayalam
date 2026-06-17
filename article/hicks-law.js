@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["hicks-law"] = {
   id: "hicks-law",
-  thumbnail: "assets/thumbnails/hicks-law.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/hicks-law.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Hick's Law - Reducing the Complexity of Choices",

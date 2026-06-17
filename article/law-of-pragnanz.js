@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["law-of-pragnanz"] = {
   id: "law-of-pragnanz",
-  thumbnail: "assets/thumbnails/law-of-pragnanz.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/law-of-pragnanz.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Law of Prägnanz - The Power of Simplicity",

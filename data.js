@@ -5,7 +5,7 @@
 
 // ── SITE META ────────────────────────────────────────────────
 const SITE = {
-  name: "Design School Malayalam",
+  name: "Design School",
   tagline: "UI/UX ഡിസൈൻ മലയാളത്തിൽ പഠിക്കാം",
   description: "Learn UI/UX Design, Figma, Design Systems, and more",
   youtubeChannelId: "UCcBtRTuTjRU5krJoJBw7cAA",  // used to build subscribe + channel URLs
@@ -47,6 +47,7 @@ const CATEGORIES = [
       { id: "layout-design", title: "Layout Design", description: "Grid systems, spacing, composition" },
       { id: "mobile-ui", title: "Mobile UI", description: "iOS & Android UI patterns" },
       { id: "web-ui", title: "Web UI", description: "Web design patterns and components" },
+      { id: "basics", title: "Basics", description: "Foundational UI/UX concepts and principles" },
     ],
   },
   {

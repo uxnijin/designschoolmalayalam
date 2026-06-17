@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["cognitive-bias"] = {
   id: "cognitive-bias",
-  thumbnail: "assets/thumbnails/cognitive-bias.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/cognitive-bias.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Cognitive Bias - How Mental Shortcuts Shape User Decisions",

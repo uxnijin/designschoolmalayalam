@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["law-of-proximity"] = {
   id: "law-of-proximity",
-  thumbnail: "assets/thumbnails/law-of-proximity.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/law-of-proximity.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Law of Proximity - Grouping Through White Space",

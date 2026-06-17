@@ -283,7 +283,11 @@ function renderCategorySkeleton(catId) {
           ${breadcrumbHtml}
         </div>
         
-        <div class="section-title">${cat ? cat.title : ''}</div>
+        <div class="subcategory-banner">
+          <div class="sub-banner-badge">Category</div>
+          <h1 class="sub-banner-title">${cat ? cat.title : ''}</h1>
+          ${cat && cat.description ? `<p class="sub-banner-desc">${cat.description}</p>` : ''}
+        </div>
         
         <div class="category-subgrid-mobile-only">
           <div class="sub-grid">
@@ -358,8 +362,11 @@ function renderSubcategorySkeleton(catId, subId) {
           ${breadcrumbHtml}
         </div>
         
-        <div class="section-title">${sub ? sub.title : ''}</div>
-        <div class="section-divider"></div>
+        <div class="subcategory-banner">
+          <div class="sub-banner-badge">Topic</div>
+          <h1 class="sub-banner-title">${sub ? sub.title : ''}</h1>
+          ${sub && sub.description ? `<p class="sub-banner-desc">${sub.description}</p>` : ''}
+        </div>
         
         <div class="article-list">
           ${renderArticleListSkeleton(3)}
@@ -444,15 +451,12 @@ function renderArticleSkeleton(catId, subId, articleId) {
           ${breadcrumbHtml}
         </div>
         
-        <div class="article-header">
-          <div class="article-tag">${cat?.title || ''}</div>
-          <h1>${article ? article.title : ''}</h1>
-          <div class="article-meta-row" style="padding-bottom: 14px; border-bottom: 1px solid var(--border);">
-            <div class="shimmer" style="width: 100px; height: 12px; border-radius: 4px;"></div>
-          </div>
+        <div class="subcategory-banner">
+          <div class="sub-banner-badge">${sub?.title || cat?.title || 'Article'}</div>
+          <h1 class="sub-banner-title">${article ? article.title : ''}</h1>
+          ${article && article.description ? `<p class="sub-banner-desc" style="margin-bottom: 12px;">${article.description}</p>` : ''}
+          <div class="shimmer" style="width: 80px; height: 10px; border-radius: 4px; background: rgba(255,255,255,0.25);"></div>
         </div>
-        
-        <div class="shimmer" style="width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius); margin: 16px 0 32px 0;"></div>
         
         <div class="article-body">
           <div class="shimmer" style="width: 100%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
@@ -608,8 +612,12 @@ function renderCategoryPage(catId) {
     { label: cat.title }
   ], 1)}
         </div>
-
-        <div class="section-title stagger-item" style="--stagger: 2">${cat.title}</div>
+        
+        <div class="subcategory-banner stagger-item" style="--stagger: 2">
+          <div class="sub-banner-badge">Category</div>
+          <h1 class="sub-banner-title">${cat.title}</h1>
+          ${cat.description ? `<p class="sub-banner-desc">${cat.description}</p>` : ''}
+        </div>
         
         <!-- Subgrid: shown on mobile, hidden on desktop -->
         <div class="category-subgrid-mobile-only">
@@ -699,9 +707,12 @@ function renderSubcategoryPage(catId, subId) {
     { label: sub.title }
   ], 1)}
         </div>
-
-        <div class="section-title stagger-item" style="--stagger: 2">${sub.title}</div>
-        <div class="section-divider stagger-item" style="--stagger: 3"></div>
+        
+        <div class="subcategory-banner stagger-item" style="--stagger: 2">
+          <div class="sub-banner-badge">Topic</div>
+          <h1 class="sub-banner-title">${sub.title}</h1>
+          ${sub.description ? `<p class="sub-banner-desc">${sub.description}</p>` : ''}
+        </div>
         ${articles.length ? renderArticleList(articles, 4) : `<div class="empty-state">
           <div class="empty-state-lottie"></div>
           <p class="empty-state-text">No articles yet. Coming soon.</p>
@@ -845,7 +856,7 @@ function renderArticlePage(catId, subId, articleId) {
           <div class="sidebar-widget">
             <nav class="sidebar-menu">
               <a href="#" class="sidebar-menu-item" onclick="navigate('category','${catId}'); return false;">
-                Back to ${cat?.title || 'Category'}
+                Back
               </a>
             </nav>
           </div>
@@ -871,19 +882,14 @@ function renderArticlePage(catId, subId, articleId) {
   ], 1)}
         </div>
 
-        <div class="article-header stagger-item" style="--stagger: 2">
-          <div class="article-tag">${cat?.title}</div>
-          <h1>${article.title}</h1>
-          <div class="article-meta-row">
-            <span class="article-date-meta">${formatDate(article.date)}</span>
+        <div class="subcategory-banner stagger-item" style="--stagger: 2">
+          <div class="sub-banner-badge">${sub?.title || cat?.title || 'Article'}</div>
+          <h1 class="sub-banner-title">${article.title}</h1>
+          ${article.description ? `<p class="sub-banner-desc" style="margin-bottom: 12px;">${article.description}</p>` : ''}
+          <div style="font-family: var(--font-mono); font-size: 11px; opacity: 0.7; letter-spacing: 0.5px;">
+            ${formatDate(article.date)}
           </div>
         </div>
-
-        ${article.thumbnail && !embedUrl ? `
-          <div class="article-hero-image stagger-item" style="--stagger: 3">
-            <img src="${article.thumbnail}" alt="${article.title}" loading="lazy">
-          </div>
-        ` : ''}
 
         <div class="article-body stagger-item" style="--stagger: 4">${bodyWithIds}</div>
 

@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["law-of-similarity"] = {
   id: "law-of-similarity",
-  thumbnail: "assets/thumbnails/law-of-similarity.svg", // add custom image path here (e.g. assets/my-image.png) to replace
+  thumbnail: "assets/thumbnails/law-of-similarity.png", // add custom image path here (e.g. assets/my-image.png) to replace
   subcategoryId: "ux-laws",
   categoryId: "ux-design",
   title: "Law of Similarity - Grouping by Visual Attributes",
