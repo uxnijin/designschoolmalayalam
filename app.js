@@ -332,7 +332,7 @@ function renderSubcategorySkeleton(catId, subId) {
   ], 1) : '';
 
   return `
-    <div class="layout-container two-column">
+    <div class="layout-container">
       <!-- Left Column Skeleton -->
       <aside class="layout-left">
         <div class="sidebar-widget">
@@ -365,6 +365,24 @@ function renderSubcategorySkeleton(catId, subId) {
           ${renderArticleListSkeleton(3)}
         </div>
       </main>
+
+      <!-- Right Column Skeleton -->
+      <aside class="layout-right">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 100px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="best-reads-list">
+            ${Array(3).fill(0).map(() => `
+              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                <div class="shimmer" style="width: 70px; height: 42px; border-radius: 6px; flex-shrink: 0;"></div>
+                <div style="flex: 1;">
+                  <div class="shimmer" style="width: 85%; height: 13px; margin-bottom: 6px; border-radius: 3px;"></div>
+                  <div class="shimmer" style="width: 60px; height: 9px; border-radius: 3px;"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </aside>
     </div>
   `;
 }
@@ -447,6 +465,21 @@ function renderArticleSkeleton(catId, subId, articleId) {
       <!-- Right Column Skeleton -->
       <aside class="layout-right">
         ${renderRelatedArticlesSkeleton()}
+        
+        <div class="sidebar-widget" style="margin-top: 36px;">
+          <div class="shimmer" style="width: 100px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="best-reads-list">
+            ${Array(3).fill(0).map(() => `
+              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                <div class="shimmer" style="width: 70px; height: 42px; border-radius: 6px; flex-shrink: 0;"></div>
+                <div style="flex: 1;">
+                  <div class="shimmer" style="width: 85%; height: 13px; margin-bottom: 6px; border-radius: 3px;"></div>
+                  <div class="shimmer" style="width: 60px; height: 9px; border-radius: 3px;"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
       </aside>
     </div>
   `;
@@ -571,9 +604,9 @@ function renderCategoryPage(catId) {
           </button>
 
           ${renderBreadcrumb([
-            { label: 'Home', action: `navigate('home')` },
-            { label: cat.title }
-          ], 1)}
+    { label: 'Home', action: `navigate('home')` },
+    { label: cat.title }
+  ], 1)}
         </div>
 
         <div class="section-title stagger-item" style="--stagger: 2">${cat.title}</div>
@@ -601,8 +634,8 @@ function renderCategoryPage(catId) {
           <h3 class="sidebar-title">Best Reads</h3>
           <div class="best-reads-list">
             ${bestReads.map(a => {
-              const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
-              return `
+    const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
+    return `
                 <div class="best-read-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
                   <div class="best-read-thumb">
                     ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(16) : svgDoc(16)}</div>`}
@@ -613,7 +646,7 @@ function renderCategoryPage(catId) {
                   </div>
                 </div>
               `;
-            }).join('')}
+  }).join('')}
           </div>
         </div>
       </aside>
@@ -629,8 +662,9 @@ function renderSubcategoryPage(catId, subId) {
   if (!cat || !sub) return emptyPage('Not found.');
 
   const articles = getArticlesBySubcat(subId);
+  const bestReads = getBestReads(catId, 3);
   return `
-    <div class="layout-container two-column">
+    <div class="layout-container">
       <!-- Left Column: Sibling subcategories on desktop -->
       <aside class="layout-left stagger-item" style="--stagger: 1">
         <div class="sidebar-widget">
@@ -660,10 +694,10 @@ function renderSubcategoryPage(catId, subId) {
           </button>
 
           ${renderBreadcrumb([
-            { label: 'Home', action: `navigate('home')` },
-            { label: cat.title, action: `navigate('category','${catId}')` },
-            { label: sub.title }
-          ], 1)}
+    { label: 'Home', action: `navigate('home')` },
+    { label: cat.title, action: `navigate('category','${catId}')` },
+    { label: sub.title }
+  ], 1)}
         </div>
 
         <div class="section-title stagger-item" style="--stagger: 2">${sub.title}</div>
@@ -673,6 +707,29 @@ function renderSubcategoryPage(catId, subId) {
           <p class="empty-state-text">No articles yet. Coming soon.</p>
         </div>`}
       </main>
+
+      <!-- Right Column: Best Reads on desktop -->
+      <aside class="layout-right stagger-item" style="--stagger: 2">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Best Reads</h3>
+          <div class="best-reads-list">
+            ${bestReads.map(a => {
+              const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
+              return `
+                <div class="best-read-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+                  <div class="best-read-thumb">
+                    ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(16) : svgDoc(16)}</div>`}
+                  </div>
+                  <div class="best-read-content">
+                    <h4 class="best-read-title">${a.title}</h4>
+                    <div class="best-read-date">${formatDate(a.date)}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      </aside>
     </div>
   `;
 }
@@ -710,25 +767,25 @@ function renderArticleList(articles, startStaggerIdx = 0) {
 function getRelatedArticles(currentArticle, limit = 3) {
   // 1. Get articles in the same subcategory
   let related = ARTICLES.filter(a => a.id !== currentArticle.id && a.subcategoryId === currentArticle.subcategoryId);
-  
+
   // 2. If we need more, get articles in the same category
   if (related.length < limit) {
     const sameCat = ARTICLES.filter(a => a.id !== currentArticle.id && a.categoryId === currentArticle.categoryId && !related.some(r => r.id === a.id));
     related = related.concat(sameCat.slice(0, limit - related.length));
   }
-  
+
   // 3. If we still need more, fill with other articles
   if (related.length < limit) {
     const others = ARTICLES.filter(a => a.id !== currentArticle.id && !related.some(r => r.id === a.id));
     related = related.concat(others.slice(0, limit - related.length));
   }
-  
+
   return related.slice(0, limit);
 }
 
 function renderRelatedArticles(articles) {
   if (!articles.length) return '';
-  
+
   const itemsHtml = articles.map(a => {
     const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
     return `
@@ -762,6 +819,7 @@ function renderArticlePage(catId, subId, articleId) {
   const sub = getSubcategoryById(catId, subId);
   const embedUrl = getEmbedUrl(article.youtubeUrl);
   const relatedArticles = getRelatedArticles(article, 3);
+  const bestReads = getBestReads(catId, 3);
 
   const headings = extractHeadings(article.content);
   const bodyWithIds = injectHeadingIds(article.content);
@@ -806,11 +864,11 @@ function renderArticlePage(catId, subId, articleId) {
           </button>
 
           ${renderBreadcrumb([
-            { label: 'Home', action: `navigate('home')` },
-            { label: cat?.title, action: `navigate('category','${catId}')` },
-            { label: sub?.title, action: `navigate('subcategory','${catId}','${subId}')` },
-            { label: article.title }
-          ], 1)}
+    { label: 'Home', action: `navigate('home')` },
+    { label: cat?.title, action: `navigate('category','${catId}')` },
+    { label: sub?.title, action: `navigate('subcategory','${catId}','${subId}')` },
+    { label: article.title }
+  ], 1)}
         </div>
 
         <div class="article-header stagger-item" style="--stagger: 2">
@@ -841,6 +899,26 @@ function renderArticlePage(catId, subId, articleId) {
       <!-- Right Column: Related Articles on desktop -->
       <aside class="layout-right stagger-item" style="--stagger: 6">
         ${renderRelatedArticles(relatedArticles)}
+        
+        <div class="sidebar-widget" style="margin-top: 36px;">
+          <h3 class="sidebar-title">Best Reads</h3>
+          <div class="best-reads-list">
+            ${bestReads.map(a => {
+              const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
+              return `
+                <div class="best-read-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+                  <div class="best-read-thumb">
+                    ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(16) : svgDoc(16)}</div>`}
+                  </div>
+                  <div class="best-read-content">
+                    <h4 class="best-read-title">${a.title}</h4>
+                    <div class="best-read-date">${formatDate(a.date)}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
       </aside>
     </div>
   `;
@@ -922,14 +1000,14 @@ function highlightText(text, query) {
 function searchArticles(query) {
   if (!query) return [];
   const q = query.toLowerCase().trim();
-  
+
   const results = [];
   for (const article of ARTICLES) {
     let score = 0;
     const title = article.title?.toLowerCase() || '';
     const desc = article.description?.toLowerCase() || '';
     const tags = article.tags || [];
-    
+
     if (title === q) {
       score += 100;
     } else if (title.startsWith(q)) {
@@ -937,32 +1015,32 @@ function searchArticles(query) {
     } else if (title.includes(q)) {
       score += 50;
     }
-    
+
     tags.forEach(tag => {
       const t = tag.toLowerCase();
       if (t === q) score += 40;
       else if (t.includes(q)) score += 20;
     });
-    
+
     if (desc.includes(q)) {
       score += 10;
     }
-    
+
     const cat = getCategoryById(article.categoryId);
     if (cat?.title?.toLowerCase().includes(q)) {
       score += 15;
     }
-    
+
     const sub = getSubcategoryById(article.categoryId, article.subcategoryId);
     if (sub?.title?.toLowerCase().includes(q)) {
       score += 15;
     }
-    
+
     if (score > 0) {
       results.push({ article, score });
     }
   }
-  
+
   results.sort((a, b) => b.score - a.score);
   return results.map(r => r.article);
 }
@@ -1343,13 +1421,13 @@ function scrollToHeading(id) {
 function initTOCActiveTracker() {
   const headings = document.querySelectorAll('.article-body h2, .article-body h3');
   const tocLinks = document.querySelectorAll('.toc-link');
-  
+
   if (!headings.length || !tocLinks.length) return;
-  
+
   function updateActiveHeading() {
     const yOffset = 100;
     let activeId = null;
-    
+
     for (let i = 0; i < headings.length; i++) {
       const heading = headings[i];
       const top = heading.getBoundingClientRect().top;
@@ -1359,21 +1437,21 @@ function initTOCActiveTracker() {
         break;
       }
     }
-    
+
     if (!activeId && headings.length) {
       activeId = headings[0].getAttribute('id');
     }
-    
+
     tocLinks.forEach(link => {
       const active = link.getAttribute('href') === `#${activeId}`;
       link.classList.toggle('active', active);
     });
   }
-  
+
   updateActiveHeading();
-  
+
   window.addEventListener('scroll', updateActiveHeading, { passive: true });
-  
+
   if (window._currentScrollListener) {
     window.removeEventListener('scroll', window._currentScrollListener);
   }
@@ -1387,9 +1465,33 @@ function cleanupScrollListeners() {
   }
 }
 
+// ── ARTICLE DYNAMIC LOADING ──────────────────────────────────
+function loadArticles() {
+  const promises = ARTICLE_IDS.map(id => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = `article/${id}.js`;
+      script.onload = () => resolve();
+      script.onerror = () => {
+        console.error(`Failed to load article: ${id}`);
+        resolve();
+      };
+      document.head.appendChild(script);
+    });
+  });
+  return Promise.all(promises).then(() => {
+    ARTICLE_IDS.forEach(id => {
+      if (ARTICLE_REGISTRY[id] && !ARTICLES.some(a => a.id === id)) {
+        ARTICLES.push(ARTICLE_REGISTRY[id]);
+      }
+    });
+  });
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadArticles();
   initNav();
   initSearch();
 
