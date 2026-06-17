@@ -32,13 +32,14 @@ function stateKey(page, catId, subId, articleId) {
   return JSON.stringify({ page, catId: catId || null, subId: subId || null, articleId: articleId || null });
 }
 
-function navigate(page, catId, subId, articleId, { replace = false } = {}) {
+function navigate(page, catId, subId, articleId, query = null, { replace = false } = {}) {
   catId = catId || null;
   subId = subId || null;
   articleId = articleId || null;
+  query = query || null;
 
-  const state = { page, catId, subId, articleId };
-  const url = buildUrl(page, catId, subId, articleId);
+  const state = { page, catId, subId, articleId, query };
+  const url = buildUrl(page, catId, subId, articleId, query);
 
   if (replace) {
     history.replaceState(state, '', url);
@@ -50,25 +51,27 @@ function navigate(page, catId, subId, articleId, { replace = false } = {}) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function buildUrl(page, catId, subId, articleId) {
+function buildUrl(page, catId, subId, articleId, query) {
   if (page === 'home') return '/';
   if (page === 'category') return `/#cat=${catId}`;
   if (page === 'subcategory') return `/#cat=${catId}&sub=${subId}`;
   if (page === 'article') return `/#cat=${catId}&sub=${subId}&art=${articleId}`;
+  if (page === 'search') return `/#search=${encodeURIComponent(query)}`;
   return '/';
 }
 
 function parseHash() {
   const hash = location.hash.replace('#', '');
-  if (!hash) return { page: 'home', catId: null, subId: null, articleId: null };
+  if (!hash) return { page: 'home', catId: null, subId: null, articleId: null, query: null };
 
   const params = {};
   hash.split('&').forEach(p => { const [k, v] = p.split('='); if (k && v) params[k] = decodeURIComponent(v); });
 
-  if (params.art) return { page: 'article', catId: params.cat, subId: params.sub, articleId: params.art };
-  if (params.sub) return { page: 'subcategory', catId: params.cat, subId: params.sub, articleId: null };
-  if (params.cat) return { page: 'category', catId: params.cat, subId: null, articleId: null };
-  return { page: 'home', catId: null, subId: null, articleId: null };
+  if (params.search) return { page: 'search', catId: null, subId: null, articleId: null, query: params.search };
+  if (params.art) return { page: 'article', catId: params.cat, subId: params.sub, articleId: params.art, query: null };
+  if (params.sub) return { page: 'subcategory', catId: params.cat, subId: params.sub, articleId: null, query: null };
+  if (params.cat) return { page: 'category', catId: params.cat, subId: null, articleId: null, query: null };
+  return { page: 'home', catId: null, subId: null, articleId: null, query: null };
 }
 
 window.addEventListener('popstate', e => {
@@ -80,7 +83,7 @@ window.addEventListener('popstate', e => {
 // ── RENDER ───────────────────────────────────────────────────
 
 function renderPage(state) {
-  const { page, catId, subId, articleId } = state;
+  const { page, catId, subId, articleId, query } = state;
   const content = document.getElementById('content');
 
   // Cancel any pending render
@@ -101,6 +104,7 @@ function renderPage(state) {
         case 'category': content.innerHTML = renderCategoryPage(catId); break;
         case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
         case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId); break;
+        case 'search': content.innerHTML = renderSearchPage(query); break;
         default: content.innerHTML = renderHome();
       }
       initEmptyStateLottie();
@@ -115,6 +119,7 @@ function renderPage(state) {
       case 'category': content.innerHTML = renderCategoryPage(catId); break;
       case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
       case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId); break;
+      case 'search': content.innerHTML = renderSearchPage(query); break;
       default: content.innerHTML = renderHome();
     }
     updateNavActive(catId);
@@ -126,12 +131,13 @@ function renderPage(state) {
 
 function renderSkeletonForPage(state, content) {
   if (!content) return;
-  const { page, catId, subId, articleId } = state;
+  const { page, catId, subId, articleId, query } = state;
   switch (page) {
     case 'home': content.innerHTML = renderHomeSkeleton(); break;
     case 'category': content.innerHTML = renderCategorySkeleton(catId); break;
     case 'subcategory': content.innerHTML = renderSubcategorySkeleton(catId, subId); break;
     case 'article': content.innerHTML = renderArticleSkeleton(catId, subId, articleId); break;
+    case 'search': content.innerHTML = renderSearchSkeleton(query); break;
     default: content.innerHTML = renderHomeSkeleton();
   }
 }
@@ -245,6 +251,25 @@ function renderSubcategorySkeleton(catId, subId) {
   `;
 }
 
+function renderRelatedArticlesSkeleton() {
+  return `
+    <div class="related-articles-section">
+      <div class="shimmer" style="width: 140px; height: 20px; border-radius: 4px; margin-bottom: 20px;"></div>
+      <div class="related-grid">
+        ${[1, 2, 3].map(() => `
+          <div class="related-card-skeleton">
+            <div class="shimmer" style="width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); margin-bottom: 12px;"></div>
+            <div class="shimmer" style="width: 60px; height: 10px; border-radius: 4px; margin-bottom: 8px;"></div>
+            <div class="shimmer" style="width: 90%; height: 16px; border-radius: 4px; margin-bottom: 8px;"></div>
+            <div class="shimmer" style="width: 60%; height: 16px; border-radius: 4px; margin-bottom: 12px;"></div>
+            <div class="shimmer" style="width: 80px; height: 10px; border-radius: 4px;"></div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
 function renderArticleSkeleton(catId, subId, articleId) {
   const article = ARTICLES.find(a => a.id === articleId);
   const cat = getCategoryById(catId);
@@ -258,7 +283,7 @@ function renderArticleSkeleton(catId, subId, articleId) {
 
   return `
     <div class="article-shell">
-      <div class="article-reading" style="width: 100%;">
+      <div class="article-reading">
         ${breadcrumbHtml}
         
         <div class="article-header">
@@ -283,6 +308,7 @@ function renderArticleSkeleton(catId, subId, articleId) {
           <div class="shimmer" style="width: 75%; height: 16px; border-radius: 4px; margin-bottom: 24px;"></div>
         </div>
       </div>
+      ${renderRelatedArticlesSkeleton()}
     </div>
   `;
 }
@@ -453,6 +479,55 @@ function renderArticleList(articles, startStaggerIdx = 0) {
 
 // ── ARTICLE PAGE ─────────────────────────────────────────────
 
+function getRelatedArticles(currentArticle, limit = 3) {
+  // 1. Get articles in the same subcategory
+  let related = ARTICLES.filter(a => a.id !== currentArticle.id && a.subcategoryId === currentArticle.subcategoryId);
+  
+  // 2. If we need more, get articles in the same category
+  if (related.length < limit) {
+    const sameCat = ARTICLES.filter(a => a.id !== currentArticle.id && a.categoryId === currentArticle.categoryId && !related.some(r => r.id === a.id));
+    related = related.concat(sameCat.slice(0, limit - related.length));
+  }
+  
+  // 3. If we still need more, fill with other articles
+  if (related.length < limit) {
+    const others = ARTICLES.filter(a => a.id !== currentArticle.id && !related.some(r => r.id === a.id));
+    related = related.concat(others.slice(0, limit - related.length));
+  }
+  
+  return related.slice(0, limit);
+}
+
+function renderRelatedArticles(articles) {
+  if (!articles.length) return '';
+  
+  const itemsHtml = articles.map(a => {
+    const cat = getCategoryById(a.categoryId);
+    const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
+    return `
+      <div class="related-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+        <div class="related-card-thumb">
+          ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(18) : svgDoc(18)}</div>`}
+        </div>
+        <div class="related-card-content">
+          <div class="related-card-tag">${cat?.title || ''}</div>
+          <div class="related-card-title">${a.title}</div>
+          <div class="related-card-date">${formatDate(a.date)}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="related-articles-section stagger-item" style="--stagger: 5">
+      <h3 class="related-title">Related Articles</h3>
+      <div class="related-grid">
+        ${itemsHtml}
+      </div>
+    </div>
+  `;
+}
+
 function renderArticlePage(catId, subId, articleId) {
   const article = ARTICLES.find(a => a.id === articleId);
   if (!article) return emptyPage('Article not found.');
@@ -460,6 +535,7 @@ function renderArticlePage(catId, subId, articleId) {
   const cat = getCategoryById(catId);
   const sub = getSubcategoryById(catId, subId);
   const embedUrl = getEmbedUrl(article.youtubeUrl);
+  const relatedArticles = getRelatedArticles(article, 3);
 
   return `
     <div class="article-shell">
@@ -495,6 +571,7 @@ function renderArticlePage(catId, subId, articleId) {
           </div>
         ` : ''}
       </div>
+      ${renderRelatedArticles(relatedArticles)}
     </div>
   `;
 }
@@ -565,6 +642,101 @@ function emptyPage(msg) {
   </div>`;
 }
 
+function highlightText(text, query) {
+  if (!query) return text;
+  const q = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const regex = new RegExp(`(${q})`, 'gi');
+  return text.replace(regex, '<span class="search-highlight">$1</span>');
+}
+
+function searchArticles(query) {
+  if (!query) return [];
+  const q = query.toLowerCase().trim();
+  
+  const results = [];
+  for (const article of ARTICLES) {
+    let score = 0;
+    const title = article.title?.toLowerCase() || '';
+    const desc = article.description?.toLowerCase() || '';
+    const tags = article.tags || [];
+    
+    if (title === q) {
+      score += 100;
+    } else if (title.startsWith(q)) {
+      score += 80;
+    } else if (title.includes(q)) {
+      score += 50;
+    }
+    
+    tags.forEach(tag => {
+      const t = tag.toLowerCase();
+      if (t === q) score += 40;
+      else if (t.includes(q)) score += 20;
+    });
+    
+    if (desc.includes(q)) {
+      score += 10;
+    }
+    
+    const cat = getCategoryById(article.categoryId);
+    if (cat?.title?.toLowerCase().includes(q)) {
+      score += 15;
+    }
+    
+    const sub = getSubcategoryById(article.categoryId, article.subcategoryId);
+    if (sub?.title?.toLowerCase().includes(q)) {
+      score += 15;
+    }
+    
+    if (score > 0) {
+      results.push({ article, score });
+    }
+  }
+  
+  results.sort((a, b) => b.score - a.score);
+  return results.map(r => r.article);
+}
+
+function renderSearchPage(query) {
+  const results = searchArticles(query);
+  const breadcrumbHtml = renderBreadcrumb([
+    { label: 'Home', action: `navigate('home')` },
+    { label: `Search: ${query}` }
+  ], 0);
+
+  return `
+    <div class="page-wide">
+      ${breadcrumbHtml}
+      
+      <div class="section-title stagger-item" style="--stagger: 1">Search Results for "${query}"</div>
+      <div class="section-divider stagger-item" style="--stagger: 2"></div>
+      
+      ${results.length ? renderArticleList(results, 3) : `
+        <div class="empty-state">
+          <div class="empty-state-lottie"></div>
+          <p class="empty-state-text">No articles found matching "${query}". Try searching for something else!</p>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function renderSearchSkeleton(query) {
+  const escapedQuery = query ? query.replace(/"/g, '&quot;') : '';
+  return `
+    <div class="page-wide">
+      <div class="breadcrumb">
+        <span class="breadcrumb-current">Search</span>
+      </div>
+      <div class="section-title">Search Results for "${escapedQuery}"</div>
+      <div class="section-divider"></div>
+      <div class="article-list">
+        ${renderArticleListSkeleton(3)}
+      </div>
+    </div>
+  `;
+}
+
 let lottieDataPromise = null;
 function getLottieData() {
   if (!lottieDataPromise) {
@@ -620,10 +792,186 @@ function svgDoc(size = 24) {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="${size}" height="${size}"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`;
 }
 
+function initSearch() {
+  const wrapper = document.getElementById('navSearchWrapper');
+  const input = document.getElementById('navSearchInput');
+  const suggestions = document.getElementById('searchSuggestions');
+
+  if (!wrapper || !input || !suggestions) return;
+
+  let activeIndex = -1;
+  let currentSuggestions = [];
+
+  function updateHighlight(items) {
+    items.forEach((item, idx) => {
+      item.classList.toggle('highlighted', idx === activeIndex);
+      if (idx === activeIndex) {
+        item.scrollIntoView({ block: 'nearest' });
+      }
+    });
+  }
+
+  function showSuggestions(val) {
+    const query = val.trim();
+    if (!query) {
+      suggestions.style.display = 'none';
+      activeIndex = -1;
+      return;
+    }
+
+    const results = searchArticles(query);
+    currentSuggestions = results.slice(0, 5);
+    let html = '';
+
+    if (currentSuggestions.length > 0) {
+      currentSuggestions.forEach((article, idx) => {
+        const cat = getCategoryById(article.categoryId);
+        const titleHtml = highlightText(article.title, query);
+        const descHtml = highlightText(article.description, query);
+        html += `
+          <div class="suggestion-item" data-index="${idx}">
+            <div class="suggestion-tag">${cat?.title || ''}</div>
+            <div class="suggestion-title">${titleHtml}</div>
+            <div class="suggestion-desc">${descHtml}</div>
+          </div>
+        `;
+      });
+      html += `
+        <div class="suggestion-special" data-index="${currentSuggestions.length}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>See all results for "${query}"</span>
+        </div>
+      `;
+    } else {
+      currentSuggestions = [];
+      html += `
+        <div class="suggestion-empty">No results found for "${query}"</div>
+      `;
+    }
+
+    suggestions.innerHTML = html;
+    suggestions.style.display = 'flex';
+    activeIndex = -1;
+  }
+
+  input.addEventListener('input', (e) => {
+    showSuggestions(e.target.value);
+  });
+
+  input.addEventListener('focus', (e) => {
+    if (e.target.value.trim()) {
+      showSuggestions(e.target.value);
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!wrapper.contains(e.target)) {
+      suggestions.style.display = 'none';
+      activeIndex = -1;
+    }
+  });
+
+  suggestions.addEventListener('click', (e) => {
+    const item = e.target.closest('.suggestion-item');
+    const special = e.target.closest('.suggestion-special');
+
+    if (item) {
+      const idx = parseInt(item.dataset.index, 10);
+      const article = currentSuggestions[idx];
+      if (article) {
+        navigate('article', article.categoryId, article.subcategoryId, article.id);
+        input.value = '';
+        suggestions.style.display = 'none';
+        input.blur();
+      }
+    } else if (special) {
+      const query = input.value.trim();
+      if (query) {
+        navigate('search', null, null, null, query);
+        suggestions.style.display = 'none';
+        input.blur();
+      }
+    }
+  });
+
+  input.addEventListener('keydown', (e) => {
+    const items = suggestions.querySelectorAll('.suggestion-item, .suggestion-special');
+    const hasDropdownOpen = suggestions.style.display === 'flex';
+
+    if (hasDropdownOpen && items.length > 0) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % items.length;
+        updateHighlight(items);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        activeIndex = (activeIndex - 1 + items.length) % items.length;
+        updateHighlight(items);
+      } else if (e.key === 'Escape') {
+        suggestions.style.display = 'none';
+        activeIndex = -1;
+        input.blur();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (activeIndex >= 0 && activeIndex < items.length) {
+          const activeEl = items[activeIndex];
+          if (activeEl.classList.contains('suggestion-item')) {
+            const idx = parseInt(activeEl.dataset.index, 10);
+            const article = currentSuggestions[idx];
+            if (article) {
+              navigate('article', article.categoryId, article.subcategoryId, article.id);
+            }
+          } else if (activeEl.classList.contains('suggestion-special')) {
+            navigate('search', null, null, null, input.value.trim());
+          }
+          input.value = '';
+          suggestions.style.display = 'none';
+          input.blur();
+        } else {
+          const query = input.value.trim();
+          if (query) {
+            navigate('search', null, null, null, query);
+            suggestions.style.display = 'none';
+            input.blur();
+          }
+        }
+      }
+    } else {
+      if (e.key === 'Enter') {
+        const query = input.value.trim();
+        if (query) {
+          navigate('search', null, null, null, query);
+          input.blur();
+        }
+      }
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const isInputFocused = document.activeElement && (
+      document.activeElement.tagName === 'INPUT' ||
+      document.activeElement.tagName === 'TEXTAREA' ||
+      document.activeElement.isContentEditable
+    );
+
+    if (!isInputFocused) {
+      if (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
+        e.preventDefault();
+        input.focus();
+        input.select();
+      }
+    }
+  });
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
+  initSearch();
 
   const navLogo = document.getElementById('navLogo');
   if (navLogo) {
@@ -638,7 +986,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const initialState = history.state || parseHash();
   // Replace current history entry so back doesn't bounce out of site
   history.replaceState(initialState, '', buildUrl(
-    initialState.page, initialState.catId, initialState.subId, initialState.articleId
+    initialState.page, initialState.catId, initialState.subId, initialState.articleId, initialState.query
   ));
 
   renderPage(initialState);
