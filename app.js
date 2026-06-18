@@ -1669,7 +1669,6 @@ function renderDashboardPage() {
         -->
         
         <div class="section-title-article stagger-item" style="--stagger: 2.2">Recently Completed Articles</div>
-        <div class="section-divider stagger-item" style="--stagger: 2.4"></div>
         
         <div class="completed-articles-list-container stagger-item" style="--stagger: 2.6">
           ${completedListHtml}
