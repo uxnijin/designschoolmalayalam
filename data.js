@@ -1,18 +1,18 @@
 // ============================================================
-//  DESIGN SCHOOL MALAYALAM — DATA FILE
+//  DESIGN SCHOOL — DATA FILE
 //  Edit EVERYTHING here. app.js and style.css need no changes.
 // ============================================================
 
 // ── SITE META ────────────────────────────────────────────────
 const SITE = {
   name: "Design School",
-  tagline: "UI/UX ഡിസൈൻ മലയാളത്തിൽ പഠിക്കാം",
+  tagline: "Learn Design",
   description: "Learn UI/UX Design, Figma, Design Systems, and more",
   domain: "https://designschool.site/", // Change this to your custom domain if needed (e.g. https://designschoolmalayalam.com)
   youtubeChannelId: "UCcBtRTuTjRU5krJoJBw7cAA",  // used to build subscribe + channel URLs
   youtubeChannel: "https://www.youtube.com/channel/UCcBtRTuTjRU5krJoJBw7cAA",
   whatsapp: "916238417389",                         // country code + number, no +
-  whatsappMessage: "Hi! I'm interested in personal training from Design School Malayalam.",
+  whatsappMessage: "Hi! I'm interested in personal training from Design School.",
   logo: "assets/logo.png",                          // path to logo image
   accentColor: "#FF6F2C",                           // used as CSS --accent
 };
@@ -193,9 +193,9 @@ const ARTICLE_IDS = [
 const TRAINING = {
   badge: "Personal Training",           // small label above the title
   title: "Learn UI/UX 1 on 1",
-  description: "1 on 1 mentorship in UI/UX Design, Figma, and portfolio building. Learn at your own pace in Malayalam.",
+  description: "1 on 1 mentorship in UI/UX Design, Figma, and portfolio building. Learn at your own pace.",
   features: [
-    "1 on 1 classes in Malayalam",
+    "1 on 1 classes",
     "UX, UI, Figma & Portfolio",
     "Job ready curriculum",
     "Flexible timing"

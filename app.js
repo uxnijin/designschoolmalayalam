@@ -1,5 +1,5 @@
 /* ============================================================
-   DESIGN SCHOOL MALAYALAM — APP.JS
+   DESIGN SCHOOL — APP.JS
    Do not edit. All content is in data.js
    ============================================================ */
 
@@ -214,14 +214,14 @@ function updateSEO(state) {
   let schema = null;
   
   if (page === 'home') {
-    title = `${SITE.name} | ${SITE.tagline || 'UI/UX Design in Malayalam'}`;
-    description = `Learn UI/UX Design, Figma, Design Systems, and Graphic Design in Malayalam. Access articles, tutorials, quizzes, and 1-on-1 mentorship.`;
+    title = `${SITE.name} | ${SITE.tagline || 'UI/UX Design'}`;
+    description = `Learn UI/UX Design, Figma, Design Systems, and Graphic Design. Access articles, tutorials, quizzes, and 1-on-1 mentorship.`;
     
     schema = {
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": SITE.name,
-      "alternateName": "Design School Malayalam",
+      "alternateName": "Design School",
       "url": baseDomain + '/',
       "description": description,
       "publisher": {
@@ -237,7 +237,7 @@ function updateSEO(state) {
     const cat = getCategoryById(catId);
     if (cat) {
       title = `${cat.title} | ${SITE.name}`;
-      description = `Learn ${cat.title} in Malayalam. ${cat.description || ''} — Access full tutorials and articles.`;
+      description = `Learn ${cat.title}. ${cat.description || ''} — Access full tutorials and articles.`;
       
       schema = {
         "@context": "https://schema.org",
@@ -252,7 +252,7 @@ function updateSEO(state) {
     const sub = getSubcategoryById(catId, subId);
     if (cat && sub) {
       title = `${sub.title} - ${cat.title} | ${SITE.name}`;
-      description = `Learn ${sub.title} under ${cat.title} in Malayalam. ${sub.description || ''} — Browse related articles.`;
+      description = `Learn ${sub.title} under ${cat.title}. ${sub.description || ''} — Browse related articles.`;
       
       schema = {
         "@context": "https://schema.org",
@@ -266,7 +266,7 @@ function updateSEO(state) {
     const article = ARTICLES.find(a => a.id === articleId);
     if (article) {
       title = `${article.title} | ${SITE.name}`;
-      description = article.description || `Read the full article about ${article.title} on Design School Malayalam.`;
+      description = article.description || `Read the full article about ${article.title} on Design School.`;
       
       const thumb = article.thumbnail || getThumbUrl(article.youtubeUrl);
       if (thumb) {
@@ -305,7 +305,7 @@ function updateSEO(state) {
     }
   } else if (page === 'search') {
     title = `Search results for "${query}" | ${SITE.name}`;
-    description = `Find UI/UX design articles, Figma tutorials, and design resources on Design School Malayalam.`;
+    description = `Find UI/UX design articles, Figma tutorials, and design resources on Design School.`;
   }
   
   // Update browser window/tab title
@@ -1407,7 +1407,7 @@ function submitTrainingForm() {
   const phone = document.getElementById('tf-phone')?.value?.trim();
   const msg = document.getElementById('tf-msg')?.value?.trim() || '';
   if (!name || !phone) { alert('Please enter your name and phone number.'); return; }
-  const text = `Hi! I'm ${name}. Phone: ${phone}.${msg ? ' Message: ' + msg : ''} — via Design School Malayalam website`;
+  const text = `Hi! I'm ${name}. Phone: ${phone}.${msg ? ' Message: ' + msg : ''} — via Design School website`;
   window.open(`https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(text)}`, '_blank');
 }
 
