@@ -47,20 +47,27 @@ const db = firebase.firestore();
 let currentUser = null;
 
 // Listen for auth state changes
-auth.onAuthStateChanged(async (user) => {
+auth.onAuthStateChanged((user) => {
   currentUser = user;
-  if (user) {
-    // User signed in - merge & sync progress
-    await syncLocalDataToCloud();
-  }
   
-  // Update nav button text/icon
+  // Update nav button text/icon immediately
   updateNavAuthButton();
 
-  // Trigger UI update if we are on dashboard, home page, or article page
+  // Trigger UI update immediately if we are on dashboard, home page, or article page
   const state = history.state || parseUrl();
   if (state.page === 'dashboard' || state.page === 'home' || state.page === 'article') {
     renderPage(state);
+  }
+
+  if (user) {
+    // User signed in - merge & sync progress in background
+    syncLocalDataToCloud().then(() => {
+      // Re-render after sync completes to reflect merged progress
+      const currentState = history.state || parseUrl();
+      if (currentState.page === 'dashboard' || currentState.page === 'home' || currentState.page === 'article') {
+        renderPage(currentState);
+      }
+    });
   }
 });
 
