@@ -112,70 +112,77 @@ function buildUrl(page, catId, subId, articleId, query) {
   return '/';
 }
 
+let _parsingUrl = false;
+
 function parseUrl() {
-  const path = location.pathname;
-  let normalizedPath = path;
-  if (normalizedPath.length > 1 && normalizedPath.endsWith('/')) {
-    normalizedPath = normalizedPath.slice(0, -1);
-  }
-
-  // Determine the active routing path (uses hash path if it resembles a clean route)
-  let routePath = normalizedPath;
-  if (location.hash) {
-    const hashPath = location.hash.replace('#', '');
-    if (hashPath.startsWith('/article/') || hashPath.startsWith('article/') ||
-        hashPath.startsWith('/category/') || hashPath.startsWith('category/') ||
-        hashPath.startsWith('/search') || hashPath.startsWith('search')) {
-      routePath = hashPath.startsWith('/') ? hashPath : '/' + hashPath;
+  _parsingUrl = true;
+  try {
+    const path = location.pathname;
+    let normalizedPath = path;
+    if (normalizedPath.length > 1 && normalizedPath.endsWith('/')) {
+      normalizedPath = normalizedPath.slice(0, -1);
     }
-  }
 
-  const searchParams = new URLSearchParams(location.search);
-  const query = searchParams.get('q') || searchParams.get('hl') || null;
+    // Determine the active routing path (uses hash path if it resembles a clean route)
+    let routePath = normalizedPath;
+    if (location.hash) {
+      const hashPath = location.hash.replace('#', '');
+      if (hashPath.startsWith('/article/') || hashPath.startsWith('article/') ||
+          hashPath.startsWith('/category/') || hashPath.startsWith('category/') ||
+          hashPath.startsWith('/search') || hashPath.startsWith('search')) {
+        routePath = hashPath.startsWith('/') ? hashPath : '/' + hashPath;
+      }
+    }
 
-  // Support old query-parameter-based hash URLs for backwards compatibility
-  if (location.hash && !routePath.startsWith('/article/') && !routePath.startsWith('/category/')) {
-    const hash = location.hash.replace('#', '');
-    const params = {};
-    hash.split('&').forEach(p => { const [k, v] = p.split('='); if (k && v) params[k] = decodeURIComponent(v); });
+    const searchParams = new URLSearchParams(location.search);
+    const query = searchParams.get('q') || searchParams.get('hl') || null;
+
+    // Support old query-parameter-based hash URLs for backwards compatibility
+    if (location.hash && !routePath.startsWith('/article/') && !routePath.startsWith('/category/')) {
+      const hash = location.hash.replace('#', '');
+      const params = {};
+      hash.split('&').forEach(p => { const [k, v] = p.split('='); if (k && v) params[k] = decodeURIComponent(v); });
+      
+      if (params.search) return { page: 'search', catId: null, subId: null, articleId: null, query: params.search };
+      if (params.art) return { page: 'article', catId: params.cat, subId: params.sub, articleId: params.art, query: params.hl || null };
+      if (params.sub) return { page: 'subcategory', catId: params.cat, subId: params.sub, articleId: null, query: null };
+      if (params.cat) return { page: 'category', catId: params.cat, subId: null, articleId: null, query: null };
+    }
+
+    if (routePath === '/' || routePath === '/index.html') {
+      return { page: 'home', catId: null, subId: null, articleId: null, query: null };
+    }
     
-    if (params.search) return { page: 'search', catId: null, subId: null, articleId: null, query: params.search };
-    if (params.art) return { page: 'article', catId: params.cat, subId: params.sub, articleId: params.art, query: params.hl || null };
-    if (params.sub) return { page: 'subcategory', catId: params.cat, subId: params.sub, articleId: null, query: null };
-    if (params.cat) return { page: 'category', catId: params.cat, subId: null, articleId: null, query: null };
-  }
+    if (routePath.startsWith('/search')) {
+      return { page: 'search', catId: null, subId: null, articleId: null, query };
+    }
 
-  if (routePath === '/' || routePath === '/index.html') {
+    if (routePath.startsWith('/article/')) {
+      const parts = routePath.split('/');
+      const articleId = parts[2];
+      const article = ARTICLES.find(a => a.id === articleId);
+      if (article) {
+        const catId = Array.isArray(article.categoryId) ? article.categoryId[0] : article.categoryId;
+        const subId = Array.isArray(article.subcategoryId) ? article.subcategoryId[0] : article.subcategoryId;
+        return { page: 'article', catId, subId, articleId, query };
+      }
+      return { page: 'article', catId: null, subId: null, articleId, query };
+    }
+
+    if (routePath.startsWith('/category/')) {
+      const parts = routePath.split('/');
+      const catId = parts[2];
+      const subId = parts[3] || null;
+      if (subId) {
+        return { page: 'subcategory', catId, subId, articleId: null, query: null };
+      }
+      return { page: 'category', catId, subId: null, articleId: null, query: null };
+    }
+
     return { page: 'home', catId: null, subId: null, articleId: null, query: null };
+  } finally {
+    _parsingUrl = false;
   }
-  
-  if (routePath.startsWith('/search')) {
-    return { page: 'search', catId: null, subId: null, articleId: null, query };
-  }
-
-  if (routePath.startsWith('/article/')) {
-    const parts = routePath.split('/');
-    const articleId = parts[2];
-    const article = ARTICLES.find(a => a.id === articleId);
-    if (article) {
-      const catId = Array.isArray(article.categoryId) ? article.categoryId[0] : article.categoryId;
-      const subId = Array.isArray(article.subcategoryId) ? article.subcategoryId[0] : article.subcategoryId;
-      return { page: 'article', catId, subId, articleId, query };
-    }
-    return { page: 'article', catId: null, subId: null, articleId, query };
-  }
-
-  if (routePath.startsWith('/category/')) {
-    const parts = routePath.split('/');
-    const catId = parts[2];
-    const subId = parts[3] || null;
-    if (subId) {
-      return { page: 'subcategory', catId, subId, articleId: null, query: null };
-    }
-    return { page: 'category', catId, subId: null, articleId: null, query: null };
-  }
-
-  return { page: 'home', catId: null, subId: null, articleId: null, query: null };
 }
 
 window.addEventListener('popstate', e => {
@@ -1935,6 +1942,9 @@ function loadArticles() {
           art._categories = art.categoryId;
           Object.defineProperty(art, 'categoryId', {
             get: () => {
+              if (_parsingUrl) {
+                return art._categories[0] || '';
+              }
               const hashState = parseUrl();
               if (hashState.catId && art._categories.includes(hashState.catId)) {
                 return hashState.catId;
@@ -1949,6 +1959,9 @@ function loadArticles() {
           art._subcategories = art.subcategoryId;
           Object.defineProperty(art, 'subcategoryId', {
             get: () => {
+              if (_parsingUrl) {
+                return art._subcategories[0] || '';
+              }
               const hashState = parseUrl();
               if (hashState.subId && art._subcategories.includes(hashState.subId)) {
                 return hashState.subId;
