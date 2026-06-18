@@ -45,40 +45,49 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 
 let currentUser = null;
-let cloudCompletedArticles = [];
-let cloudQuizScores = {};
 
 // Listen for auth state changes
 auth.onAuthStateChanged(async (user) => {
   currentUser = user;
   if (user) {
-    // User signed in
+    // User signed in - merge & sync progress
     await syncLocalDataToCloud();
-    await fetchCloudData();
-  } else {
-    // User signed out
-    cloudCompletedArticles = [];
-    cloudQuizScores = {};
   }
-  // Trigger UI update if we are on dashboard or home page
+  
+  // Update nav button text/icon
+  updateNavAuthButton();
+
+  // Trigger UI update if we are on dashboard, home page, or article page
   const state = history.state || parseUrl();
   if (state.page === 'dashboard' || state.page === 'home' || state.page === 'article') {
     renderPage(state);
   }
 });
 
-async function fetchCloudData() {
-  if (!currentUser) return;
-  try {
-    const docRef = db.collection('users').doc(currentUser.uid);
-    const doc = await docRef.get();
-    if (doc.exists) {
-      const data = doc.data();
-      cloudCompletedArticles = data.completedArticles || [];
-      cloudQuizScores = data.quizScores || {};
-    }
-  } catch (e) {
-    console.error('Error fetching cloud data:', e);
+function updateNavAuthButton() {
+  const btnDashboardNav = document.getElementById('btnDashboardNav');
+  if (!btnDashboardNav) return;
+
+  if (currentUser) {
+    btnDashboardNav.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <line x1="9" y1="21" x2="9" y2="9"/>
+        <line x1="3" y1="9" x2="21" y2="9"/>
+      </svg>
+      <span>Dashboard</span>
+    `;
+    btnDashboardNav.title = "View Dashboard";
+  } else {
+    btnDashboardNav.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+        <polyline points="10 17 15 12 10 7"/>
+        <line x1="15" y1="12" x2="3" y2="12"/>
+      </svg>
+      <span>Sign In</span>
+    `;
+    btnDashboardNav.title = "Sign In with Google";
   }
 }
 
@@ -116,15 +125,16 @@ async function syncLocalDataToCloud() {
       }
     }
 
+    // Save to local storage as the unified local representation
+    localStorage.setItem('ds_completed_articles', JSON.stringify(mergedArticles));
+    localStorage.setItem('ds_quiz_scores', JSON.stringify(mergedQuizScores));
+
+    // Upload to Firestore to ensure cloud is fully synced
     await docRef.set({
       completedArticles: mergedArticles,
       quizScores: mergedQuizScores,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
-
-    // Sync localStorage as well to keep in step
-    localStorage.setItem('ds_completed_articles', JSON.stringify(mergedArticles));
-    localStorage.setItem('ds_quiz_scores', JSON.stringify(mergedQuizScores));
   } catch (e) {
     console.error('Error syncing local data to cloud:', e);
   }
@@ -132,9 +142,6 @@ async function syncLocalDataToCloud() {
 
 // ── LEARNING PATH & PROGRESS TRACKING UTILITIES ─────────────
 function getCompletedArticles() {
-  if (currentUser) {
-    return cloudCompletedArticles;
-  }
   try {
     return JSON.parse(localStorage.getItem('ds_completed_articles') || '[]');
   } catch (e) {
@@ -143,7 +150,6 @@ function getCompletedArticles() {
 }
 
 async function saveCompletedArticles(list) {
-  // Keep local storage updated
   try {
     localStorage.setItem('ds_completed_articles', JSON.stringify(list));
   } catch (e) {
@@ -151,7 +157,6 @@ async function saveCompletedArticles(list) {
   }
 
   if (currentUser) {
-    cloudCompletedArticles = list;
     try {
       await db.collection('users').doc(currentUser.uid).set({
         completedArticles: list,
@@ -176,12 +181,6 @@ function toggleArticleCompleted(articleId) {
     list.splice(idx, 1);
   }
   saveCompletedArticles(list);
-  
-  // Update UI immediately if user is signed in to reflect local memory state
-  if (currentUser) {
-    cloudCompletedArticles = list;
-  }
-  
   return idx === -1; // returns true if now completed, false if removed
 }
 
@@ -316,9 +315,6 @@ let activeQuizState = {
 };
 
 function getQuizScores() {
-  if (currentUser) {
-    return cloudQuizScores;
-  }
   try {
     return JSON.parse(localStorage.getItem('ds_quiz_scores') || '{}');
   } catch (e) {
@@ -333,11 +329,10 @@ async function saveQuizScore(trackId, scorePercent) {
     if (scorePercent > currentHigh) {
       scores[trackId] = scorePercent;
       
-      // Update local storage backup
+      // Update local storage
       localStorage.setItem('ds_quiz_scores', JSON.stringify(scores));
 
       if (currentUser) {
-        cloudQuizScores = scores;
         try {
           await db.collection('users').doc(currentUser.uid).set({
             quizScores: scores,
@@ -1539,7 +1534,10 @@ function handleGoogleSignIn() {
 }
 
 function handleSignOut() {
-  auth.signOut().catch((error) => {
+  auth.signOut().then(() => {
+    localStorage.removeItem('ds_completed_articles');
+    localStorage.removeItem('ds_quiz_scores');
+  }).catch((error) => {
     console.error("Sign out failed:", error);
   });
 }
@@ -3002,7 +3000,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   const btnDashboardNav = document.getElementById('btnDashboardNav');
   if (btnDashboardNav) {
-    btnDashboardNav.addEventListener('click', () => navigate('dashboard'));
+    btnDashboardNav.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (currentUser) {
+        navigate('dashboard');
+      } else {
+        handleGoogleSignIn();
+      }
+    });
+    updateNavAuthButton();
   }
 
   // Restore state from URL on first load
