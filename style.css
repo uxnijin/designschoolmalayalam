@@ -2471,8 +2471,7 @@ mark.body-highlight {
 
 .learning-dashboard.empty {
   padding: 20px 24px;
-  background: linear-gradient(135deg, var(--accent-tint) 0%, rgba(255, 111, 44, 0.02) 100%);
-  border: 1px dashed rgba(255, 111, 44, 0.3);
+  border: 1px solid #FF6F2C;
 }
 
 .dashboard-header-simple h3 {
