@@ -1573,7 +1573,6 @@ function renderAuthBanner() {
     return `
       <div class="auth-banner-card signed-out stagger-item" style="--stagger: 1.2">
         <div class="auth-banner-left">
-          <div class="auth-banner-icon">🔄</div>
           <div class="auth-banner-info">
             <h4 class="auth-banner-title">Sync Your Progress</h4>
             <p class="auth-banner-desc">Log in to keep your reading progress and quiz achievements synchronized across all devices.</p>
