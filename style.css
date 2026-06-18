@@ -415,7 +415,8 @@ ol {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 0 16px;
+  height: 38px;
   background: var(--accent);
   color: #fff;
   border: none;
@@ -1971,10 +1972,10 @@ ol {
   }
 
   .btn-dashboard-nav.auth-signed-out {
-    padding: 8px 16px !important;
+    padding: 0 16px !important;
     border-radius: 20px !important;
     width: auto !important;
-    height: auto !important;
+    height: 38px !important;
   }
 
   .nav-search-wrapper {
