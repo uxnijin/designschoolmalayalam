@@ -28,7 +28,113 @@ const countInCategory = catId => ARTICLES.filter(a =>
 ).length;
 
 // ── LEARNING PATH & PROGRESS TRACKING UTILITIES ─────────────
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCCqIHvx83WillWuQR7RrcUojdgabDeYxg",
+  authDomain: "designschool-6b97c.firebaseapp.com",
+  projectId: "designschool-6b97c",
+  storageBucket: "designschool-6b97c.firebasestorage.app",
+  messagingSenderId: "734958557338",
+  appId: "1:734958557338:web:0a16d3c81638fb5a82e723",
+  measurementId: "G-PLJHQ0H7PJ"
+};
+
+// Initialize Firebase using compat mode
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+let cloudCompletedArticles = [];
+let cloudQuizScores = {};
+
+// Listen for auth state changes
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+  if (user) {
+    // User signed in
+    await syncLocalDataToCloud();
+    await fetchCloudData();
+  } else {
+    // User signed out
+    cloudCompletedArticles = [];
+    cloudQuizScores = {};
+  }
+  // Trigger UI update if we are on dashboard or home page
+  const state = history.state || parseUrl();
+  if (state.page === 'dashboard' || state.page === 'home' || state.page === 'article') {
+    renderPage(state);
+  }
+});
+
+async function fetchCloudData() {
+  if (!currentUser) return;
+  try {
+    const docRef = db.collection('users').doc(currentUser.uid);
+    const doc = await docRef.get();
+    if (doc.exists) {
+      const data = doc.data();
+      cloudCompletedArticles = data.completedArticles || [];
+      cloudQuizScores = data.quizScores || {};
+    }
+  } catch (e) {
+    console.error('Error fetching cloud data:', e);
+  }
+}
+
+async function syncLocalDataToCloud() {
+  if (!currentUser) return;
+  try {
+    const docRef = db.collection('users').doc(currentUser.uid);
+    const doc = await docRef.get();
+    
+    let localArticles = [];
+    try {
+      localArticles = JSON.parse(localStorage.getItem('ds_completed_articles') || '[]');
+    } catch(e) {}
+    
+    let localQuizScores = {};
+    try {
+      localQuizScores = JSON.parse(localStorage.getItem('ds_quiz_scores') || '{}');
+    } catch(e) {}
+
+    let mergedArticles = [...localArticles];
+    let mergedQuizScores = { ...localQuizScores };
+
+    if (doc.exists) {
+      const cloudData = doc.data();
+      const cloudArticles = cloudData.completedArticles || [];
+      const cloudScores = cloudData.quizScores || {};
+
+      // Merge unique articles
+      mergedArticles = Array.from(new Set([...localArticles, ...cloudArticles]));
+      
+      // Merge quiz scores keeping the highest
+      const allKeys = new Set([...Object.keys(localQuizScores), ...Object.keys(cloudScores)]);
+      for (const key of allKeys) {
+        mergedQuizScores[key] = Math.max(localQuizScores[key] || 0, cloudScores[key] || 0);
+      }
+    }
+
+    await docRef.set({
+      completedArticles: mergedArticles,
+      quizScores: mergedQuizScores,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    // Sync localStorage as well to keep in step
+    localStorage.setItem('ds_completed_articles', JSON.stringify(mergedArticles));
+    localStorage.setItem('ds_quiz_scores', JSON.stringify(mergedQuizScores));
+  } catch (e) {
+    console.error('Error syncing local data to cloud:', e);
+  }
+}
+
+// ── LEARNING PATH & PROGRESS TRACKING UTILITIES ─────────────
 function getCompletedArticles() {
+  if (currentUser) {
+    return cloudCompletedArticles;
+  }
   try {
     return JSON.parse(localStorage.getItem('ds_completed_articles') || '[]');
   } catch (e) {
@@ -36,11 +142,24 @@ function getCompletedArticles() {
   }
 }
 
-function saveCompletedArticles(list) {
+async function saveCompletedArticles(list) {
+  // Keep local storage updated
   try {
     localStorage.setItem('ds_completed_articles', JSON.stringify(list));
   } catch (e) {
-    console.warn('Failed to save completed articles:', e);
+    console.warn('Failed to save completed articles to local storage:', e);
+  }
+
+  if (currentUser) {
+    cloudCompletedArticles = list;
+    try {
+      await db.collection('users').doc(currentUser.uid).set({
+        completedArticles: list,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    } catch (e) {
+      console.error('Failed to sync completed articles to firestore:', e);
+    }
   }
 }
 
@@ -49,7 +168,7 @@ function isArticleCompleted(articleId) {
 }
 
 function toggleArticleCompleted(articleId) {
-  const list = getCompletedArticles();
+  const list = [...getCompletedArticles()];
   const idx = list.indexOf(articleId);
   if (idx === -1) {
     list.push(articleId);
@@ -57,6 +176,12 @@ function toggleArticleCompleted(articleId) {
     list.splice(idx, 1);
   }
   saveCompletedArticles(list);
+  
+  // Update UI immediately if user is signed in to reflect local memory state
+  if (currentUser) {
+    cloudCompletedArticles = list;
+  }
+  
   return idx === -1; // returns true if now completed, false if removed
 }
 
@@ -191,6 +316,9 @@ let activeQuizState = {
 };
 
 function getQuizScores() {
+  if (currentUser) {
+    return cloudQuizScores;
+  }
   try {
     return JSON.parse(localStorage.getItem('ds_quiz_scores') || '{}');
   } catch (e) {
@@ -198,13 +326,27 @@ function getQuizScores() {
   }
 }
 
-function saveQuizScore(trackId, scorePercent) {
+async function saveQuizScore(trackId, scorePercent) {
   try {
-    const scores = getQuizScores();
+    const scores = { ...getQuizScores() };
     const currentHigh = scores[trackId] || 0;
     if (scorePercent > currentHigh) {
       scores[trackId] = scorePercent;
+      
+      // Update local storage backup
       localStorage.setItem('ds_quiz_scores', JSON.stringify(scores));
+
+      if (currentUser) {
+        cloudQuizScores = scores;
+        try {
+          await db.collection('users').doc(currentUser.uid).set({
+            quizScores: scores,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        } catch (e) {
+          console.error('Failed to sync quiz scores to firestore:', e);
+        }
+      }
       return true;
     }
   } catch (e) {
@@ -1373,6 +1515,7 @@ function renderLearningDashboard() {
           <div class="dashboard-tracks">
             ${trackCatsHtml}
           </div>
+          <!--
           <div class="dashboard-vertical-divider"></div>
           <div class="dashboard-badges-section">
             <h4 class="dashboard-badges-title">Design Badges</h4>
@@ -1380,10 +1523,69 @@ function renderLearningDashboard() {
               ${badgesHtml}
             </div>
           </div>
+          -->
         </div>
       </div>
     </div>
   `;
+}
+
+function handleGoogleSignIn() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch((error) => {
+    console.error("Authentication failed:", error);
+    alert("Authentication failed: " + error.message);
+  });
+}
+
+function handleSignOut() {
+  auth.signOut().catch((error) => {
+    console.error("Sign out failed:", error);
+  });
+}
+
+function renderAuthBanner() {
+  if (currentUser) {
+    const avatarUrl = currentUser.photoURL || '';
+    const name = currentUser.displayName || currentUser.email || 'User';
+    const avatarHtml = avatarUrl 
+      ? `<img class="auth-avatar" src="${avatarUrl}" alt="Avatar">`
+      : `<div class="auth-avatar-letter">${name.charAt(0).toUpperCase()}</div>`;
+      
+    return `
+      <div class="auth-banner-card signed-in stagger-item" style="--stagger: 1.2">
+        <div class="auth-banner-left">
+          ${avatarHtml}
+          <div class="auth-banner-info">
+            <h4 class="auth-user-name">${name}</h4>
+            <p class="auth-user-status">⚡ Syncing progress across your devices</p>
+          </div>
+        </div>
+        <button class="btn-auth-action sign-out" onclick="handleSignOut()">Sign Out</button>
+      </div>
+    `;
+  } else {
+    return `
+      <div class="auth-banner-card signed-out stagger-item" style="--stagger: 1.2">
+        <div class="auth-banner-left">
+          <div class="auth-banner-icon">🔄</div>
+          <div class="auth-banner-info">
+            <h4 class="auth-banner-title">Sync Your Progress</h4>
+            <p class="auth-banner-desc">Log in to keep your reading progress and quiz achievements synchronized across all devices.</p>
+          </div>
+        </div>
+        <button class="btn-auth-action sign-in-google" onclick="handleGoogleSignIn()">
+          <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-1.14 2.77-2.4 3.61v3h3.86c2.26-2.09 3.59-5.17 3.59-8.46z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+          </svg>
+          <span>Sign In with Google</span>
+        </button>
+      </div>
+    `;
+  }
 }
 
 function renderDashboardPage() {
@@ -1451,10 +1653,14 @@ function renderDashboardPage() {
           <p class="sub-banner-desc">Track your reading progress across categories, inspect your performance metrics, and review unlocked design achievements.</p>
         </div>
         
+        ${renderAuthBanner()}
+        
         ${renderLearningDashboard()}
         
+        <!-- 
         <div class="section-title-article stagger-item" style="--stagger: 1.8">UI/UX Quiz Arena</div>
         <div id="quizArenaContainer" class="stagger-item" style="--stagger: 2.0"></div>
+        -->
         
         <div class="section-title-article stagger-item" style="--stagger: 2.2">Recently Completed Articles</div>
         <div class="section-divider stagger-item" style="--stagger: 2.4"></div>
@@ -1521,9 +1727,10 @@ function renderCompactLearningDashboard() {
   
   const overallPercent = Math.round((completedCount / totalArticles) * 100);
   
-  const badges = checkBadges();
-  const unlockedBadges = badges.filter(b => b.unlocked);
+  // const badges = checkBadges();
+  // const unlockedBadges = badges.filter(b => b.unlocked);
   let unlockedBadgesHtml = '';
+  /*
   if (unlockedBadges.length > 0) {
     unlockedBadgesHtml = `
       <div class="dashboard-compact-badges-row">
@@ -1538,6 +1745,7 @@ function renderCompactLearningDashboard() {
       </div>
     `;
   }
+  */
   
   return `
     <div class="learning-dashboard compact stagger-item" style="--stagger: 0.8" onclick="navigate('dashboard')">

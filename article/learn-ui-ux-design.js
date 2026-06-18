@@ -804,7 +804,7 @@ ARTICLE_REGISTRY["learn-ui-ux-design"] = {
   title: "Best Resources to Learn UI/UX Design",
   description: "Curated catalog of 115 educational platforms to learn UI/UX design, including courses, accessibility checklists, brief generators, and talks.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/learn-ui-ux-design.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "ux design", "learn ui ux", "courses", "tutorials", "resources"],
   content: htmlContent
