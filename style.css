@@ -4061,3 +4061,34 @@ mark.body-highlight {
     justify-content: center;
   }
 }
+
+/* Visibility Rules for Desktop / Mobile Auth Banner Positions */
+.auth-banner-desktop {
+  display: none !important;
+}
+.auth-banner-mobile {
+  display: block !important;
+}
+
+@media (min-width: 1024px) {
+  .auth-banner-desktop {
+    display: block !important;
+  }
+  .auth-banner-mobile {
+    display: none !important;
+  }
+  
+  /* Desktop layout styling adjustments for auth widget inside sidebar */
+  .auth-banner-desktop .auth-banner-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    gap: 16px;
+    margin-top: 0;
+  }
+
+  .auth-banner-desktop .btn-auth-action {
+    width: 100%;
+    justify-content: center;
+  }
+}

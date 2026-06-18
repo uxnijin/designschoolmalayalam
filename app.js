@@ -1658,7 +1658,9 @@ function renderDashboardPage() {
           <p class="sub-banner-desc">Track your reading progress across categories, inspect your performance metrics, and review unlocked design achievements.</p>
         </div>
         
-        ${renderAuthBanner()}
+        <div class="auth-banner-mobile">
+          ${renderAuthBanner()}
+        </div>
         
         ${renderLearningDashboard()}
         
@@ -1674,6 +1676,13 @@ function renderDashboardPage() {
           ${completedListHtml}
         </div>
       </main>
+
+      <!-- Right Column: Auth Widget on desktop -->
+      <aside class="layout-right stagger-item" style="--stagger: 1.8">
+        <div class="auth-banner-desktop">
+          ${renderAuthBanner()}
+        </div>
+      </aside>
     </div>
   `;
 }
