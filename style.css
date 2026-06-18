@@ -2471,7 +2471,8 @@ mark.body-highlight {
 
 .learning-dashboard.empty {
   padding: 20px 24px;
-  border: 1px solid #FF6F2C;
+  border: 1px solid var(--border);
+  background-color: var(--bg-1);
 }
 
 .dashboard-header-simple h3 {
