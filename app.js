@@ -1812,7 +1812,6 @@ function renderHome() {
     </div>
 
     <div class="page-wide">
-      ${renderCompactLearningDashboard()}
       
       <div class="section-title stagger-item" style="--stagger: 1.2">${HOME.browseSectionTitle}</div>
       <div class="category-grid">
