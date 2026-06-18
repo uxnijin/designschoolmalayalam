@@ -1508,16 +1508,16 @@ function renderCompactLearningDashboard() {
   const totalArticles = ARTICLES.length;
   const completedCount = completedList.length;
   
-  if (completedCount === 0) {
-    return `
-      <div class="learning-dashboard empty stagger-item" style="--stagger: 0.8">
-        <div class="dashboard-header-simple">
-          <h3>Start Your Learning Journey</h3>
-          <p>Read UI/UX or Figma articles and mark them as completed to track progress and earn design badges!</p>
-        </div>
-      </div>
-    `;
-  }
+  // if (completedCount === 0) {
+  //   return `
+  //     <div class="learning-dashboard empty stagger-item" style="--stagger: 0.8">
+  //       <div class="dashboard-header-simple">
+  //         <h3>Start Your Learning Journey</h3>
+  //         <p>Read UI/UX or Figma articles and mark them as completed to track progress and earn design badges!</p>
+  //       </div>
+  //     </div>
+  //   `;
+  // }
   
   const overallPercent = Math.round((completedCount / totalArticles) * 100);
   
