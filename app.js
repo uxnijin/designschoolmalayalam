@@ -27,6 +27,460 @@ const countInCategory = catId => ARTICLES.filter(a =>
   a._categories ? a._categories.includes(catId) : a.categoryId === catId
 ).length;
 
+// ── LEARNING PATH & PROGRESS TRACKING UTILITIES ─────────────
+function getCompletedArticles() {
+  try {
+    return JSON.parse(localStorage.getItem('ds_completed_articles') || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveCompletedArticles(list) {
+  try {
+    localStorage.setItem('ds_completed_articles', JSON.stringify(list));
+  } catch (e) {
+    console.warn('Failed to save completed articles:', e);
+  }
+}
+
+function isArticleCompleted(articleId) {
+  return getCompletedArticles().includes(articleId);
+}
+
+function toggleArticleCompleted(articleId) {
+  const list = getCompletedArticles();
+  const idx = list.indexOf(articleId);
+  if (idx === -1) {
+    list.push(articleId);
+  } else {
+    list.splice(idx, 1);
+  }
+  saveCompletedArticles(list);
+  return idx === -1; // returns true if now completed, false if removed
+}
+
+const BADGES = [
+  {
+    id: 'typography-apprentice',
+    title: 'Typography Apprentice',
+    description: 'Read 2 Typography articles',
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="badge-svg-icon">
+      <polyline points="4 7 4 4 20 4 20 7"></polyline>
+      <line x1="9" y1="20" x2="15" y2="20"></line>
+      <line x1="12" y1="4" x2="12" y2="20"></line>
+    </svg>`,
+    theme: 'gradient-orange',
+    check: (completedList) => {
+      const typoArticles = getArticlesBySubcat('typography');
+      return typoArticles.filter(a => completedList.includes(a.id)).length >= 2;
+    }
+  },
+  {
+    id: 'figma-beginner',
+    title: 'Figma Beginner',
+    description: 'Read 3 Figma articles',
+    icon: `<svg viewBox="0 0 38 57" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" class="badge-svg-icon figma-svg" style="width: 16px; height: 24px; display: block;">
+      <path d="M19 28.5C19 23.2533 14.7467 19 9.5 19C4.2533 19 0 23.2533 0 28.5C0 33.7467 4.2533 38 9.5 38H19V28.5Z" />
+      <path d="M19 9.5C19 4.2533 14.7467 0 9.5 0C4.2533 0 0 4.2533 0 9.5C0 14.7467 4.2533 19 9.5 19H19V9.5Z" />
+      <path d="M38 9.5C38 4.2533 33.7467 0 28.5 0C23.2533 0 19 4.2533 19 9.5V19H28.5C33.7467 19 38 14.7467 38 9.5Z" />
+      <path d="M38 28.5C38 23.2533 33.7467 19 28.5 19C23.2533 19 19 23.2533 19 28.5V38H28.5C33.7467 38 38 33.7467 38 28.5Z" />
+      <path d="M19 47.5C19 42.2533 14.7467 38 9.5 38C4.2533 38 0 42.2533 0 47.5C0 52.7467 4.2533 57 9.5 57C14.7467 57 19 52.7467 19 47.5Z" />
+    </svg>`,
+    theme: 'gradient-green',
+    check: (completedList) => {
+      const figmaArticles = getArticlesByCategory('figma');
+      return figmaArticles.filter(a => completedList.includes(a.id)).length >= 3;
+    }
+  },
+  {
+    id: 'ux-explorer',
+    title: 'UX Explorer',
+    description: 'Read 3 UX Design articles',
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="badge-svg-icon">
+      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1 .4 2.5 1.5 3.5.7.8 1.3 1.5 1.5 2.5"></path>
+      <line x1="9" y1="18" x2="15" y2="18"></line>
+      <line x1="10" y1="22" x2="14" y2="22"></line>
+    </svg>`,
+    theme: 'gradient-blue',
+    check: (completedList) => {
+      const uxArticles = getArticlesByCategory('ux-design');
+      return uxArticles.filter(a => completedList.includes(a.id)).length >= 3;
+    }
+  },
+  {
+    id: 'design-legend',
+    title: 'Design Legend',
+    description: 'Read 10 or more articles',
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="badge-svg-icon">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+      <path d="M4 22h16"></path>
+      <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"></path>
+      <path d="M12 2a5 5 0 0 0-5 5v5a5 5 0 0 0 10 0V7a5 5 0 0 0-5-5z"></path>
+    </svg>`,
+    theme: 'gradient-purple',
+    check: (completedList) => {
+      return completedList.length >= 10;
+    }
+  }
+];
+
+function checkBadges() {
+  const completedList = getCompletedArticles();
+  return BADGES.map(badge => ({
+    ...badge,
+    unlocked: badge.check(completedList)
+  }));
+}
+
+// ── QUIZ ARENA STATE & DATA DEFINITIONS ──────────────────────
+const QUIZ_TRACKS = [
+  {
+    id: 'ux-laws',
+    title: 'UX Laws & Principles',
+    description: 'Master cognitive principles: Jakob\'s Law, Hick\'s Law, Miller\'s Law, Fitts\'s Law, and Aesthetic Usability.',
+    icon: '⚡',
+    theme: 'gradient-orange',
+    articleIds: [
+      'aesthetic-usability-effect', 'fittss-law', 'hicks-law', 'jakobs-law',
+      'millers-law', 'doherty-threshold', 'ikea-effect', 'occams-razor',
+      'pareto-principle', 'parkinsons-law', 'peak-end-rule', 'teslers-law',
+      'von-restorff-effect', 'zeigarnik-effect'
+    ]
+  },
+  {
+    id: 'cognitive-ux',
+    title: 'Cognitive Psychology & UX',
+    description: 'Learn about user behavior, cognitive load, chunking, choice overload, and mental models.',
+    icon: '🧠',
+    theme: 'gradient-blue',
+    articleIds: [
+      'cognitive-bias', 'cognitive-load', 'choice-overload', 'chunking',
+      'goal-gradient-effect', 'mental-model'
+    ]
+  },
+  {
+    id: 'ux-research',
+    title: 'UX Research Methods',
+    description: 'Test your knowledge on user interviews, surveys, qualitative, and quantitative research.',
+    icon: '🔍',
+    theme: 'gradient-green',
+    articleIds: [
+      'qualitative-research', 'quantitative-research', 'user-interviews', 'surveys'
+    ]
+  },
+  {
+    id: 'ui-usability',
+    title: 'UI Design & Usability',
+    description: 'Check color contrast standards, responsive scaling, typography hierarchies, and layout rules.',
+    icon: '📐',
+    theme: 'gradient-purple',
+    articleIds: [
+      'accessibility', 'ux-writing', 'responsive-design', 'rule-of-thirds', 'rapid-prototyping'
+    ]
+  }
+];
+
+let activeQuizState = {
+  trackId: null,
+  currentQuestionIdx: 0,
+  score: 0,
+  selectedOptionIdx: null,
+  answers: []
+};
+
+function getQuizScores() {
+  try {
+    return JSON.parse(localStorage.getItem('ds_quiz_scores') || '{}');
+  } catch (e) {
+    return {};
+  }
+}
+
+function saveQuizScore(trackId, scorePercent) {
+  try {
+    const scores = getQuizScores();
+    const currentHigh = scores[trackId] || 0;
+    if (scorePercent > currentHigh) {
+      scores[trackId] = scorePercent;
+      localStorage.setItem('ds_quiz_scores', JSON.stringify(scores));
+      return true;
+    }
+  } catch (e) {
+    console.warn('Failed to save quiz score:', e);
+  }
+  return false;
+}
+
+function startQuiz(trackId) {
+  const track = QUIZ_TRACKS.find(t => t.id === trackId);
+  if (!track) return;
+  
+  const questions = track.articleIds
+    .map(id => ({ ...QUIZZES[id], articleId: id }))
+    .filter(q => q && q.question);
+    
+  if (questions.length === 0) {
+    alert('This quiz track has no questions yet. Coming soon!');
+    return;
+  }
+  
+  activeQuizState = {
+    trackId: trackId,
+    currentQuestionIdx: 0,
+    score: 0,
+    selectedOptionIdx: null,
+    answers: []
+  };
+  
+  updateQuizView();
+}
+
+function updateQuizView() {
+  const container = document.getElementById('quizArenaContainer');
+  if (!container) return;
+  
+  const layout = document.querySelector('.dashboard-page-layout');
+  if (layout) {
+    if (activeQuizState.trackId === null) {
+      layout.classList.remove('quiz-active-mode');
+    } else {
+      layout.classList.add('quiz-active-mode');
+    }
+  }
+  
+  if (activeQuizState.trackId === null) {
+    container.innerHTML = renderQuizArena();
+  } else {
+    const track = QUIZ_TRACKS.find(t => t.id === activeQuizState.trackId);
+    const questions = track.articleIds
+      .map(id => ({ ...QUIZZES[id], articleId: id }))
+      .filter(q => q && q.question);
+      
+    if (activeQuizState.currentQuestionIdx < questions.length) {
+      container.innerHTML = renderActiveQuiz(track, questions);
+    } else {
+      container.innerHTML = renderQuizResults(track, questions);
+    }
+  }
+  
+  const rect = container.getBoundingClientRect();
+  const absoluteTop = window.pageYOffset + rect.top;
+  window.scrollTo({ top: absoluteTop - 80, behavior: 'smooth' });
+}
+
+function handleQuizPlaySelection(idx) {
+  if (activeQuizState.selectedOptionIdx !== null) return;
+  
+  const track = QUIZ_TRACKS.find(t => t.id === activeQuizState.trackId);
+  const questions = track.articleIds
+    .map(id => ({ ...QUIZZES[id], articleId: id }))
+    .filter(q => q && q.question);
+    
+  const q = questions[activeQuizState.currentQuestionIdx];
+  activeQuizState.selectedOptionIdx = idx;
+  
+  const isCorrect = idx === q.answerIndex;
+  activeQuizState.answers.push(isCorrect);
+  if (isCorrect) activeQuizState.score++;
+  
+  updateQuizView();
+}
+
+function nextQuizQuestion() {
+  activeQuizState.currentQuestionIdx++;
+  activeQuizState.selectedOptionIdx = null;
+  updateQuizView();
+}
+
+function exitQuiz() {
+  activeQuizState.trackId = null;
+  updateQuizView();
+}
+
+function handleTrackCardClick(e, trackId) {
+  if (window.innerWidth >= 1024) {
+    startQuiz(trackId);
+  }
+}
+
+function renderQuizArena() {
+  const scores = getQuizScores();
+  
+  const tracksHtml = QUIZ_TRACKS.map(track => {
+    const questions = track.articleIds
+      .map(id => ({ ...QUIZZES[id], articleId: id }))
+      .filter(q => q && q.question);
+      
+    const totalQ = questions.length;
+    const highScore = scores[track.id];
+    const scoreText = highScore !== undefined ? `Best: <strong>${highScore}%</strong>` : 'Not started';
+    
+    return `
+      <div class="quiz-track-card" onclick="handleTrackCardClick(event, '${track.id}')">
+        <div class="quiz-track-header">
+          <div class="quiz-track-icon-wrapper ${track.theme}">
+            <span>${track.icon}</span>
+          </div>
+          <div class="quiz-track-score-pill">${scoreText}</div>
+        </div>
+        <div class="quiz-track-body">
+          <h4 class="quiz-track-title">${track.title}</h4>
+          <p class="quiz-track-desc">${track.description}</p>
+        </div>
+        <div class="quiz-track-footer">
+          <span class="quiz-track-qcount">${totalQ} Questions</span>
+          <button class="btn-start-quiz" onclick="event.stopPropagation(); startQuiz('${track.id}')">Start Quiz</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  return `
+    <div class="quiz-arena-grid">
+      ${tracksHtml}
+    </div>
+  `;
+}
+
+function renderActiveQuiz(track, questions) {
+  const qIdx = activeQuizState.currentQuestionIdx;
+  const q = questions[qIdx];
+  const total = questions.length;
+  const progressPercent = Math.round((qIdx / total) * 100);
+  
+  const optionsHtml = q.options.map((opt, idx) => {
+    const isSelected = activeQuizState.selectedOptionIdx === idx;
+    const isRevealed = activeQuizState.selectedOptionIdx !== null;
+    const isCorrectOption = idx === q.answerIndex;
+    
+    let statusClass = '';
+    if (isRevealed) {
+      if (isCorrectOption) statusClass = 'correct';
+      else if (isSelected) statusClass = 'incorrect';
+    }
+    
+    const disabledAttr = isRevealed ? 'disabled' : '';
+    
+    return `
+      <button class="quiz-play-option ${statusClass}" ${disabledAttr} onclick="handleQuizPlaySelection(${idx})">
+        <span class="quiz-play-letter">${String.fromCharCode(65 + idx)}</span>
+        <span class="quiz-play-text">${opt}</span>
+      </button>
+    `;
+  }).join('');
+  
+  const hasSelected = activeQuizState.selectedOptionIdx !== null;
+  
+  return `
+    <div class="quiz-play-box">
+      <div class="quiz-play-header">
+        <div class="quiz-play-header-left">
+          <span class="quiz-play-track-title">${track.icon} ${track.title}</span>
+          <span class="quiz-play-progress-text">Question <strong>${qIdx + 1}</strong> of ${total}</span>
+        </div>
+        <button class="btn-quiz-exit-icon" onclick="exitQuiz()" title="Exit Quiz">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="quiz-play-progress-track">
+        <div class="quiz-play-progress-fill" style="width: ${progressPercent}%"></div>
+      </div>
+      
+      <div class="quiz-play-question-container">
+        <h3 class="quiz-play-question">${q.question}</h3>
+      </div>
+      
+      <div class="quiz-play-options">
+        ${optionsHtml}
+      </div>
+      
+      ${hasSelected ? `
+        <div class="quiz-play-feedback">
+          <div class="quiz-play-feedback-status ${activeQuizState.selectedOptionIdx === q.answerIndex ? 'correct-text' : 'incorrect-text'}">
+            ${activeQuizState.selectedOptionIdx === q.answerIndex ? '✨ <strong>Correct choice!</strong> Good job.' : '🔍 <strong>Not quite!</strong> The correct answer is highlighted above.'}
+          </div>
+          <p class="quiz-play-explanation">${q.explanation}</p>
+          <button class="btn-quiz-next" onclick="nextQuizQuestion()">
+            <span>${qIdx + 1 === total ? 'Finish Quiz' : 'Next Question'}</span>
+            ${qIdx + 1 === total ? '' : `
+              <svg class="chevron-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            `}
+          </button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function renderQuizResults(track, questions) {
+  const total = questions.length;
+  const correct = activeQuizState.score;
+  const scorePercent = Math.round((correct / total) * 100);
+  
+  const isNewHigh = saveQuizScore(track.id, scorePercent);
+  
+  let confettiHtml = '';
+  if (scorePercent >= 80) {
+    confettiHtml = `
+      <div class="confetti-container">
+        ${Array(30).fill(0).map((_, i) => {
+          const left = Math.random() * 100;
+          const delay = Math.random() * 2;
+          const color = ['#FF6F2C', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B'][Math.floor(Math.random() * 5)];
+          return `<div class="confetti-particle" style="left: ${left}%; animation-delay: ${delay}s; background: ${color}"></div>`;
+        }).join('')}
+      </div>
+    `;
+  }
+  
+  return `
+    <div class="quiz-results-box">
+      ${confettiHtml}
+      <div class="results-header-section">
+        <h3 class="results-main-title">Quiz Completed!</h3>
+        <p class="results-subtitle">${track.title}</p>
+      </div>
+      
+      <div class="results-score-circle-container">
+        <svg class="results-score-circle-svg" viewBox="0 0 100 100">
+          <circle class="results-circle-bg" cx="50" cy="50" r="45"></circle>
+          <circle class="results-circle-fill" cx="50" cy="50" r="45" stroke-dasharray="283" stroke-dashoffset="${283 - (283 * scorePercent) / 100}"></circle>
+        </svg>
+        <div class="results-score-text">
+          <span class="score-percent">${scorePercent}%</span>
+          <span class="score-fraction">${correct} / ${total} Correct</span>
+        </div>
+      </div>
+      
+      <div class="results-badge-callout ${scorePercent >= 80 ? 'success' : 'info'}">
+        <div class="callout-icon">${scorePercent >= 80 ? '🏆' : '📖'}</div>
+        <div class="callout-content">
+          <p class="callout-text">
+            ${scorePercent >= 80 
+              ? '<strong>Expert Score!</strong> You scored a high result. Excellent mastery of these concepts!' 
+              : '<strong>Practice makes perfect!</strong> Keep reading and try again to master this track.'}
+          </p>
+        </div>
+      </div>
+      
+      <div class="results-action-row">
+        <button class="btn-results-action primary" onclick="startQuiz('${track.id}')">Try Again</button>
+        <button class="btn-results-action secondary" onclick="exitQuiz()">Exit to Arena</button>
+      </div>
+    </div>
+  `;
+}
+
+
+
 function getTrendingArticles() {
   const trendingIds = ['every-ui-ux-concept-explained', 'best-3-malayalam-fonts', '2026-graphic-design-trends'];
   const trending = ARTICLES.filter(a => trendingIds.includes(a.id));
@@ -109,6 +563,7 @@ function buildUrl(page, catId, subId, articleId, query) {
     return url;
   }
   if (page === 'search') return `/search?q=${encodeURIComponent(query)}`;
+  if (page === 'dashboard') return '/dashboard';
   return '/';
 }
 
@@ -128,8 +583,9 @@ function parseUrl() {
     if (location.hash) {
       const hashPath = location.hash.replace('#', '');
       if (hashPath.startsWith('/article/') || hashPath.startsWith('article/') ||
-          hashPath.startsWith('/category/') || hashPath.startsWith('category/') ||
-          hashPath.startsWith('/search') || hashPath.startsWith('search')) {
+        hashPath.startsWith('/category/') || hashPath.startsWith('category/') ||
+        hashPath.startsWith('/search') || hashPath.startsWith('search') ||
+        hashPath.startsWith('/dashboard') || hashPath.startsWith('dashboard')) {
         routePath = hashPath.startsWith('/') ? hashPath : '/' + hashPath;
       }
     }
@@ -138,11 +594,11 @@ function parseUrl() {
     const query = searchParams.get('q') || searchParams.get('hl') || null;
 
     // Support old query-parameter-based hash URLs for backwards compatibility
-    if (location.hash && !routePath.startsWith('/article/') && !routePath.startsWith('/category/')) {
+    if (location.hash && !routePath.startsWith('/article/') && !routePath.startsWith('/category/') && !routePath.startsWith('/dashboard')) {
       const hash = location.hash.replace('#', '');
       const params = {};
       hash.split('&').forEach(p => { const [k, v] = p.split('='); if (k && v) params[k] = decodeURIComponent(v); });
-      
+
       if (params.search) return { page: 'search', catId: null, subId: null, articleId: null, query: params.search };
       if (params.art) return { page: 'article', catId: params.cat, subId: params.sub, articleId: params.art, query: params.hl || null };
       if (params.sub) return { page: 'subcategory', catId: params.cat, subId: params.sub, articleId: null, query: null };
@@ -152,7 +608,11 @@ function parseUrl() {
     if (routePath === '/' || routePath === '/index.html') {
       return { page: 'home', catId: null, subId: null, articleId: null, query: null };
     }
-    
+
+    if (routePath.startsWith('/dashboard')) {
+      return { page: 'dashboard', catId: null, subId: null, articleId: null, query: null };
+    }
+
     if (routePath.startsWith('/search')) {
       return { page: 'search', catId: null, subId: null, articleId: null, query };
     }
@@ -195,11 +655,11 @@ window.addEventListener('popstate', e => {
 
 function updateSEO(state) {
   const { page, catId, subId, articleId, query } = state;
-  
+
   let title = SITE.name;
   let description = SITE.description;
   let ogImage = SITE.logo;
-  
+
   // Base URL calculation (defaults to window location if SITE.domain is missing)
   const origin = window.location.origin;
   const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
@@ -207,16 +667,16 @@ function updateSEO(state) {
   if (baseDomain.endsWith('/')) {
     baseDomain = baseDomain.slice(0, -1);
   }
-  
+
   const hashUrl = buildUrl(page, catId, subId, articleId, query);
   const canonicalUrl = baseDomain + hashUrl;
-  
+
   let schema = null;
-  
+
   if (page === 'home') {
     title = `${SITE.name} | ${SITE.tagline || 'UI/UX Design'}`;
     description = `Learn UI/UX Design, Figma, Design Systems, and Graphic Design. Access articles, tutorials, quizzes, and 1-on-1 mentorship.`;
-    
+
     schema = {
       "@context": "https://schema.org",
       "@type": "WebSite",
@@ -238,7 +698,7 @@ function updateSEO(state) {
     if (cat) {
       title = `${cat.title} | ${SITE.name}`;
       description = `Learn ${cat.title}. ${cat.description || ''} — Access full tutorials and articles.`;
-      
+
       schema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
@@ -253,7 +713,7 @@ function updateSEO(state) {
     if (cat && sub) {
       title = `${sub.title} - ${cat.title} | ${SITE.name}`;
       description = `Learn ${sub.title} under ${cat.title}. ${sub.description || ''} — Browse related articles.`;
-      
+
       schema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
@@ -267,7 +727,7 @@ function updateSEO(state) {
     if (article) {
       title = `${article.title} | ${SITE.name}`;
       description = article.description || `Read the full article about ${article.title} on Design School.`;
-      
+
       const thumb = article.thumbnail || getThumbUrl(article.youtubeUrl);
       if (thumb) {
         if (thumb.startsWith('http')) {
@@ -276,7 +736,7 @@ function updateSEO(state) {
           ogImage = baseDomain + '/' + thumb.replace(/^\//, '');
         }
       }
-      
+
       schema = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -307,10 +767,10 @@ function updateSEO(state) {
     title = `Search results for "${query}" | ${SITE.name}`;
     description = `Find UI/UX design articles, Figma tutorials, and design resources on Design School.`;
   }
-  
+
   // Update browser window/tab title
   document.title = title;
-  
+
   // Helper to safely update meta elements
   const updateMeta = (selector, content) => {
     const el = document.querySelector(selector);
@@ -318,15 +778,15 @@ function updateSEO(state) {
       el.setAttribute('content', content);
     }
   };
-  
+
   updateMeta('meta[name="description"]', description);
-  
+
   // Update Canonical Tag
   const canonicalEl = document.getElementById('canonicalUrl');
   if (canonicalEl) {
     canonicalEl.setAttribute('href', canonicalUrl);
   }
-  
+
   // Update OpenGraph & Twitter tags
   updateMeta('#ogTitle', title);
   updateMeta('#ogDesc', description);
@@ -335,13 +795,13 @@ function updateSEO(state) {
   updateMeta('#twTitle', title);
   updateMeta('#twDesc', description);
   updateMeta('#twImg', ogImage);
-  
+
   // Inject structured JSON-LD schema
   let schemaScript = document.getElementById('seo-schema');
   if (schemaScript) {
     schemaScript.remove();
   }
-  
+
   if (schema) {
     schemaScript = document.createElement('script');
     schemaScript.id = 'seo-schema';
@@ -376,6 +836,10 @@ function renderPage(state) {
         case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
         case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId, query); break;
         case 'search': content.innerHTML = renderSearchPage(query); break;
+        case 'dashboard': 
+          content.innerHTML = renderDashboardPage(); 
+          updateQuizView();
+          break;
         default: content.innerHTML = renderHome();
       }
       initEmptyStateLottie();
@@ -397,6 +861,10 @@ function renderPage(state) {
       case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
       case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId, query); break;
       case 'search': content.innerHTML = renderSearchPage(query); break;
+      case 'dashboard': 
+        content.innerHTML = renderDashboardPage(); 
+        updateQuizView();
+        break;
       default: content.innerHTML = renderHome();
     }
     updateNavActive(catId);
@@ -421,6 +889,7 @@ function renderSkeletonForPage(state, content) {
     case 'subcategory': content.innerHTML = renderSubcategorySkeleton(catId, subId); break;
     case 'article': content.innerHTML = renderArticleSkeleton(catId, subId, articleId); break;
     case 'search': content.innerHTML = renderSearchSkeleton(query); break;
+    case 'dashboard': content.innerHTML = renderDashboardSkeleton(); break;
     default: content.innerHTML = renderHomeSkeleton();
   }
 }
@@ -834,6 +1303,261 @@ function closeAllDropdowns() {
 
 // ── HOME ─────────────────────────────────────────────────────
 
+function renderLearningDashboard() {
+  const completedList = getCompletedArticles();
+  const totalArticles = ARTICLES.length;
+  const completedCount = completedList.length;
+
+  if (completedCount === 0) {
+    return `
+      <div class="learning-dashboard empty stagger-item" style="--stagger: 0.8">
+        <div class="dashboard-header-simple">
+          <h3>🚀 Start Your Learning Journey</h3>
+          <p>Read UI/UX or Figma articles and mark them as completed to track progress and earn design badges!</p>
+        </div>
+      </div>
+    `;
+  }
+
+  const overallPercent = Math.round((completedCount / totalArticles) * 100);
+
+  const trackCats = ['ui-design', 'ux-design', 'figma'];
+  const trackCatsHtml = trackCats.map(catId => {
+    const cat = getCategoryById(catId);
+    if (!cat) return '';
+
+    const catArticles = getArticlesByCategory(catId);
+    const catCompleted = catArticles.filter(a => completedList.includes(a.id)).length;
+    const catTotal = catArticles.length;
+    const catPercent = catTotal > 0 ? Math.round((catCompleted / catTotal) * 100) : 0;
+
+    return `
+      <div class="dashboard-cat-row">
+        <div class="dashboard-cat-info">
+          <span class="dashboard-cat-title">${cat.title}</span>
+          <span class="dashboard-cat-meta">${catCompleted}/${catTotal} Read (${catPercent}%)</span>
+        </div>
+        <div class="dashboard-progress-bar-container">
+          <div class="dashboard-progress-bar-fill" style="width: ${catPercent}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  const badges = checkBadges();
+  const badgesHtml = badges.map(badge => {
+    return `
+      <div class="badge-item ${badge.unlocked ? 'unlocked' : 'locked'}" title="${badge.description}">
+        <div class="badge-icon-wrapper ${badge.theme}">
+          <span class="badge-icon">${badge.icon}</span>
+        </div>
+        <div class="badge-tooltip">
+          <div class="badge-tooltip-title">${badge.title}</div>
+          <div class="badge-tooltip-desc">${badge.description}</div>
+          <div class="badge-tooltip-status">${badge.unlocked ? '✅ Unlocked' : '🔒 Locked'}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="learning-dashboard stagger-item" style="--stagger: 0.8">
+      <div class="dashboard-inner-container">
+        <div class="dashboard-title-row">
+          <h3>Your Learning Dashboard</h3>
+          <div class="dashboard-overall-pill">
+            <span>Overall Progress: <strong>${completedCount}/${totalArticles}</strong> (${overallPercent}%)</span>
+          </div>
+        </div>
+        <div class="dashboard-content-layout">
+          <div class="dashboard-tracks">
+            ${trackCatsHtml}
+          </div>
+          <div class="dashboard-vertical-divider"></div>
+          <div class="dashboard-badges-section">
+            <h4 class="dashboard-badges-title">Design Badges</h4>
+            <div class="dashboard-badges-grid">
+              ${badgesHtml}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderDashboardPage() {
+  const completedList = getCompletedArticles();
+  const completedArticles = ARTICLES.filter(a => completedList.includes(a.id))
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  let completedListHtml = '';
+  if (completedArticles.length > 0) {
+    completedListHtml = completedArticles.map(a => {
+      return `
+        <div class="completed-article-row" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+          <div class="completed-article-title-col">
+            <span class="completed-checkmark-badge">✓</span>
+            <span class="completed-article-title">${a.title}</span>
+          </div>
+          <span class="completed-article-date">${formatDate(a.date)}</span>
+        </div>
+      `;
+    }).join('');
+  } else {
+    completedListHtml = `
+      <div class="completed-articles-empty">
+        <p>No completed articles yet. Start reading to build your learning path!</p>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="layout-container dashboard-page-layout">
+      <!-- Left Column: Navigation Sidebar on desktop -->
+      <aside class="layout-left stagger-item" style="--stagger: 1">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-title">Menu</h3>
+          <nav class="sidebar-menu">
+            <a href="/" class="sidebar-menu-item" onclick="navigate('home'); return false;">
+              Home Page
+            </a>
+            <a href="/dashboard" class="sidebar-menu-item active" onclick="navigate('dashboard'); return false;">
+              Learning Dashboard
+            </a>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Center Column: Full detailed dashboard and achievements list -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back stagger-item" style="--stagger: 0" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Back</span>
+          </button>
+          ${renderBreadcrumb([
+            { label: 'Home', action: `navigate('home')` },
+            { label: 'Learning Dashboard' }
+          ], 1)}
+        </div>
+        
+        <div class="subcategory-banner stagger-item" style="--stagger: 1.5">
+          <div class="sub-banner-badge">My Progress</div>
+          <h1 class="sub-banner-title">Your Learning Dashboard</h1>
+          <p class="sub-banner-desc">Track your reading progress across categories, inspect your performance metrics, and review unlocked design achievements.</p>
+        </div>
+        
+        ${renderLearningDashboard()}
+        
+        <div class="section-title-article stagger-item" style="--stagger: 1.8">UI/UX Quiz Arena</div>
+        <div id="quizArenaContainer" class="stagger-item" style="--stagger: 2.0"></div>
+        
+        <div class="section-title-article stagger-item" style="--stagger: 2.2">Recently Completed Articles</div>
+        <div class="section-divider stagger-item" style="--stagger: 2.4"></div>
+        
+        <div class="completed-articles-list-container stagger-item" style="--stagger: 2.6">
+          ${completedListHtml}
+        </div>
+      </main>
+    </div>
+  `;
+}
+
+function renderDashboardSkeleton() {
+  return `
+    <div class="layout-container dashboard-page-layout">
+      <!-- Left Column Skeleton -->
+      <aside class="layout-left">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 100px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="sidebar-menu">
+            <div class="shimmer" style="width: 80%; height: 32px; border-radius: 8px; margin-bottom: 6px;"></div>
+            <div class="shimmer" style="width: 80%; height: 32px; border-radius: 8px; margin-bottom: 6px;"></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Column Skeleton -->
+      <main class="layout-center">
+        <div class="header-navigation-row">
+          <button class="btn-back">
+            <span>Back</span>
+          </button>
+        </div>
+        
+        <div class="subcategory-banner">
+          <div class="sub-banner-badge">My Progress</div>
+          <h1 class="sub-banner-title">Your Learning Dashboard</h1>
+        </div>
+        
+        <div class="shimmer" style="width: 100%; height: 280px; border-radius: var(--radius); margin-top: 24px; margin-bottom: 32px;"></div>
+        
+        <div class="shimmer" style="width: 150px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+        <div class="shimmer" style="width: 100%; height: 120px; border-radius: var(--radius-sm);"></div>
+      </main>
+    </div>
+  `;
+}
+
+function renderCompactLearningDashboard() {
+  const completedList = getCompletedArticles();
+  const totalArticles = ARTICLES.length;
+  const completedCount = completedList.length;
+  
+  if (completedCount === 0) {
+    return `
+      <div class="learning-dashboard empty stagger-item" style="--stagger: 0.8">
+        <div class="dashboard-header-simple">
+          <h3>🚀 Start Your Learning Journey</h3>
+          <p>Read UI/UX or Figma articles and mark them as completed to track progress and earn design badges!</p>
+        </div>
+      </div>
+    `;
+  }
+  
+  const overallPercent = Math.round((completedCount / totalArticles) * 100);
+  
+  const badges = checkBadges();
+  const unlockedBadges = badges.filter(b => b.unlocked);
+  let unlockedBadgesHtml = '';
+  if (unlockedBadges.length > 0) {
+    unlockedBadgesHtml = `
+      <div class="dashboard-compact-badges-row">
+        <span class="compact-badges-label">Unlocked Badges:</span>
+        <div class="compact-badges-list">
+          ${unlockedBadges.map(badge => `
+            <div class="compact-badge-item ${badge.theme}" title="${badge.title}: ${badge.description}">
+              ${badge.icon}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  
+  return `
+    <div class="learning-dashboard compact stagger-item" style="--stagger: 0.8" onclick="navigate('dashboard')">
+      <div class="dashboard-compact-inner">
+        <div class="dashboard-compact-info-row">
+          <div class="dashboard-compact-text">
+            <span class="dashboard-compact-badge">My Progress</span>
+            <span class="dashboard-compact-stats"><strong>${completedCount}/${totalArticles}</strong> Articles Completed</span>
+          </div>
+          <span class="dashboard-compact-link">View Dashboard</span>
+        </div>
+        <div class="dashboard-compact-progress-container">
+          <div class="dashboard-compact-progress-fill" style="width: ${overallPercent}%"></div>
+        </div>
+        ${unlockedBadgesHtml}
+      </div>
+    </div>
+  `;
+}
+
 function renderHome() {
   const subscribeUrl = `https://www.youtube.com/channel/${SITE.youtubeChannelId}?sub_confirmation=1`;
 
@@ -862,17 +1586,19 @@ function renderHome() {
             <a href="${subscribeUrl}" target="_blank" rel="noopener" class="btn-subscribe">
               ${svgYT(15)} Subscribe
             </a>
-            <a href="${SITE.youtubeChannel}" target="_blank" rel="noopener" class="btn-visit-channel">Visit Channel</a>
+            <button class="btn-visit-channel" onclick="navigate('dashboard')">Learning Dashboard</button>
           </div>
         </div>
       </div>
     </div>
 
     <div class="page-wide">
-      <div class="section-title stagger-item" style="--stagger: 1">${HOME.browseSectionTitle}</div>
+      ${renderCompactLearningDashboard()}
+      
+      <div class="section-title stagger-item" style="--stagger: 1.2">${HOME.browseSectionTitle}</div>
       <div class="category-grid">
         ${CATEGORIES.map((cat, idx) => `
-          <div class="category-card stagger-item" style="--stagger: ${2 + idx}" onclick="navigate('category','${cat.id}')">
+          <div class="category-card stagger-item" style="--stagger: ${1.4 + idx}" onclick="navigate('category','${cat.id}')">
             <div class="category-title">${cat.title}</div>
             <div class="category-desc">${cat.description}</div>
             <div class="category-count">${countInCategory(cat.id)} articles</div>
@@ -880,9 +1606,50 @@ function renderHome() {
         `).join('')}
       </div>
 
-      <div class="section-title-article stagger-item" style="--stagger: ${2 + CATEGORIES.length}; margin-top:12px">${HOME.latestSectionTitle}</div>
-      <div class="section-divider stagger-item" style="--stagger: ${3 + CATEGORIES.length}"></div>
-      ${renderArticleList(latestArticles, 4 + CATEGORIES.length)}
+      <div class="section-title-article stagger-item" style="--stagger: ${1.6 + CATEGORIES.length}; margin-top:12px">${HOME.latestSectionTitle}</div>
+      <div class="section-divider stagger-item" style="--stagger: ${1.8 + CATEGORIES.length}"></div>
+      ${renderArticleList(latestArticles, 2.0 + CATEGORIES.length)}
+    </div>
+  `;
+}
+
+// ── CATEGORY PROGRESS HELPERS ────────────────────────────────
+function renderCategoryBannerProgress(catId) {
+  const completedList = getCompletedArticles();
+  const catArticles = getArticlesByCategory(catId);
+  const total = catArticles.length;
+  if (total === 0) return '';
+  const completed = catArticles.filter(a => completedList.includes(a.id)).length;
+  const percent = Math.round((completed / total) * 100);
+
+  return `
+    <div class="banner-progress-container">
+      <div class="banner-progress-info">
+        <span>Course Progress: <strong>${completed}/${total} completed</strong> (${percent}%)</span>
+      </div>
+      <div class="banner-progress-track">
+        <div class="banner-progress-fill" style="width: ${percent}%"></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSubcategoryBannerProgress(subId) {
+  const completedList = getCompletedArticles();
+  const subArticles = getArticlesBySubcat(subId);
+  const total = subArticles.length;
+  if (total === 0) return '';
+  const completed = subArticles.filter(a => completedList.includes(a.id)).length;
+  const percent = Math.round((completed / total) * 100);
+
+  return `
+    <div class="banner-progress-container">
+      <div class="banner-progress-info">
+        <span>Topic Progress: <strong>${completed}/${total} completed</strong> (${percent}%)</span>
+      </div>
+      <div class="banner-progress-track">
+        <div class="banner-progress-fill" style="width: ${percent}%"></div>
+      </div>
     </div>
   `;
 }
@@ -935,6 +1702,7 @@ function renderCategoryPage(catId) {
           <div class="sub-banner-badge">Category</div>
           <h1 class="sub-banner-title">${cat.title}</h1>
           ${cat.description ? `<p class="sub-banner-desc">${cat.description}</p>` : ''}
+          ${renderCategoryBannerProgress(catId)}
         </div>
         
         <!-- Subgrid: shown on mobile, hidden on desktop -->
@@ -1030,6 +1798,7 @@ function renderSubcategoryPage(catId, subId) {
           <div class="sub-banner-badge">Topic</div>
           <h1 class="sub-banner-title">${sub.title}</h1>
           ${sub.description ? `<p class="sub-banner-desc">${sub.description}</p>` : ''}
+          ${renderSubcategoryBannerProgress(sub.id)}
         </div>
         ${articles.length ? renderArticleList(articles, 4) : `<div class="empty-state">
           <div class="empty-state-lottie"></div>
@@ -1231,6 +2000,7 @@ function renderArticlePage(catId, subId, articleId, query) {
         ` : ''}
 
         ${renderQuizCard(article.id)}
+        ${renderArticleCompletionToggle(article.id)}
       </main>
 
       <!-- Right Column: Related Articles on desktop -->
@@ -1316,6 +2086,39 @@ function handleQuizSelection(articleId, selectedIdx, btn) {
   }
 
   feedback.style.display = 'block';
+}
+
+// ── ARTICLE COMPLETION TOGGLE ──
+
+function renderArticleCompletionToggle(articleId) {
+  const isDone = isArticleCompleted(articleId);
+  return `
+    <div class="completion-card stagger-item" style="--stagger: 5" id="completion-card-${articleId}">
+      <div class="completion-card-inner">
+        <div class="completion-info">
+          <h4 class="completion-title">Finished reading this article?</h4>
+          <p class="completion-desc">Mark it as completed to track your progress and unlock badges!</p>
+        </div>
+        <button class="btn-completion-toggle ${isDone ? 'completed' : ''}" onclick="handleArticleCompletionToggle('${articleId}', this)">
+          <span class="completion-text">${isDone ? 'Completed' : 'Mark as Completed'}</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function handleArticleCompletionToggle(articleId, btn) {
+  const completed = toggleArticleCompleted(articleId);
+  btn.classList.toggle('completed', completed);
+  const textEl = btn.querySelector('.completion-text');
+  if (textEl) {
+    textEl.textContent = completed ? 'Completed' : 'Mark as Completed';
+  }
+
+  // Optional: trigger subtle custom audio click sound if supported
+  if (typeof window.navigator.vibrate === 'function') {
+    window.navigator.vibrate(10); // subtle vibration feedback on mobile devices
+  }
 }
 
 // ── SEARCH HIGHLIGHT HELPERS ──
@@ -1989,9 +2792,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (navLogo) {
     navLogo.addEventListener('click', () => navigate('home'));
   }
-  const btnYT = document.getElementById('btnYT');
-  if (btnYT) {
-    btnYT.addEventListener('click', () => window.open(SITE.youtubeChannel, '_blank'));
+  const btnDashboardNav = document.getElementById('btnDashboardNav');
+  if (btnDashboardNav) {
+    btnDashboardNav.addEventListener('click', () => navigate('dashboard'));
   }
 
   // Restore state from URL on first load
