@@ -786,7 +786,7 @@ ARTICLE_REGISTRY["best-ux-tools"] = {
   title: "Best UX Tools for Research, Flows & Prototyping",
   description: "Curated catalog of 111 UX design tools covering research platforms, user testing, behavior analytics, wireframing, flowcharts, prototyping, and collaboration.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/best-ux-tools.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ux design", "ux tools", "user research", "usability testing", "prototyping", "wireframing", "resources"],
   content: htmlContent

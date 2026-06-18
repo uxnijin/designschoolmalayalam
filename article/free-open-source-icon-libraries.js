@@ -654,7 +654,7 @@ ARTICLE_REGISTRY["free-open-source-icon-libraries"] = {
   title: "Best Free & Open Source Icon Libraries",
   description: "Curated collection of 81 icon libraries, systems, animated icons, custom font compilers, and explorers for designers.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use default video placeholder
+  thumbnail: "assets/thumbnails/free-open-source-icon-libraries.png", // empty to use default video placeholder
   youtubeUrl: "", // no video for this article
   tags: ["ui design", "icons", "web ui", "free", "resources", "tools"],
   content: htmlContent

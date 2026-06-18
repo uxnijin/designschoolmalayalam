@@ -696,7 +696,7 @@ ARTICLE_REGISTRY["productivity-tools-for-design-and-product-teams"] = {
   title: "Best Productivity Tools for Design & Product Teams",
   description: "Curated catalog of 94 productivity tools covering whiteboards, AI agents, screen recording, timezone tools, and workspace platforms.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/productivity-tools-for-design-and-product-teams.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "productivity", "design teams", "collaboration", "workshops", "resources"],
   content: htmlContent

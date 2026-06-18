@@ -1140,7 +1140,7 @@ ARTICLE_REGISTRY["best-no-code-website-builders"] = {
   title: "Best No-Code Website Builders",
   description: "Curated catalog of 164 no-code tools covering visual website builders, native app creators, landing page builders, database tools, Figma design-to-code converters, and Framer/Webflow resources.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/best-no-code-website-builders.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "no code", "website builders", "webflow", "framer", "web apps", "resources"],
   content: htmlContent

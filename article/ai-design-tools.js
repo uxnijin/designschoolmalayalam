@@ -1728,7 +1728,7 @@ ARTICLE_REGISTRY["ai-design-tools"] = {
   title: "Best AI Design Tools for Modern Workflows",
   description: "Curated catalog of 262 AI design tools covering image generators, UI mockup platforms, vibe coding, website builders, 3D, animation, and video.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/ai-design-tools.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "ai design", "design tools", "image generation", "artificial intelligence", "resources"],
   content: htmlContent

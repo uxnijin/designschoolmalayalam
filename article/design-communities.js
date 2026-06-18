@@ -438,7 +438,7 @@ ARTICLE_REGISTRY["design-communities"] = {
   title: "Best Design Communities & Job Boards",
   description: "Curated catalog of 55 design spaces, including online communities, local meetups, global events, showcases, and job boards.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/design-communities.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "design communities", "job boards", "conferences", "meetups", "resources"],
   content: htmlContent

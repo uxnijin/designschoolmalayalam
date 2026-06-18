@@ -527,7 +527,7 @@ ARTICLE_REGISTRY["free-stock-images-videos"] = {
   title: "Free Stock Images & Videos",
   description: "Curated collection of 70 free and premium stock media directories, AI assets, video footage websites, sound catalogs, and avatar tools.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/free-stock-images-videos.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "stock photo", "stock video", "avatars", "resources", "tools"],
   content: htmlContent

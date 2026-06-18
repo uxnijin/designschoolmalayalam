@@ -839,7 +839,7 @@ ARTICLE_REGISTRY["books-for-designers"] = {
   title: "Best Books for Designers",
   description: "Curated collection of 116 design books covering AI prompt engineering, visual branding, UX psychology, digital interface patterns, and design thinking.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/books-for-designers.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "books", "basics", "resources", "tools", "ux design", "branding"],
   content: htmlContent

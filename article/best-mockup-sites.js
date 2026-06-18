@@ -545,7 +545,7 @@ ARTICLE_REGISTRY["best-mockup-sites"] = {
   title: "Best Mockup Sites for Designers",
   description: "Explore the ultimate list of 74 mockup generators, print libraries, design marketplaces, and UI resources.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/best-mockup-sites.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "mockups", "resources", "templates", "ui kits"],
   content: htmlContent

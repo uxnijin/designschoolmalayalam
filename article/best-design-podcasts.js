@@ -582,7 +582,7 @@ ARTICLE_REGISTRY["best-design-podcasts"] = {
   title: "Best Design Podcasts to Listen",
   description: "Curated catalog of 78 design podcasts covering product design, user experience, branding, illustration, and creative code.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/best-design-podcasts.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "podcasts", "audio", "ux design", "branding", "resources"],
   content: htmlContent

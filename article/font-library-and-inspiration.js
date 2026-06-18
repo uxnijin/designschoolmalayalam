@@ -876,7 +876,7 @@ ARTICLE_REGISTRY["font-library-and-inspiration"] = {
   title: "Best Font Libraries & Inspiration Sites",
   description: "Explore the ultimate collection of 124 free font libraries, pairing tools, pro foundries, desktop font managers, type editors, and font inspiration resources.",
   date: "2026-06-17",
-  thumbnail: "", // empty to use document fallback icon
+  thumbnail: "assets/thumbnails/font-library-and-inspiration.png", // empty to use document fallback icon
   youtubeUrl: "", // no video
   tags: ["ui design", "fonts", "typography", "inspiration", "tools", "resources"],
   content: htmlContent
