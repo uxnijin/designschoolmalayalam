@@ -8,6 +8,7 @@ const SITE = {
   name: "Design School",
   tagline: "UI/UX ഡിസൈൻ മലയാളത്തിൽ പഠിക്കാം",
   description: "Learn UI/UX Design, Figma, Design Systems, and more",
+  domain: "https://designschool.site/", // Change this to your custom domain if needed (e.g. https://designschoolmalayalam.com)
   youtubeChannelId: "UCcBtRTuTjRU5krJoJBw7cAA",  // used to build subscribe + channel URLs
   youtubeChannel: "https://www.youtube.com/channel/UCcBtRTuTjRU5krJoJBw7cAA",
   whatsapp: "916238417389",                         // country code + number, no +
@@ -202,3 +203,320 @@ const TRAINING = {
   useWhatsapp: true,     // true = WhatsApp button | false = contact form
   formFields: ["name", "phone", "message"],  // "message" is optional; remove to hide
 };
+
+// ── QUIZZES ──────────────────────────────────────────────────
+// Quick interactive quiz questions for articles (English only)
+const QUIZZES = {
+  "aesthetic-usability-effect": {
+    question: "What is the core principle of the Aesthetic Usability Effect?",
+    options: [
+      "Users perceive aesthetically pleasing designs as designs that are more usable.",
+      "Beautiful designs are always cheaper to produce.",
+      "Aesthetics are secondary to technical code performance.",
+      "Visual style does not impact user tolerance for usability issues."
+    ],
+    answerIndex: 0,
+    explanation: "The Aesthetic Usability Effect states that users tend to believe attractive products work better and are easier to use, even if they contain minor usability flaws."
+  },
+  "fittss-law": {
+    question: "According to Fitts's Law, how should primary interactive elements (like buttons) be designed?",
+    options: [
+      "They should be small and placed far away from each other to prevent accidental clicks.",
+      "They should be large and positioned close to the user's expected cursor or finger location.",
+      "They should always be colored red for maximum visibility.",
+      "They should be hidden until the user hovers over the active screen zone."
+    ],
+    answerIndex: 1,
+    explanation: "Fitts's Law dictates that the time to acquire a target is a function of the distance to and size of the target. Making targets large and near minimizes user effort."
+  },
+  "hicks-law": {
+    question: "What does Hick's Law describe regarding user decision-making?",
+    options: [
+      "The time it takes to choose a font based on read times.",
+      "The time it takes to make a decision increases with the number and complexity of choices.",
+      "The density of images required on a landing page.",
+      "The color contrast ratio necessary for accessibility."
+    ],
+    answerIndex: 1,
+    explanation: "Hick's Law states that decision time increases logarithmically with the number of options presented. Reducing choices speeds up user tasks."
+  },
+  "jakobs-law": {
+    question: "According to Jakob's Law, what kind of behavior do users expect from your website?",
+    options: [
+      "They expect it to work similarly to other websites they already know.",
+      "They expect a highly experimental layout that breaks all common conventions.",
+      "They expect the website to have no navigation options.",
+      "They expect custom scrollbars and complex transitions on every click."
+    ],
+    answerIndex: 0,
+    explanation: "Jakob's Law states that users spend most of their time on other sites, meaning they prefer your site to function in a familiar, conventional way."
+  },
+  "millers-law": {
+    question: "According to Miller's Law, what is the capacity of an average person's working memory?",
+    options: [
+      "2 ± 1 items",
+      "7 ± 2 items",
+      "15 ± 3 items",
+      "25 ± 5 items"
+    ],
+    answerIndex: 1,
+    explanation: "Miller's Law suggests that the average human working memory can hold roughly 7 (plus or minus 2) chunks of information at any given time."
+  },
+  "cognitive-bias": {
+    question: "What is a cognitive bias in the context of UX design?",
+    options: [
+      "A systematic pattern of deviation from norm or rationality in judgment.",
+      "A coding error that affects website page speed.",
+      "The color contrast preference of an individual user.",
+      "A specific typography style chosen by the designer."
+    ],
+    answerIndex: 0,
+    explanation: "Cognitive biases are mental shortcuts or systematic deviations in thinking that designers can understand to build more intuitive and supportive experiences."
+  },
+  "cognitive-load": {
+    question: "How can designers reduce extraneous cognitive load for users?",
+    options: [
+      "By adding more design embellishments and multi-layered features.",
+      "By using simple layouts, familiar icons, and eliminating unnecessary visual elements.",
+      "By requiring users to read longer instructions before completing actions.",
+      "By designing multi-step verification prompts on every action."
+    ],
+    answerIndex: 1,
+    explanation: "Extraneous cognitive load is mental processing power wasted by poor layout, structure, or interface noise. Simplifying UI details keeps users focused on their goal."
+  },
+  "doherty-threshold": {
+    question: "What does the Doherty Threshold law specify about system response times?",
+    options: [
+      "System response should happen within 400 milliseconds to keep user attention active.",
+      "A website should always take at least 2 seconds to load so users can read the branding.",
+      "Users prefer systems that have randomized response times.",
+      "The ideal system response time is completely dependent on screen size."
+    ],
+    answerIndex: 0,
+    explanation: "The Doherty Threshold dictates that productivity skyrockets when a computer and its users interact at a pace that ensures neither has to wait on the other (under 400ms)."
+  },
+  "ikea-effect": {
+    question: "What does the IKEA Effect say about user relationship to products?",
+    options: [
+      "Users value products more highly if they played a role in building or customizing them.",
+      "Users prefer products that look cheap and minimalist.",
+      "Users prefer ready-made items over customizable solutions.",
+      "Visual clutter makes a product feel more customized."
+    ],
+    answerIndex: 0,
+    explanation: "The IKEA Effect is a cognitive bias in which consumers place a disproportionately high value on products they partially created or configured."
+  },
+  "accessibility": {
+    question: "Which of the following is a primary rule for visual accessibility (A11y) in UX?",
+    options: [
+      "Using color as the *only* visual indicator for errors.",
+      "Ensuring sufficient text-to-background color contrast (WCAG standards).",
+      "Avoiding alt tags on decorative images.",
+      "Using small, stylized fonts for all body copy."
+    ],
+    answerIndex: 1,
+    explanation: "Ensuring proper contrast ratios (e.g. 4.5:1 for normal text) is a fundamental WCAG requirement for making web text readable by everyone."
+  },
+  "ux-writing": {
+    question: "What is the primary goal of microcopy in UX writing?",
+    options: [
+      "To show off the brand's vocabulary and include lengthy paragraphs.",
+      "To guide users, explain actions, and alleviate friction concisely.",
+      "To optimize keywords purely for search engine algorithms.",
+      "To fill up empty space on desktop screen dimensions."
+    ],
+    answerIndex: 1,
+    explanation: "UX writing and microcopy should be clear, concise, and helpful, helping users understand errors, complete forms, and navigate interfaces smoothly."
+  },
+  "choice-overload": {
+    question: "What happens when a user experiences Choice Overload?",
+    options: [
+      "They make a purchase decision much faster.",
+      "They feel overwhelmed by too many options, leading to decision fatigue or inaction.",
+      "They appreciate the freedom of having unlimited options.",
+      "They choose the most expensive option on the screen."
+    ],
+    answerIndex: 1,
+    explanation: "Choice Overload occurs when users are presented with too many options, making it harder to evaluate choices and leading to frustration or abandonment."
+  },
+  "chunking": {
+    question: "Why do UX designers use 'chunking' for long content?",
+    options: [
+      "To break down information into smaller, digestible groups to improve memory retention.",
+      "To make the website page load faster.",
+      "To hide information from the user until they hover over it.",
+      "To force the user to scroll through more pages."
+    ],
+    answerIndex: 0,
+    explanation: "Chunking involves grouping separate pieces of information into manageable units, making it easier for users to process and retain data."
+  },
+  "goal-gradient-effect": {
+    question: "What does the Goal-Gradient Effect state about user motivation?",
+    options: [
+      "Motivation increases as users get closer to reaching their goal.",
+      "Users are most motivated when starting a task from scratch.",
+      "Adding more steps to a process makes users more determined to finish.",
+      "Motivation is completely random and unaffected by progress indicators."
+    ],
+    answerIndex: 0,
+    explanation: "The Goal-Gradient Effect states that users accelerate their behavior and motivation as they approach their goal (e.g., progress bars, loyalty stamp cards)."
+  },
+  "mental-model": {
+    question: "What is a 'mental model' in UX design?",
+    options: [
+      "A designer's internal plan for the codebase architecture.",
+      "What a user believes they know about how a system or product works.",
+      "A prototype designed inside virtual reality interfaces.",
+      "A checklist of UI elements required for standard compliance."
+    ],
+    answerIndex: 1,
+    explanation: "A mental model is the user's belief and understanding of how a product works based on their past experiences. Matching this model reduces learning curves."
+  },
+  "occams-razor": {
+    question: "How does Occam's Razor apply to user interface design?",
+    options: [
+      "Choose the design with the most visual gradients and borders.",
+      "Among competing designs that perform the same function, select the simplest one.",
+      "Always design interfaces with sharp, razor-thin borders.",
+      "Choose the design with the largest number of steps for security."
+    ],
+    answerIndex: 1,
+    explanation: "Occam's Razor suggests that the simplest solution is usually the best. Minimizing elements reduces cognitive load and visual complexity."
+  },
+  "pareto-principle": {
+    question: "How is the Pareto Principle (80/20 rule) applied in UX product design?",
+    options: [
+      "80% of users will use only 20% of the features; prioritize optimizing those core features.",
+      "80% of the screen should be white space, and 20% should contain active visual content.",
+      "UX designers should spend 80% of their time on UI design and 20% on user testing.",
+      "Color palettes must consist of 80% dark tones and 20% accent colors."
+    ],
+    answerIndex: 0,
+    explanation: "The Pareto Principle suggests focusing efforts on the 20% of features that generate 80% of the user value, keeping primary tasks prominent."
+  },
+  "parkinsons-law": {
+    question: "What does Parkinson's Law state in relation to user tasks?",
+    options: [
+      "A task will expand to fill the time allocated for its completion.",
+      "Users always prefer tasks that take longer to complete.",
+      "Restricting time limits makes users abandon tasks immediately.",
+      "People work best when they are given infinite flexibility to complete forms."
+    ],
+    answerIndex: 0,
+    explanation: "Parkinson's Law explains that limiting the time to complete a task (like checkout times or form fills) can help users focus and complete tasks faster."
+  },
+  "peak-end-rule": {
+    question: "According to the Peak-End Rule, how do users judge an experience?",
+    options: [
+      "Based on the average quality of every single moment of the experience.",
+      "Largely based on how they felt at its peak (most intense point) and at its end.",
+      "Based on the first 5 seconds of opening the landing page.",
+      "Based entirely on the colors used at the top navigation bar."
+    ],
+    answerIndex: 1,
+    explanation: "The Peak-End Rule is a cognitive bias where people judge an experience based on its peak emotional state and its ending, rather than the average of all parts."
+  },
+  "teslers-law": {
+    question: "What does Tesler's Law (Law of Conservation of Complexity) state?",
+    options: [
+      "For any system, there is a certain amount of complexity that cannot be reduced.",
+      "All complexity should be shifted onto the user instead of the system.",
+      "Simple systems have absolutely no complex backend code.",
+      "Visual interfaces must look complex to appear trustworthy to users."
+    ],
+    answerIndex: 0,
+    explanation: "Tesler's Law states that every application has an inherent amount of complexity. The designer's job is to manage this complexity, moving it from the user to the system."
+  },
+  "von-restorff-effect": {
+    question: "What is the primary takeaway of the Von Restorff Effect?",
+    options: [
+      "Similar objects should be grouped close together on the screen grid.",
+      "When multiple similar objects are present, the one that differs from the rest is most likely to be remembered.",
+      "Users ignore text that is styled differently from the surrounding elements.",
+      "All buttons on a page should look exactly the same."
+    ],
+    answerIndex: 1,
+    explanation: "Also known as the Isolation Effect, the Von Restorff Effect explains why we use call-to-action (CTA) buttons that stand out visually to draw user focus."
+  },
+  "zeigarnik-effect": {
+    question: "What does the Zeigarnik Effect tell us about memory and tasks?",
+    options: [
+      "People remember completed tasks better than incomplete or interrupted ones.",
+      "People remember incomplete or interrupted tasks better than completed ones.",
+      "Users forget their password every time they interrupt the sign-up flow.",
+      "Memory retention is completely unaffected by task progress states."
+    ],
+    answerIndex: 1,
+    explanation: "The Zeigarnik Effect states that incomplete tasks create mental tension, making users more likely to remember them (often used in gamification or progress tracking)."
+  },
+  "qualitative-research": {
+    question: "What is the main goal of qualitative UX research?",
+    options: [
+      "To gather numerical data and statistical metrics about conversion rates.",
+      "To understand user motivations, behaviors, and feelings (the 'why' behind actions).",
+      "To automatically verify code performance and load speeds.",
+      "To generate automated user behavior charts using heatmaps."
+    ],
+    answerIndex: 1,
+    explanation: "Qualitative research focuses on direct observations, interviews, and usability tests to gather insights about user feelings, pain points, and motivations."
+  },
+  "quantitative-research": {
+    question: "Which of the following is a quantitative research method?",
+    options: [
+      "One-on-one user interview conversations.",
+      "Focus group open discussions.",
+      "Analyzing analytics data, click rates, and A/B test numbers.",
+      "Observational diary studies."
+    ],
+    answerIndex: 2,
+    explanation: "Quantitative research involves collecting and analyzing numerical data to answer questions like 'how many' or 'how much'."
+  },
+  "responsive-design": {
+    question: "What is the primary objective of Responsive Web Design?",
+    options: [
+      "Ensuring the website looks and works great across different screen sizes and device viewports.",
+      "Making sure the website responds to vocal commands.",
+      "Allowing users to customize the color scheme of the web page.",
+      "Forcing the website to look identical on desktop and mobile screens."
+    ],
+    answerIndex: 0,
+    explanation: "Responsive design uses fluid grids, flexible images, and media queries to dynamically adjust layouts, providing an optimal reading and interactive experience on any device."
+  },
+  "rule-of-thirds": {
+    question: "How is the Rule of Thirds applied in layout composition?",
+    options: [
+      "Placing focal elements along a 3x3 grid's lines and intersection points.",
+      "Dividing the landing page layout into exactly three columns of equal width.",
+      "Ensuring that only three colors are used across the design system.",
+      "Giving users three choices for every interactive action."
+    ],
+    answerIndex: 0,
+    explanation: "The Rule of Thirds is a compositional guideline that places key visual elements along grid lines and intersections, making layouts look balanced and engaging."
+  },
+  "rapid-prototyping": {
+    question: "What is the main benefit of rapid prototyping in product workflows?",
+    options: [
+      "Writing final production code in the very first design sprint.",
+      "Quickly validating ideas and gathering feedback before committing significant development resources.",
+      "Eliminating the need to perform user testing sessions.",
+      "Making high-fidelity designs look polished on day one."
+    ],
+    answerIndex: 1,
+    explanation: "Rapid prototyping lets teams build, test, and iterate ideas quickly and cheaply, avoiding costly developmental mistakes early on."
+  },
+  "user-interviews": {
+    question: "What is a best practice when conducting user interviews?",
+    options: [
+      "Asking leading questions to get the user to agree with your design choices.",
+      "Asking open-ended questions and active listening to understand user habits.",
+      "Explaining how the product works before the user starts their task.",
+      "Correcting the user whenever they make a mistake during the test."
+    ],
+    answerIndex: 1,
+    explanation: "User interviews should use open-ended, non-leading questions (e.g. 'Tell me about how you...' instead of 'Do you like our button?') to gather unbiased, authentic insights."
+  }
+};
+
+
+
+

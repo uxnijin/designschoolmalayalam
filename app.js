@@ -17,13 +17,13 @@ const formatDate = s => s ? new Date(s).toLocaleDateString('en-IN', { year: 'num
 
 const getCategoryById = id => CATEGORIES.find(c => c.id === id);
 const getSubcategoryById = (c, s) => getCategoryById(c)?.subcategories.find(x => x.id === s);
-const getArticlesBySubcat = subId => ARTICLES.filter(a => 
+const getArticlesBySubcat = subId => ARTICLES.filter(a =>
   a._subcategories ? a._subcategories.includes(subId) : a.subcategoryId === subId
 );
-const getArticlesByCategory = catId => ARTICLES.filter(a => 
+const getArticlesByCategory = catId => ARTICLES.filter(a =>
   a._categories ? a._categories.includes(catId) : a.categoryId === catId
 );
-const countInCategory = catId => ARTICLES.filter(a => 
+const countInCategory = catId => ARTICLES.filter(a =>
   a._categories ? a._categories.includes(catId) : a.categoryId === catId
 ).length;
 
@@ -69,6 +69,7 @@ function stateKey(page, catId, subId, articleId) {
 }
 
 function navigate(page, catId, subId, articleId, query = null, { replace = false } = {}) {
+  closeAllDropdowns();
   catId = catId || null;
   subId = subId || null;
   articleId = articleId || null;
@@ -86,7 +87,8 @@ function navigate(page, catId, subId, articleId, query = null, { replace = false
     renderPage(state);
   } catch (e) {
     console.warn('History API not supported or blocked (e.g. file:// protocol):', e);
-    const hash = url.replace(/^\/\#/, '#');
+    // Fallback to hash if pushState is blocked or unsupported
+    const hash = '#' + url.replace(/^\//, '');
     if (location.hash !== hash) {
       location.hash = hash;
     } else {
@@ -99,32 +101,248 @@ function navigate(page, catId, subId, articleId, query = null, { replace = false
 
 function buildUrl(page, catId, subId, articleId, query) {
   if (page === 'home') return '/';
-  if (page === 'category') return `/#cat=${catId}`;
-  if (page === 'subcategory') return `/#cat=${catId}&sub=${subId}`;
-  if (page === 'article') return `/#cat=${catId}&sub=${subId}&art=${articleId}`;
-  if (page === 'search') return `/#search=${encodeURIComponent(query)}`;
+  if (page === 'category') return `/category/${catId}`;
+  if (page === 'subcategory') return `/category/${catId}/${subId}`;
+  if (page === 'article') {
+    let url = `/article/${articleId}`;
+    if (query) url += `?hl=${encodeURIComponent(query)}`;
+    return url;
+  }
+  if (page === 'search') return `/search?q=${encodeURIComponent(query)}`;
   return '/';
 }
 
-function parseHash() {
-  const hash = location.hash.replace('#', '');
-  if (!hash) return { page: 'home', catId: null, subId: null, articleId: null, query: null };
+function parseUrl() {
+  const path = location.pathname;
+  let normalizedPath = path;
+  if (normalizedPath.length > 1 && normalizedPath.endsWith('/')) {
+    normalizedPath = normalizedPath.slice(0, -1);
+  }
 
-  const params = {};
-  hash.split('&').forEach(p => { const [k, v] = p.split('='); if (k && v) params[k] = decodeURIComponent(v); });
+  // Determine the active routing path (uses hash path if it resembles a clean route)
+  let routePath = normalizedPath;
+  if (location.hash) {
+    const hashPath = location.hash.replace('#', '');
+    if (hashPath.startsWith('/article/') || hashPath.startsWith('article/') ||
+        hashPath.startsWith('/category/') || hashPath.startsWith('category/') ||
+        hashPath.startsWith('/search') || hashPath.startsWith('search')) {
+      routePath = hashPath.startsWith('/') ? hashPath : '/' + hashPath;
+    }
+  }
 
-  if (params.search) return { page: 'search', catId: null, subId: null, articleId: null, query: params.search };
-  if (params.art) return { page: 'article', catId: params.cat, subId: params.sub, articleId: params.art, query: null };
-  if (params.sub) return { page: 'subcategory', catId: params.cat, subId: params.sub, articleId: null, query: null };
-  if (params.cat) return { page: 'category', catId: params.cat, subId: null, articleId: null, query: null };
+  const searchParams = new URLSearchParams(location.search);
+  const query = searchParams.get('q') || searchParams.get('hl') || null;
+
+  // Support old query-parameter-based hash URLs for backwards compatibility
+  if (location.hash && !routePath.startsWith('/article/') && !routePath.startsWith('/category/')) {
+    const hash = location.hash.replace('#', '');
+    const params = {};
+    hash.split('&').forEach(p => { const [k, v] = p.split('='); if (k && v) params[k] = decodeURIComponent(v); });
+    
+    if (params.search) return { page: 'search', catId: null, subId: null, articleId: null, query: params.search };
+    if (params.art) return { page: 'article', catId: params.cat, subId: params.sub, articleId: params.art, query: params.hl || null };
+    if (params.sub) return { page: 'subcategory', catId: params.cat, subId: params.sub, articleId: null, query: null };
+    if (params.cat) return { page: 'category', catId: params.cat, subId: null, articleId: null, query: null };
+  }
+
+  if (routePath === '/' || routePath === '/index.html') {
+    return { page: 'home', catId: null, subId: null, articleId: null, query: null };
+  }
+  
+  if (routePath.startsWith('/search')) {
+    return { page: 'search', catId: null, subId: null, articleId: null, query };
+  }
+
+  if (routePath.startsWith('/article/')) {
+    const parts = routePath.split('/');
+    const articleId = parts[2];
+    const article = ARTICLES.find(a => a.id === articleId);
+    if (article) {
+      const catId = Array.isArray(article.categoryId) ? article.categoryId[0] : article.categoryId;
+      const subId = Array.isArray(article.subcategoryId) ? article.subcategoryId[0] : article.subcategoryId;
+      return { page: 'article', catId, subId, articleId, query };
+    }
+    return { page: 'article', catId: null, subId: null, articleId, query };
+  }
+
+  if (routePath.startsWith('/category/')) {
+    const parts = routePath.split('/');
+    const catId = parts[2];
+    const subId = parts[3] || null;
+    if (subId) {
+      return { page: 'subcategory', catId, subId, articleId: null, query: null };
+    }
+    return { page: 'category', catId, subId: null, articleId: null, query: null };
+  }
+
   return { page: 'home', catId: null, subId: null, articleId: null, query: null };
 }
 
 window.addEventListener('popstate', e => {
-  const state = e.state || parseHash();
+  const state = e.state || parseUrl();
   renderPage(state);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
+
+// ── SEO & META TAG UPDATER ────────────────────────────────────
+
+function updateSEO(state) {
+  const { page, catId, subId, articleId, query } = state;
+  
+  let title = SITE.name;
+  let description = SITE.description;
+  let ogImage = SITE.logo;
+  
+  // Base URL calculation (defaults to window location if SITE.domain is missing)
+  const origin = window.location.origin;
+  const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
+  let baseDomain = SITE.domain || (origin + path);
+  if (baseDomain.endsWith('/')) {
+    baseDomain = baseDomain.slice(0, -1);
+  }
+  
+  const hashUrl = buildUrl(page, catId, subId, articleId, query);
+  const canonicalUrl = baseDomain + hashUrl;
+  
+  let schema = null;
+  
+  if (page === 'home') {
+    title = `${SITE.name} | ${SITE.tagline || 'UI/UX Design in Malayalam'}`;
+    description = `Learn UI/UX Design, Figma, Design Systems, and Graphic Design in Malayalam. Access articles, tutorials, quizzes, and 1-on-1 mentorship.`;
+    
+    schema = {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": SITE.name,
+      "alternateName": "Design School Malayalam",
+      "url": baseDomain + '/',
+      "description": description,
+      "publisher": {
+        "@type": "Organization",
+        "name": SITE.name,
+        "logo": {
+          "@type": "ImageObject",
+          "url": baseDomain + '/' + SITE.logo
+        }
+      }
+    };
+  } else if (page === 'category') {
+    const cat = getCategoryById(catId);
+    if (cat) {
+      title = `${cat.title} | ${SITE.name}`;
+      description = `Learn ${cat.title} in Malayalam. ${cat.description || ''} — Access full tutorials and articles.`;
+      
+      schema = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": title,
+        "description": description,
+        "url": canonicalUrl
+      };
+    }
+  } else if (page === 'subcategory') {
+    const cat = getCategoryById(catId);
+    const sub = getSubcategoryById(catId, subId);
+    if (cat && sub) {
+      title = `${sub.title} - ${cat.title} | ${SITE.name}`;
+      description = `Learn ${sub.title} under ${cat.title} in Malayalam. ${sub.description || ''} — Browse related articles.`;
+      
+      schema = {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": title,
+        "description": description,
+        "url": canonicalUrl
+      };
+    }
+  } else if (page === 'article') {
+    const article = ARTICLES.find(a => a.id === articleId);
+    if (article) {
+      title = `${article.title} | ${SITE.name}`;
+      description = article.description || `Read the full article about ${article.title} on Design School Malayalam.`;
+      
+      const thumb = article.thumbnail || getThumbUrl(article.youtubeUrl);
+      if (thumb) {
+        if (thumb.startsWith('http')) {
+          ogImage = thumb;
+        } else {
+          ogImage = baseDomain + '/' + thumb.replace(/^\//, '');
+        }
+      }
+      
+      schema = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": article.title,
+        "description": article.description || description,
+        "datePublished": article.date,
+        "author": {
+          "@type": "Person",
+          "name": "Nijin Muhammed",
+          "url": "https://www.instagram.com/uxnijin/"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": SITE.name,
+          "logo": {
+            "@type": "ImageObject",
+            "url": baseDomain + '/' + SITE.logo
+          }
+        },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": canonicalUrl
+        },
+        "image": ogImage
+      };
+    }
+  } else if (page === 'search') {
+    title = `Search results for "${query}" | ${SITE.name}`;
+    description = `Find UI/UX design articles, Figma tutorials, and design resources on Design School Malayalam.`;
+  }
+  
+  // Update browser window/tab title
+  document.title = title;
+  
+  // Helper to safely update meta elements
+  const updateMeta = (selector, content) => {
+    const el = document.querySelector(selector);
+    if (el) {
+      el.setAttribute('content', content);
+    }
+  };
+  
+  updateMeta('meta[name="description"]', description);
+  
+  // Update Canonical Tag
+  const canonicalEl = document.getElementById('canonicalUrl');
+  if (canonicalEl) {
+    canonicalEl.setAttribute('href', canonicalUrl);
+  }
+  
+  // Update OpenGraph & Twitter tags
+  updateMeta('#ogTitle', title);
+  updateMeta('#ogDesc', description);
+  updateMeta('#ogUrl', canonicalUrl);
+  updateMeta('#ogImg', ogImage);
+  updateMeta('#twTitle', title);
+  updateMeta('#twDesc', description);
+  updateMeta('#twImg', ogImage);
+  
+  // Inject structured JSON-LD schema
+  let schemaScript = document.getElementById('seo-schema');
+  if (schemaScript) {
+    schemaScript.remove();
+  }
+  
+  if (schema) {
+    schemaScript = document.createElement('script');
+    schemaScript.id = 'seo-schema';
+    schemaScript.type = 'application/ld+json';
+    schemaScript.text = JSON.stringify(schema, null, 2);
+    document.head.appendChild(schemaScript);
+  }
+}
 
 // ── RENDER ───────────────────────────────────────────────────
 
@@ -149,7 +367,7 @@ function renderPage(state) {
         case 'home': content.innerHTML = renderHome(); break;
         case 'category': content.innerHTML = renderCategoryPage(catId); break;
         case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
-        case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId); break;
+        case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId, query); break;
         case 'search': content.innerHTML = renderSearchPage(query); break;
         default: content.innerHTML = renderHome();
       }
@@ -159,6 +377,7 @@ function renderPage(state) {
       } else {
         cleanupScrollListeners();
       }
+      updateSEO(state);
       activeRenderTimeout = null;
     }, 400);
 
@@ -169,7 +388,7 @@ function renderPage(state) {
       case 'home': content.innerHTML = renderHome(); break;
       case 'category': content.innerHTML = renderCategoryPage(catId); break;
       case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
-      case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId); break;
+      case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId, query); break;
       case 'search': content.innerHTML = renderSearchPage(query); break;
       default: content.innerHTML = renderHome();
     }
@@ -180,6 +399,7 @@ function renderPage(state) {
     } else {
       cleanupScrollListeners();
     }
+    updateSEO(state);
   }
 }
 
@@ -514,10 +734,95 @@ function initNav() {
   if (navLinks) {
     if (!NAV.showCategoryLinks) { navLinks.innerHTML = ''; return; }
 
-    navLinks.innerHTML = CATEGORIES.map(cat =>
-      `<button class="nav-link" data-cat-id="${cat.id}" onclick="navigate('category','${cat.id}')">${cat.title}</button>`
-    ).join('');
+    navLinks.innerHTML = CATEGORIES.map(cat => {
+      let gridCols = 1;
+      if (cat.subcategories.length > 8) {
+        gridCols = 3;
+      } else if (cat.subcategories.length > 3) {
+        gridCols = 2;
+      }
+
+      const subcategoriesHtml = cat.subcategories.map(sub => {
+        const articleCount = getArticlesBySubcat(sub.id).length;
+        const countText = `${articleCount} ${articleCount === 1 ? 'article' : 'articles'}`;
+        return `
+          <a href="/category/${cat.id}/${sub.id}" class="nav-dropdown-item" onclick="navigate('subcategory','${cat.id}','${sub.id}'); return false;">
+            <div class="nav-dropdown-item-title">${sub.title}</div>
+            <div class="nav-dropdown-item-desc">${sub.description}</div>
+            <div class="nav-dropdown-item-count">${countText}</div>
+          </a>
+        `;
+      }).join('');
+
+      return `
+        <div class="nav-item-wrapper" data-cat-id="${cat.id}">
+          <button class="nav-link" data-cat-id="${cat.id}" onclick="navigate('category','${cat.id}')">
+            <span>${cat.title}</span>
+            <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="nav-dropdown-menu cols-${gridCols}">
+            <div class="nav-dropdown-inner">
+              <div class="nav-dropdown-header">
+                <div class="nav-dropdown-title">
+                  <span>${cat.title}</span>
+                  <span class="nav-dropdown-header-count">${countInCategory(cat.id)} articles</span>
+                </div>
+                <div class="nav-dropdown-desc">${cat.description}</div>
+              </div>
+              <div class="nav-dropdown-grid">
+                ${subcategoriesHtml}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    setupDropdownHoverEvents();
   }
+}
+
+function setupDropdownHoverEvents() {
+  const wrappers = document.querySelectorAll('.nav-item-wrapper');
+  wrappers.forEach(wrapper => {
+    const dropdown = wrapper.querySelector('.nav-dropdown-menu');
+    let hideTimeout = null;
+
+    const showDropdown = () => {
+      wrappers.forEach(w => {
+        if (w !== wrapper) {
+          w.classList.remove('dropdown-active');
+        }
+      });
+      clearTimeout(hideTimeout);
+      wrapper.classList.add('dropdown-active');
+    };
+
+    const hideDropdown = () => {
+      clearTimeout(hideTimeout);
+      hideTimeout = setTimeout(() => {
+        wrapper.classList.remove('dropdown-active');
+      }, 150);
+    };
+
+    wrapper.addEventListener('mouseenter', showDropdown);
+    wrapper.addEventListener('mouseleave', hideDropdown);
+
+    if (dropdown) {
+      dropdown.addEventListener('mouseenter', () => {
+        clearTimeout(hideTimeout);
+      });
+      dropdown.addEventListener('mouseleave', hideDropdown);
+    }
+  });
+}
+
+function closeAllDropdowns() {
+  document.querySelectorAll('.nav-item-wrapper').forEach(w => {
+    w.classList.remove('dropdown-active');
+  });
 }
 
 // ── HOME ─────────────────────────────────────────────────────
@@ -590,11 +895,11 @@ function renderCategoryPage(catId) {
         <div class="sidebar-widget">
           <h3 class="sidebar-title">Subcategories</h3>
           <nav class="sidebar-menu">
-            <a href="#cat=${catId}" class="sidebar-menu-item active" onclick="navigate('category','${catId}'); return false;">
+            <a href="/category/${catId}" class="sidebar-menu-item active" onclick="navigate('category','${catId}'); return false;">
               All Articles
             </a>
             ${cat.subcategories.map(sub => `
-              <a href="#cat=${catId}&sub=${sub.id}" class="sidebar-menu-item" onclick="navigate('subcategory','${catId}','${sub.id}'); return false;">
+              <a href="/category/${catId}/${sub.id}" class="sidebar-menu-item" onclick="navigate('subcategory','${catId}','${sub.id}'); return false;">
                 ${sub.title}
               </a>
             `).join('')}
@@ -684,11 +989,11 @@ function renderSubcategoryPage(catId, subId) {
         <div class="sidebar-widget">
           <h3 class="sidebar-title">Subcategories</h3>
           <nav class="sidebar-menu">
-            <a href="#cat=${catId}" class="sidebar-menu-item" onclick="navigate('category','${catId}'); return false;">
+            <a href="/category/${catId}" class="sidebar-menu-item" onclick="navigate('category','${catId}'); return false;">
               All Articles
             </a>
             ${cat.subcategories.map(s => `
-              <a href="#cat=${catId}&sub=${s.id}" class="sidebar-menu-item ${s.id === subId ? 'active' : ''}" onclick="navigate('subcategory','${catId}','${s.id}'); return false;">
+              <a href="/category/${catId}/${s.id}" class="sidebar-menu-item ${s.id === subId ? 'active' : ''}" onclick="navigate('subcategory','${catId}','${s.id}'); return false;">
                 ${s.title}
               </a>
             `).join('')}
@@ -731,8 +1036,8 @@ function renderSubcategoryPage(catId, subId) {
           <h3 class="sidebar-title">Best Reads</h3>
           <div class="best-reads-list">
             ${bestReads.map(a => {
-              const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
-              return `
+    const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
+    return `
                 <div class="best-read-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
                   <div class="best-read-thumb">
                     ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(16) : svgDoc(16)}</div>`}
@@ -743,7 +1048,7 @@ function renderSubcategoryPage(catId, subId) {
                   </div>
                 </div>
               `;
-            }).join('')}
+  }).join('')}
           </div>
         </div>
       </aside>
@@ -753,17 +1058,18 @@ function renderSubcategoryPage(catId, subId) {
 
 // ── ARTICLE LIST ─────────────────────────────────────────────
 
-function renderArticleList(articles, startStaggerIdx = 0) {
+function renderArticleList(articles, startStaggerIdx = 0, query = null) {
   if (!articles.length) return `<div class="empty-state">
     <div class="empty-state-lottie"></div>
     <p class="empty-state-text">No articles yet.</p>
   </div>`;
+  const queryArg = query ? `, '${query.replace(/'/g, "\\'")}'` : '';
   return `<div class="article-list">
     ${articles.map((a, idx) => {
     const cat = getCategoryById(a.categoryId);
     const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
     return `
-        <div class="article-item stagger-item" style="--stagger: ${startStaggerIdx + idx}" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
+        <div class="article-item stagger-item" style="--stagger: ${startStaggerIdx + idx}" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}'${queryArg})">
           <div class="article-info">
             <div class="article-tag-sm">${cat?.title || ''}</div>
             <div class="article-title">${a.title}</div>
@@ -828,7 +1134,7 @@ function renderRelatedArticles(articles) {
   `;
 }
 
-function renderArticlePage(catId, subId, articleId) {
+function renderArticlePage(catId, subId, articleId, query) {
   const article = ARTICLES.find(a => a.id === articleId);
   if (!article) return emptyPage('Article not found.');
 
@@ -839,7 +1145,10 @@ function renderArticlePage(catId, subId, articleId) {
   const bestReads = getBestReads(catId, 3);
 
   const headings = extractHeadings(article.content);
-  const bodyWithIds = injectHeadingIds(article.content);
+  let bodyWithIds = injectHeadingIds(article.content);
+  if (query) {
+    bodyWithIds = highlightHtmlContent(bodyWithIds, query);
+  }
 
   return `
     <div class="layout-container article-shell">
@@ -861,7 +1170,7 @@ function renderArticlePage(catId, subId, articleId) {
         ` : `
           <div class="sidebar-widget">
             <nav class="sidebar-menu">
-              <a href="#" class="sidebar-menu-item" onclick="navigate('category','${catId}'); return false;">
+              <a href="/category/${catId}" class="sidebar-menu-item" onclick="navigate('category','${catId}'); return false;">
                 Back
               </a>
             </nav>
@@ -888,6 +1197,13 @@ function renderArticlePage(catId, subId, articleId) {
   ], 1)}
         </div>
 
+        ${query ? `
+          <div class="highlight-banner stagger-item" id="highlightBanner" style="--stagger: 1.5">
+            <span>Showing matches highlighted for "<strong>${query}</strong>"</span>
+            <button class="btn-clear-highlights" onclick="clearBodyHighlights()">Clear</button>
+          </div>
+        ` : ''}
+
         <div class="subcategory-banner stagger-item" style="--stagger: 2">
           <div class="sub-banner-badge">${sub?.title || cat?.title || 'Article'}</div>
           <h1 class="sub-banner-title">${article.title}</h1>
@@ -906,6 +1222,8 @@ function renderArticlePage(catId, subId, articleId) {
             </div>
           </div>
         ` : ''}
+
+        ${renderQuizCard(article.id)}
       </main>
 
       <!-- Right Column: Related Articles on desktop -->
@@ -916,8 +1234,8 @@ function renderArticlePage(catId, subId, articleId) {
           <h3 class="sidebar-title">Best Reads</h3>
           <div class="best-reads-list">
             ${bestReads.map(a => {
-              const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
-              return `
+    const thumb = a.thumbnail || getThumbUrl(a.youtubeUrl);
+    return `
                 <div class="best-read-card" onclick="navigate('article','${a.categoryId}','${a.subcategoryId}','${a.id}')">
                   <div class="best-read-thumb">
                     ${thumb ? `<img src="${thumb}" alt="${a.title}" loading="lazy">` : `<div class="thumb-placeholder">${a.youtubeUrl ? svgPlay(16) : svgDoc(16)}</div>`}
@@ -928,13 +1246,122 @@ function renderArticlePage(catId, subId, articleId) {
                   </div>
                 </div>
               `;
-            }).join('')}
+  }).join('')}
           </div>
         </div>
       </aside>
     </div>
   `;
 }
+
+// ── QUIZ CARD ──
+
+function renderQuizCard(articleId) {
+  const quiz = QUIZZES[articleId];
+  if (!quiz) return '';
+
+  return `
+    <div class="quiz-card stagger-item" style="--stagger: 4.8" id="quiz-card-${articleId}">
+      <div class="quiz-badge">Quick Test</div>
+      <h3 class="quiz-question">${quiz.question}</h3>
+      <div class="quiz-options">
+        ${quiz.options.map((opt, idx) => `
+          <button class="quiz-option" onclick="handleQuizSelection('${articleId}', ${idx}, this)">
+            <span class="quiz-option-letter">${String.fromCharCode(65 + idx)}</span>
+            <span class="quiz-option-text">${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback-${articleId}" style="display: none;">
+        <div class="quiz-feedback-status"></div>
+        <div class="quiz-explanation">${quiz.explanation}</div>
+      </div>
+    </div>
+  `;
+}
+
+function handleQuizSelection(articleId, selectedIdx, btn) {
+  const quiz = QUIZZES[articleId];
+  if (!quiz) return;
+
+  const card = document.getElementById(`quiz-card-${articleId}`);
+  if (!card) return;
+
+  const options = card.querySelectorAll('.quiz-option');
+  const feedback = document.getElementById(`quiz-feedback-${articleId}`);
+
+  // Disable all options
+  options.forEach(opt => opt.disabled = true);
+
+  const correctIdx = quiz.answerIndex;
+
+  if (selectedIdx === correctIdx) {
+    btn.classList.add('correct');
+    const statusElem = feedback.querySelector('.quiz-feedback-status');
+    statusElem.innerHTML = `✨ <strong>Spot on!</strong> That's correct.`;
+    statusElem.className = 'quiz-feedback-status correct-text';
+  } else {
+    btn.classList.add('incorrect');
+    options[correctIdx].classList.add('correct');
+    const statusElem = feedback.querySelector('.quiz-feedback-status');
+    statusElem.innerHTML = `🔍 <strong>Not quite!</strong> The correct choice is highlighted.`;
+    statusElem.className = 'quiz-feedback-status incorrect-text';
+  }
+
+  feedback.style.display = 'block';
+}
+
+// ── SEARCH HIGHLIGHT HELPERS ──
+
+function highlightHtmlContent(html, query) {
+  if (!query) return html;
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(`<div>${html}</div>`, 'text/html');
+  const root = doc.body.firstChild;
+
+  const q = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const regex = new RegExp(`(${q})`, 'gi');
+
+  function walk(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.nodeValue.trim()) {
+        const text = node.nodeValue;
+        if (regex.test(text)) {
+          const temp = document.createElement('div');
+          temp.innerHTML = text.replace(regex, '<mark class="body-highlight">$1</mark>');
+          while (temp.firstChild) {
+            node.parentNode.insertBefore(temp.firstChild, node);
+          }
+          node.parentNode.removeChild(node);
+        }
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'SCRIPT' && node.tagName !== 'STYLE' && node.tagName !== 'A') {
+      const children = Array.from(node.childNodes);
+      for (const child of children) {
+        walk(child);
+      }
+    }
+  }
+
+  walk(root);
+  return root.innerHTML;
+}
+
+function clearBodyHighlights() {
+  document.querySelectorAll('mark.body-highlight').forEach(el => {
+    const text = el.textContent;
+    el.replaceWith(document.createTextNode(text));
+  });
+  const banner = document.getElementById('highlightBanner');
+  if (banner) banner.remove();
+
+  try {
+    const hash = location.hash;
+    const newHash = hash.replace(/&hl=[^&]*/, '');
+    history.replaceState(null, '', newHash);
+  } catch (e) { }
+}
+
 
 // ── TRAINING CARD ────────────────────────────────────────────
 
@@ -1048,6 +1475,11 @@ function searchArticles(query) {
       score += 15;
     }
 
+    const contentText = (article.content || '').replace(/<[^>]*>/g, ' ').toLowerCase();
+    if (contentText.includes(q)) {
+      score += 1;
+    }
+
     if (score > 0) {
       results.push({ article, score });
     }
@@ -1073,11 +1505,11 @@ function renderSearchPage(query) {
         <div class="sidebar-widget">
           <h3 class="sidebar-title">Explore Topics</h3>
           <nav class="sidebar-menu">
-            <a href="#" class="sidebar-menu-item" onclick="navigate('home'); return false;">
+            <a href="/" class="sidebar-menu-item" onclick="navigate('home'); return false;">
               Home
             </a>
             ${CATEGORIES.map(cat => `
-              <a href="#cat=${cat.id}" class="sidebar-menu-item" onclick="navigate('category','${cat.id}'); return false;">
+              <a href="/category/${cat.id}" class="sidebar-menu-item" onclick="navigate('category','${cat.id}'); return false;">
                 ${cat.title}
               </a>
             `).join('')}
@@ -1102,7 +1534,7 @@ function renderSearchPage(query) {
         <div class="section-title stagger-item" style="--stagger: 2">Search Results for "${query}"</div>
         <div class="section-divider stagger-item" style="--stagger: 3"></div>
         
-        ${results.length ? renderArticleList(results, 4) : `
+        ${results.length ? renderArticleList(results, 4, query) : `
           <div class="empty-state">
             <div class="empty-state-lottie"></div>
             <p class="empty-state-text">No articles found matching "${query}". Try searching for something else!</p>
@@ -1336,7 +1768,8 @@ function initSearch() {
       const idx = parseInt(item.dataset.index, 10);
       const article = currentSuggestions[idx];
       if (article) {
-        navigate('article', article.categoryId, article.subcategoryId, article.id);
+        const query = input.value.trim();
+        navigate('article', article.categoryId, article.subcategoryId, article.id, query);
         input.value = '';
         suggestions.style.display = 'none';
         input.blur();
@@ -1414,6 +1847,9 @@ function initSearch() {
     if (!isInputFocused) {
       if (e.key === '/' || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
         e.preventDefault();
+        input.focus();
+        input.select();
+      } else if (e.key.length === 1 && e.key !== ' ' && !e.ctrlKey && !e.metaKey && !e.altKey) {
         input.focus();
         input.select();
       }
@@ -1499,7 +1935,7 @@ function loadArticles() {
           art._categories = art.categoryId;
           Object.defineProperty(art, 'categoryId', {
             get: () => {
-              const hashState = parseHash();
+              const hashState = parseUrl();
               if (hashState.catId && art._categories.includes(hashState.catId)) {
                 return hashState.catId;
               }
@@ -1513,7 +1949,7 @@ function loadArticles() {
           art._subcategories = art.subcategoryId;
           Object.defineProperty(art, 'subcategoryId', {
             get: () => {
-              const hashState = parseHash();
+              const hashState = parseUrl();
               if (hashState.subId && art._subcategories.includes(hashState.subId)) {
                 return hashState.subId;
               }
@@ -1545,8 +1981,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     btnYT.addEventListener('click', () => window.open(SITE.youtubeChannel, '_blank'));
   }
 
-  // Restore state from URL hash on first load
-  const initialState = history.state || parseHash();
+  // Restore state from URL on first load
+  const initialState = history.state || parseUrl();
   // Replace current history entry so back doesn't bounce out of site
   try {
     history.replaceState(initialState, '', buildUrl(
