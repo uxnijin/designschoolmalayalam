@@ -2473,6 +2473,7 @@ mark.body-highlight {
   padding: 20px 24px;
   border: 1px solid var(--border);
   background-color: var(--bg-1);
+  box-shadow: none;
 }
 
 .dashboard-header-simple h3 {
