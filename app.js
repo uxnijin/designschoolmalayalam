@@ -2999,6 +2999,26 @@ function loadArticles() {
   });
 }
 
+// ── LIVE VISITOR STATS ────────────────────────────────────────
+
+async function updateLiveVisitors() {
+  if (!SITE.cloudflareWorkerUrl) return;
+  try {
+    const res = await fetch(SITE.cloudflareWorkerUrl);
+    const data = await res.json();
+    if (data && data.visitors) {
+      document.querySelectorAll('.footer-visitors').forEach(el => {
+        el.innerHTML = `
+          <span class="pulse-dot"></span>
+          ${data.visitors} monthly readers
+        `;
+      });
+    }
+  } catch (e) {
+    console.warn('Failed to fetch live visitor data:', e);
+  }
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -3035,5 +3055,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   renderPage(initialState);
+  updateLiveVisitors();
 });
 

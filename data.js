@@ -15,6 +15,7 @@ const SITE = {
   whatsappMessage: "Hi! I'm interested in personal training from Design School.",
   logo: "assets/logo.png",                          // path to logo image
   accentColor: "#FF6F2C",                           // used as CSS --accent
+  cloudflareWorkerUrl: "https://design-school-visitors.nijuvenghat550649.workers.dev",                          // Cloudflare Worker URL for live visitor stats
 };
 
 // ── HOME PAGE ────────────────────────────────────────────────
