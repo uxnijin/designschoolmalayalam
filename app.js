@@ -715,6 +715,10 @@ function buildUrl(page, catId, subId, articleId, query) {
   return '/';
 }
 
+function getToolUrl(toolId) {
+  return `/tools?t=${encodeURIComponent(toolId)}`;
+}
+
 let _parsingUrl = false;
 
 function parseUrl() {
@@ -763,7 +767,8 @@ function parseUrl() {
     }
 
     if (routePath.startsWith('/tools')) {
-      const activeTool = searchParams.get('t') || null; // null = show overview grid
+      const hashQuery = routePath.includes('?') ? new URLSearchParams(routePath.split('?')[1]) : null;
+      const activeTool = searchParams.get('t') || hashQuery?.get('t') || null; // null = show overview grid
       return { page: 'tools', catId: null, subId: null, articleId: null, query: activeTool };
     }
 
@@ -3778,12 +3783,94 @@ const WORKBENCH_TOOLS = [
             <path d="M20 7H4"></path>
             <path d="M17 4H7"></path>
           </svg>`
+  },
+  {
+    id: "image-format-converter",
+    title: "Image Format Converter",
+    description: "Convert JPG, PNG and WebP",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <path d="M8 11h8M8 15h5"></path>
+            <path d="M16 7l2 2-2 2"></path>
+          </svg>`
+  },
+  {
+    id: "palette-extractor",
+    title: "Color Palette Extractor",
+    description: "Pull dominant image colors",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+            <path d="M12 22a10 10 0 1 1 10-10c0 3-2 4-4 4h-1.5a2.5 2.5 0 0 0 0 5H12z"></path>
+          </svg>`
+  },
+  {
+    id: "qr-generator",
+    title: "QR Code Generator",
+    description: "Create branded QR codes",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="6" height="6"></rect>
+            <rect x="15" y="3" width="6" height="6"></rect>
+            <rect x="3" y="15" width="6" height="6"></rect>
+            <path d="M15 15h2v2h-2zM19 15h2v6h-6v-2"></path>
+          </svg>`
+  },
+  {
+    id: "font-pairing",
+    title: "Google Font Pairing",
+    description: "Random heading/body pairs",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7V4h16v3"></path>
+            <path d="M9 20h6"></path>
+            <path d="M12 4v16"></path>
+          </svg>`
+  },
+  {
+    id: "unicode-text",
+    title: "Stylish Text Converter",
+    description: "Unicode fonts for bios",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7V4h16v3"></path>
+            <path d="M5 20h6"></path>
+            <path d="M8 4v16"></path>
+            <path d="M17 13v7"></path>
+            <path d="M14 16h6"></path>
+          </svg>`
+  },
+  {
+    id: "favicon-generator",
+    title: "Favicon Package Generator",
+    description: "Export icons as a ZIP",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 3z"></path>
+          </svg>`
+  },
+  {
+    id: "duotone-filter",
+    title: "Duotone Photo Filter",
+    description: "Spotify-style image colors",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"></path>
+          </svg>`
+  },
+  {
+    id: "lottie-color-editor",
+    title: "Lottie Color Editor",
+    description: "Recolor animation JSON",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M8 15h2l1 2 2-6 1 4h2"></path>
+          </svg>`
   }
 ];
 
 function renderToolsOverview() {
   const toolCards = WORKBENCH_TOOLS.map(t => `
-    <a href="/tools?t=${t.id}" class="tools-overview-card" onclick="navigate('tools', null, null, null, '${t.id}'); return false;">
+    <a href="${getToolUrl(t.id)}" class="tools-overview-card" onclick="navigate('tools', null, null, null, '${t.id}'); return false;">
       <div class="tools-overview-icon">${t.icon}</div>
       <div class="tools-overview-info">
         <div class="tools-overview-title">${t.title}</div>
@@ -3835,19 +3922,6 @@ function renderToolsPage(activeTool) {
   }
 
   const selectedTool = WORKBENCH_TOOLS.find(t => t.id === activeTool) || WORKBENCH_TOOLS[0];
-  
-  const sidebarMenuHtml = WORKBENCH_TOOLS.map(t => {
-    const isActive = t.id === selectedTool.id;
-    return `
-      <a href="/tools?t=${t.id}" class="tools-sidebar-item ${isActive ? 'active' : ''}" onclick="navigate('tools', null, null, null, '${t.id}'); return false;">
-        <div class="tools-sidebar-icon">${t.icon}</div>
-        <div class="tools-sidebar-info">
-          <div class="tools-sidebar-title">${t.title}</div>
-          <div class="tools-sidebar-desc">${t.description}</div>
-        </div>
-      </a>
-    `;
-  }).join('');
 
   let toolWorkbenchHtml = '';
   if (selectedTool.id === 'tints-shades') {
@@ -3858,49 +3932,48 @@ function renderToolsPage(activeTool) {
     toolWorkbenchHtml = renderBgRemoverTool();
   } else if (selectedTool.id === 'img-compressor') {
     toolWorkbenchHtml = renderImgCompressorTool();
+  } else if (selectedTool.id === 'image-format-converter') {
+    toolWorkbenchHtml = renderImageFormatConverterTool();
+  } else if (selectedTool.id === 'palette-extractor') {
+    toolWorkbenchHtml = renderPaletteExtractorTool();
+  } else if (selectedTool.id === 'qr-generator') {
+    toolWorkbenchHtml = renderQrGeneratorTool();
+  } else if (selectedTool.id === 'font-pairing') {
+    toolWorkbenchHtml = renderFontPairingTool();
+  } else if (selectedTool.id === 'unicode-text') {
+    toolWorkbenchHtml = renderUnicodeTextTool();
+  } else if (selectedTool.id === 'favicon-generator') {
+    toolWorkbenchHtml = renderFaviconGeneratorTool();
+  } else if (selectedTool.id === 'duotone-filter') {
+    toolWorkbenchHtml = renderDuotoneFilterTool();
+  } else if (selectedTool.id === 'lottie-color-editor') {
+    toolWorkbenchHtml = renderLottieColorEditorTool();
   }
 
   return `
-    <div class="layout-container tools-page-layout">
-      <!-- Left Sidebar Selector -->
-      <aside class="layout-left tools-sidebar">
-        <div class="sidebar-widget">
-          <h3 class="sidebar-widget-title" style="margin-bottom: 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); font-weight: 700;">Interactive Utilities</h3>
-          <div class="tools-sidebar-menu">
-            ${sidebarMenuHtml}
-          </div>
+    <div class="page-wide tools-focus-page">
+      <div class="header-navigation-row">
+        <button class="btn-back" onclick="navigate('tools')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Tools</span>
+        </button>
+        <div class="breadcrumb">
+          <span onclick="navigate('home')" style="cursor: pointer;">Home</span>
+          <span class="breadcrumb-separator">/</span>
+          <span onclick="navigate('tools')" style="cursor: pointer;">Tools</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">${selectedTool.title}</span>
         </div>
-      </aside>
+      </div>
 
-      <!-- Center Active Tool Workbench -->
-      <main class="layout-center tools-workbench">
-        <div class="header-navigation-row">
-          <button class="btn-back" onclick="navigate('tools')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12"></line>
-              <polyline points="12 19 5 12 12 5"></polyline>
-            </svg>
-            <span>Tools</span>
-          </button>
-          <div class="breadcrumb">
-            <span onclick="navigate('home')" style="cursor: pointer;">Home</span>
-            <span class="breadcrumb-separator">/</span>
-            <span onclick="navigate('tools')" style="cursor: pointer;">Tools</span>
-            <span class="breadcrumb-separator">/</span>
-            <span class="breadcrumb-current">${selectedTool.title}</span>
-          </div>
-        </div>
-
-
+      <main class="tools-workbench tools-workbench-focused">
         <div class="tools-workbench-inner">
           ${toolWorkbenchHtml}
         </div>
       </main>
-
-      <!-- Right Column -->
-      <aside class="layout-right tools-info-panel">
-        ${renderAboutPanelContent(selectedTool.id)}
-      </aside>
     </div>
   `;
 }
@@ -5004,6 +5077,536 @@ async function initImgCompressorListeners() {
   });
 }
 
+function renderToolIntro(title, subtitle) {
+  return `
+    <div class="tool-hero">
+      <div class="tools-overview-badge">Designer Tool</div>
+      <h2 class="tool-title">${title}</h2>
+      <p class="tool-subtitle">${subtitle}</p>
+    </div>
+  `;
+}
+
+function renderSimpleDropzone(idPrefix, title, desc, accept = "image/*") {
+  return `
+    <div class="bg-remover-dropzone" id="${idPrefix}Dropzone">
+      <input type="file" id="${idPrefix}FileInput" accept="${accept}" style="display: none;">
+      <svg class="bg-remover-dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="17 8 12 3 7 8"></polyline>
+        <line x1="12" y1="3" x2="12" y2="15"></line>
+      </svg>
+      <div class="bg-remover-dropzone-title">${title}</div>
+      <div class="bg-remover-dropzone-desc" style="margin-bottom: 20px;">${desc}</div>
+      <button class="btn-primary" id="${idPrefix}PickBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px;">Choose File</button>
+    </div>
+  `;
+}
+
+function wireDropzone(idPrefix, onFile) {
+  const dropzone = document.getElementById(`${idPrefix}Dropzone`);
+  const fileInput = document.getElementById(`${idPrefix}FileInput`);
+  const pickBtn = document.getElementById(`${idPrefix}PickBtn`);
+  if (!dropzone || !fileInput || !pickBtn) return;
+
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    onFile(e.dataTransfer.files[0]);
+  });
+  pickBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    onFile(fileInput.files[0]);
+    fileInput.value = '';
+  });
+}
+
+function loadImageFromFile(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => resolve({ img, url });
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Could not load image'));
+    };
+    img.src = url;
+  });
+}
+
+function canvasToBlob(canvas, type = 'image/png', quality = 0.92) {
+  return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function renderImageFormatConverterTool() {
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('Image Format Converter', 'Convert JPG, PNG, and WebP files in your browser using canvas export. Great for web-ready assets and quick client handoffs.')}
+      ${renderSimpleDropzone('ifc', 'Drop an image to convert', 'JPG, PNG, or WebP')}
+      <div id="ifcWorkspace" class="utility-panel" style="display:none;">
+        <div class="utility-preview-row">
+          <img id="ifcPreview" class="utility-preview-img" alt="Image preview">
+          <div class="utility-stack">
+            <div class="utility-file-name" id="ifcFilename">image.png</div>
+            <label class="utility-label">Export format</label>
+            <select id="ifcFormat" class="utility-select">
+              <option value="image/png">PNG</option>
+              <option value="image/jpeg">JPG</option>
+              <option value="image/webp">WebP</option>
+            </select>
+            <label class="utility-label">Quality <strong id="ifcQualityVal">92%</strong></label>
+            <input type="range" id="ifcQuality" min="0.4" max="1" step="0.01" value="0.92" class="ic-slider">
+            <button class="btn-primary" id="ifcConvertBtn" style="border-radius: 12px; padding: 12px 18px;">Convert & Download</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function initImageFormatConverterListeners() {
+  const workspace = document.getElementById('ifcWorkspace');
+  const preview = document.getElementById('ifcPreview');
+  const filename = document.getElementById('ifcFilename');
+  const format = document.getElementById('ifcFormat');
+  const quality = document.getElementById('ifcQuality');
+  const qualityVal = document.getElementById('ifcQualityVal');
+  const convertBtn = document.getElementById('ifcConvertBtn');
+  let currentFile = null;
+  let currentImage = null;
+  let currentUrl = null;
+
+  if (!workspace) return;
+  quality.addEventListener('input', () => qualityVal.textContent = Math.round(parseFloat(quality.value) * 100) + '%');
+
+  wireDropzone('ifc', async (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    if (currentUrl) URL.revokeObjectURL(currentUrl);
+    currentFile = file;
+    const loaded = await loadImageFromFile(file);
+    currentImage = loaded.img;
+    currentUrl = loaded.url;
+    preview.src = currentUrl;
+    filename.textContent = `${file.name} · ${currentImage.naturalWidth}x${currentImage.naturalHeight}`;
+    workspace.style.display = 'block';
+  });
+
+  convertBtn.addEventListener('click', async () => {
+    if (!currentImage || !currentFile) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = currentImage.naturalWidth;
+    canvas.height = currentImage.naturalHeight;
+    const ctx = canvas.getContext('2d');
+    if (format.value === 'image/jpeg') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.drawImage(currentImage, 0, 0);
+    const blob = await canvasToBlob(canvas, format.value, parseFloat(quality.value));
+    const ext = format.value === 'image/jpeg' ? 'jpg' : format.value.split('/')[1];
+    downloadBlob(blob, currentFile.name.replace(/\.[^.]+$/, '') + '.' + ext);
+  });
+}
+
+function renderPaletteExtractorTool() {
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('Color Palette Extractor', 'Upload an image and extract five dominant colors you can copy straight into your design file.')}
+      ${renderSimpleDropzone('pe', 'Drop an inspirational image', 'Extracts 5 dominant colors')}
+      <div id="peResult" style="display:none;">
+        <div class="utility-preview-row">
+          <img id="pePreview" class="utility-preview-img" alt="Palette source">
+          <div class="utility-stack" style="flex:1;">
+            <div class="utility-file-name" id="peFilename"></div>
+            <div class="utility-color-grid" id="peColors"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function initPaletteExtractorListeners() {
+  const result = document.getElementById('peResult');
+  const preview = document.getElementById('pePreview');
+  const colorsEl = document.getElementById('peColors');
+  const filename = document.getElementById('peFilename');
+  if (!result) return;
+
+  wireDropzone('pe', async (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const loaded = await loadImageFromFile(file);
+    preview.src = loaded.url;
+    filename.textContent = file.name;
+    const colorThief = new ColorThief();
+    const palette = colorThief.getPalette(loaded.img, 5);
+    colorsEl.innerHTML = palette.map(rgb => {
+      const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+      return `<button class="utility-color-swatch" style="background:${hex}; color:${getContrastColor(hex)}" onclick="copyToClipboard('${hex}')"><span>${hex}</span></button>`;
+    }).join('');
+    result.style.display = 'block';
+  });
+}
+
+function renderQrGeneratorTool() {
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('QR Code Generator', 'Create QR codes for packaging mockups, business cards, print layouts, and launch materials.')}
+      <div class="utility-panel">
+        <div class="utility-grid-two">
+          <div class="utility-stack">
+            <label class="utility-label">URL or text</label>
+            <textarea id="qrText" class="utility-textarea" rows="5">https://designschool.site</textarea>
+            <div class="utility-grid-two compact">
+              <label class="utility-label">Foreground <input type="color" id="qrForeground" value="#111111"></label>
+              <label class="utility-label">Background <input type="color" id="qrBackground" value="#FFFFFF"></label>
+            </div>
+            <button class="btn-primary" id="qrDownloadBtn" style="border-radius: 12px; padding: 12px 18px;">Download PNG</button>
+          </div>
+          <div class="qr-preview-box"><canvas id="qrCanvas" width="260" height="260"></canvas></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function initQrGeneratorListeners() {
+  const canvas = document.getElementById('qrCanvas');
+  const text = document.getElementById('qrText');
+  const foreground = document.getElementById('qrForeground');
+  const background = document.getElementById('qrBackground');
+  const downloadBtn = document.getElementById('qrDownloadBtn');
+  if (!canvas) return;
+
+  const qr = new QRious({ element: canvas, size: 260, value: text.value, foreground: foreground.value, background: background.value });
+  const update = () => {
+    qr.value = text.value.trim() || ' ';
+    qr.foreground = foreground.value;
+    qr.background = background.value;
+  };
+  [text, foreground, background].forEach(el => el.addEventListener('input', update));
+  downloadBtn.addEventListener('click', async () => {
+    const blob = await canvasToBlob(canvas, 'image/png');
+    downloadBlob(blob, 'qr-code.png');
+  });
+}
+
+const GOOGLE_FONT_PAIRS = [
+  ['Playfair Display', 'Inter'], ['Fraunces', 'Source Sans 3'], ['Space Grotesk', 'DM Sans'],
+  ['Merriweather', 'Open Sans'], ['Bebas Neue', 'Lato'], ['Cormorant Garamond', 'Nunito Sans'],
+  ['Oswald', 'Roboto'], ['Libre Baskerville', 'Work Sans'], ['Archivo Black', 'Archivo'],
+  ['Lora', 'Poppins'], ['Syne', 'Manrope'], ['Prata', 'Mulish']
+];
+
+function renderFontPairingTool() {
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('Google Font Pairing Generator', 'Randomize compatible Google Font combinations and preview them on a heading and body sample.')}
+      <div class="utility-panel">
+        <div class="font-pair-toolbar">
+          <div><div class="utility-label">Current pair</div><div class="utility-file-name" id="fpPairName"></div></div>
+          <button class="btn-primary" id="fpRandomBtn" style="border-radius: 99px; padding: 10px 22px;">Randomize</button>
+        </div>
+        <div class="font-pair-preview">
+          <h3 id="fpHeading">Design systems should feel calm, useful, and memorable.</h3>
+          <p id="fpBody">A strong type pairing gives interface content a rhythm: clear hierarchy for scanning, enough character for brand, and comfortable reading for long-form lessons.</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function initFontPairingListeners() {
+  const heading = document.getElementById('fpHeading');
+  const body = document.getElementById('fpBody');
+  const name = document.getElementById('fpPairName');
+  const btn = document.getElementById('fpRandomBtn');
+  if (!heading) return;
+  let idx = -1;
+
+  const applyPair = () => {
+    idx = (idx + 1 + Math.floor(Math.random() * (GOOGLE_FONT_PAIRS.length - 1))) % GOOGLE_FONT_PAIRS.length;
+    const [headingFont, bodyFont] = GOOGLE_FONT_PAIRS[idx];
+    const linkId = 'dynamic-google-font-pair';
+    const existing = document.getElementById(linkId);
+    if (existing) existing.remove();
+    const link = document.createElement('link');
+    link.id = linkId;
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${headingFont.replace(/ /g, '+')}:wght@400;600;700&family=${bodyFont.replace(/ /g, '+')}:wght@400;500;700&display=swap`;
+    document.head.appendChild(link);
+    heading.style.fontFamily = `"${headingFont}", serif`;
+    body.style.fontFamily = `"${bodyFont}", sans-serif`;
+    name.textContent = `${headingFont} + ${bodyFont}`;
+  };
+  btn.addEventListener('click', applyPair);
+  applyPair();
+}
+
+const UNICODE_STYLES = {
+  fraktur: { name: 'Fraktur', lower: '𝔞𝔟𝔠𝔡𝔢𝔣𝔤𝔥𝔦𝔧𝔨𝔩𝔪𝔫𝔬𝔭𝔮𝔯𝔰𝔱𝔲𝔳𝔴𝔵𝔶𝔷', upper: '𝔄𝔅ℭ𝔇𝔈𝔉𝔊ℌℑ𝔍𝔎𝔏𝔐𝔑𝔒𝔓𝔔ℜ𝔖𝔗𝔘𝔙𝔚𝔛𝔜ℨ' },
+  double: { name: 'Double-Struck', lower: '𝕒𝕓𝕔𝕕𝕖𝕗𝕘𝕙𝕚𝕛𝕜𝕝𝕞𝕟𝕠𝕡𝕢𝕣𝕤𝕥𝕦𝕧𝕨𝕩𝕪𝕫', upper: '𝔸𝔹ℂ𝔻𝔼𝔽𝔾ℍ𝕀𝕁𝕂𝕃𝕄ℕ𝕆ℙℚℝ𝕊𝕋𝕌𝕍𝕎𝕏𝕐ℤ' },
+  bold: { name: 'Math Bold', lower: '𝐚𝐛𝐜𝐝𝐞𝐟𝐠𝐡𝐢𝐣𝐤𝐥𝐦𝐧𝐨𝐩𝐪𝐫𝐬𝐭𝐮𝐯𝐰𝐱𝐲𝐳', upper: '𝐀𝐁𝐂𝐃𝐄𝐅𝐆𝐇𝐈𝐉𝐊𝐋𝐌𝐍𝐎𝐏𝐐𝐑𝐒𝐓𝐔𝐕𝐖𝐗𝐘𝐙' },
+  script: { name: 'Script', lower: '𝓪𝓫𝓬𝓭𝓮𝓯𝓰𝓱𝓲𝓳𝓴𝓵𝓶𝓷𝓸𝓹𝓺𝓻𝓼𝓽𝓾𝓿𝔀𝔁𝔂𝔃', upper: '𝓐𝓑𝓒𝓓𝓔𝓕𝓖𝓗𝓘𝓙𝓚𝓛𝓜𝓝𝓞𝓟𝓠𝓡𝓢𝓣𝓤𝓥𝓦𝓧𝓨𝓩' }
+};
+
+function convertUnicodeText(text, styleKey) {
+  const style = UNICODE_STYLES[styleKey];
+  return Array.from(text).map(ch => {
+    const lowerIndex = 'abcdefghijklmnopqrstuvwxyz'.indexOf(ch);
+    const upperIndex = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.indexOf(ch);
+    if (lowerIndex >= 0) return Array.from(style.lower)[lowerIndex];
+    if (upperIndex >= 0) return Array.from(style.upper)[upperIndex];
+    return ch;
+  }).join('');
+}
+
+function renderUnicodeTextTool() {
+  const options = Object.entries(UNICODE_STYLES).map(([key, value]) => `<option value="${key}">${value.name}</option>`).join('');
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('Stylish Text / Unicode Converter', 'Convert regular text into Unicode styles you can paste into bios, captions, and readmes.')}
+      <div class="utility-panel">
+        <label class="utility-label">Style</label>
+        <select id="utStyle" class="utility-select">${options}</select>
+        <label class="utility-label">Text</label>
+        <textarea id="utInput" class="utility-textarea" rows="4">Stylish fonts for designers</textarea>
+        <div class="unicode-output" id="utOutput"></div>
+        <button class="btn-primary" id="utCopyBtn" style="border-radius: 12px; padding: 12px 18px;">Copy Text</button>
+      </div>
+    </div>
+  `;
+}
+
+function initUnicodeTextListeners() {
+  const style = document.getElementById('utStyle');
+  const input = document.getElementById('utInput');
+  const output = document.getElementById('utOutput');
+  const copyBtn = document.getElementById('utCopyBtn');
+  if (!style) return;
+  const update = () => output.textContent = convertUnicodeText(input.value, style.value);
+  [style, input].forEach(el => el.addEventListener('input', update));
+  copyBtn.addEventListener('click', () => copyToClipboard(output.textContent));
+  update();
+}
+
+function renderFaviconGeneratorTool() {
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('Favicon Package Generator', 'Upload one square logo and generate browser favicons plus an Apple Touch Icon as a ZIP package.')}
+      ${renderSimpleDropzone('fg', 'Drop a square logo', 'PNG, JPG, SVG, or WebP')}
+      <div id="fgResult" style="display:none;">
+        <div class="utility-panel">
+          <div class="utility-preview-row">
+            <img id="fgPreview" class="utility-preview-img small" alt="Logo preview">
+            <div class="utility-stack">
+              <div class="utility-file-name" id="fgFilename"></div>
+              <div class="favicon-size-list">16x16 PNG · 32x32 PNG · 180x180 Apple Touch Icon · manifest snippet</div>
+              <button class="btn-primary" id="fgDownloadBtn" style="border-radius: 12px; padding: 12px 18px;">Download ZIP</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function initFaviconGeneratorListeners() {
+  const result = document.getElementById('fgResult');
+  const preview = document.getElementById('fgPreview');
+  const filename = document.getElementById('fgFilename');
+  const downloadBtn = document.getElementById('fgDownloadBtn');
+  let currentImage = null;
+  if (!result) return;
+
+  wireDropzone('fg', async (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const loaded = await loadImageFromFile(file);
+    currentImage = loaded.img;
+    preview.src = loaded.url;
+    filename.textContent = file.name;
+    result.style.display = 'block';
+  });
+
+  downloadBtn.addEventListener('click', async () => {
+    if (!currentImage) return;
+    const zip = new JSZip();
+    for (const size of [16, 32, 180]) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      canvas.getContext('2d').drawImage(currentImage, 0, 0, size, size);
+      const blob = await canvasToBlob(canvas, 'image/png');
+      zip.file(size === 180 ? 'apple-touch-icon.png' : `favicon-${size}x${size}.png`, blob);
+    }
+    zip.file('favicon-html.txt', '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\\n<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">\\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\\n');
+    const blob = await zip.generateAsync({ type: 'blob' });
+    downloadBlob(blob, 'favicon-package.zip');
+  });
+}
+
+function renderDuotoneFilterTool() {
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('Duotone Photo Filter Generator', 'Upload a photo, choose dark and light tones, and export a Spotify-style duotone image.')}
+      ${renderSimpleDropzone('df', 'Drop a photo', 'JPG, PNG, or WebP')}
+      <div id="dfWorkspace" class="utility-panel" style="display:none;">
+        <div class="utility-grid-two">
+          <div class="utility-stack">
+            <label class="utility-label">Dark color <input type="color" id="dfDark" value="#16213E"></label>
+            <label class="utility-label">Light color <input type="color" id="dfLight" value="#00E676"></label>
+            <button class="btn-primary" id="dfDownloadBtn" style="border-radius: 12px; padding: 12px 18px;">Download PNG</button>
+          </div>
+          <canvas id="dfCanvas" class="duotone-canvas"></canvas>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function initDuotoneFilterListeners() {
+  const workspace = document.getElementById('dfWorkspace');
+  const canvas = document.getElementById('dfCanvas');
+  const dark = document.getElementById('dfDark');
+  const light = document.getElementById('dfLight');
+  const downloadBtn = document.getElementById('dfDownloadBtn');
+  let sourceImage = null;
+  if (!workspace) return;
+
+  const applyDuotone = () => {
+    if (!sourceImage) return;
+    const maxWidth = 900;
+    const scale = Math.min(1, maxWidth / sourceImage.naturalWidth);
+    canvas.width = Math.round(sourceImage.naturalWidth * scale);
+    canvas.height = Math.round(sourceImage.naturalHeight * scale);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(sourceImage, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const darkRgb = hexToRgb(dark.value);
+    const lightRgb = hexToRgb(light.value);
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      const gray = (0.2126 * imageData.data[i] + 0.7152 * imageData.data[i + 1] + 0.0722 * imageData.data[i + 2]) / 255;
+      const mixed = mixColor(darkRgb, lightRgb, gray);
+      imageData.data[i] = mixed.r;
+      imageData.data[i + 1] = mixed.g;
+      imageData.data[i + 2] = mixed.b;
+    }
+    ctx.putImageData(imageData, 0, 0);
+  };
+
+  wireDropzone('df', async (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    const loaded = await loadImageFromFile(file);
+    sourceImage = loaded.img;
+    workspace.style.display = 'block';
+    applyDuotone();
+  });
+  [dark, light].forEach(el => el.addEventListener('input', applyDuotone));
+  downloadBtn.addEventListener('click', async () => {
+    const blob = await canvasToBlob(canvas, 'image/png');
+    downloadBlob(blob, 'duotone-image.png');
+  });
+}
+
+function renderLottieColorEditorTool() {
+  return `
+    <div class="simple-tool-content" style="text-align: left;">
+      ${renderToolIntro('Lottie Animation Color Editor', 'Drop a Lottie JSON file, find color arrays, replace colors, and download the edited animation.')}
+      ${renderSimpleDropzone('le', 'Drop a Lottie JSON file', 'Detects RGB color arrays inside JSON', '.json,application/json')}
+      <div id="leWorkspace" class="utility-panel" style="display:none;">
+        <div class="utility-file-name" id="leFilename"></div>
+        <div id="leColors" class="lottie-color-list"></div>
+        <button class="btn-primary" id="leDownloadBtn" style="border-radius: 12px; padding: 12px 18px;">Download Edited JSON</button>
+      </div>
+    </div>
+  `;
+}
+
+function rgbArrayToHex(arr) {
+  return rgbToHex(Math.round(arr[0] * 255), Math.round(arr[1] * 255), Math.round(arr[2] * 255));
+}
+
+function hexToLottieArray(hex, alpha = 1) {
+  const rgb = hexToRgb(hex);
+  return [rgb.r / 255, rgb.g / 255, rgb.b / 255, alpha];
+}
+
+function collectLottieColorRefs(node, refs = []) {
+  if (!node || typeof node !== 'object') return refs;
+  if (Array.isArray(node)) {
+    const looksLikeColor = node.length >= 3 && node.length <= 4 && node.slice(0, 3).every(n => typeof n === 'number' && n >= 0 && n <= 1);
+    if (looksLikeColor) refs.push(node);
+    node.forEach(item => collectLottieColorRefs(item, refs));
+  } else {
+    Object.values(node).forEach(value => collectLottieColorRefs(value, refs));
+  }
+  return refs;
+}
+
+function initLottieColorEditorListeners() {
+  const workspace = document.getElementById('leWorkspace');
+  const filename = document.getElementById('leFilename');
+  const colorsEl = document.getElementById('leColors');
+  const downloadBtn = document.getElementById('leDownloadBtn');
+  let lottieJson = null;
+  let colorRefsByHex = new Map();
+  if (!workspace) return;
+
+  wireDropzone('le', async (file) => {
+    if (!file) return;
+    try {
+      lottieJson = JSON.parse(await file.text());
+      filename.textContent = file.name;
+      const refs = collectLottieColorRefs(lottieJson);
+      colorRefsByHex = refs.reduce((map, ref) => {
+        const hex = rgbArrayToHex(ref);
+        if (!map.has(hex)) map.set(hex, []);
+        map.get(hex).push(ref);
+        return map;
+      }, new Map());
+      colorsEl.innerHTML = [...colorRefsByHex.entries()].map(([hex, refs], idx) => `
+        <label class="lottie-color-row">
+          <span class="lottie-color-chip" style="background:${hex}"></span>
+          <span>${hex}</span>
+          <small>${refs.length} layer value${refs.length === 1 ? '' : 's'}</small>
+          <input type="color" value="${hex}" data-lottie-color="${hex}" id="leColor${idx}">
+        </label>
+      `).join('') || '<div class="utility-file-name">No editable colors found.</div>';
+      colorsEl.querySelectorAll('input[type="color"]').forEach(input => {
+        input.addEventListener('input', () => {
+          const originalHex = input.dataset.lottieColor;
+          const next = hexToLottieArray(input.value);
+          colorRefsByHex.get(originalHex).forEach(ref => {
+            ref[0] = next[0]; ref[1] = next[1]; ref[2] = next[2];
+            if (ref.length > 3) ref[3] = next[3];
+          });
+          input.closest('.lottie-color-row').querySelector('.lottie-color-chip').style.background = input.value;
+        });
+      });
+      workspace.style.display = 'block';
+    } catch (err) {
+      showClipboardToast('Invalid Lottie JSON');
+    }
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    if (!lottieJson) return;
+    downloadBlob(new Blob([JSON.stringify(lottieJson, null, 2)], { type: 'application/json' }), 'edited-lottie.json');
+  });
+}
+
 function initToolsPageListeners(activeTool) {
   const toolId = activeTool || 'tints-shades';
   if (toolId === 'tints-shades') {
@@ -5014,7 +5617,40 @@ function initToolsPageListeners(activeTool) {
     initBgRemoverListeners();
   } else if (toolId === 'img-compressor') {
     initImgCompressorListeners();
+  } else if (toolId === 'image-format-converter') {
+    initImageFormatConverterListeners();
+  } else if (toolId === 'palette-extractor') {
+    initPaletteExtractorListeners();
+  } else if (toolId === 'qr-generator') {
+    initQrGeneratorListeners();
+  } else if (toolId === 'font-pairing') {
+    initFontPairingListeners();
+  } else if (toolId === 'unicode-text') {
+    initUnicodeTextListeners();
+  } else if (toolId === 'favicon-generator') {
+    initFaviconGeneratorListeners();
+  } else if (toolId === 'duotone-filter') {
+    initDuotoneFilterListeners();
+  } else if (toolId === 'lottie-color-editor') {
+    initLottieColorEditorListeners();
   }
+}
+
+function copyToClipboard(text) {
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    showClipboardToast('Copied to clipboard');
+  }).catch(() => {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    textarea.remove();
+    showClipboardToast('Copied to clipboard');
+  });
 }
 
 function showClipboardToast(message) {
@@ -5041,4 +5677,3 @@ function showClipboardToast(message) {
     setTimeout(() => toast.remove(), 300);
   }, 2500);
 }
-

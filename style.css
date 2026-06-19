@@ -4939,6 +4939,55 @@ mark.body-highlight {
   margin-top: 24px;
 }
 
+.tools-focus-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding-top: 24px;
+}
+
+.tools-workbench-focused {
+  max-width: 860px;
+  margin: 0 auto 72px;
+}
+
+.tools-workbench-focused .tools-workbench-inner {
+  margin-top: 24px;
+}
+
+.simple-tool-content,
+.tints-shades-tool-content,
+.contrast-checker-tool-content,
+.bg-remover-tool-content,
+.img-compressor-tool-content {
+  background: var(--bg);
+}
+
+.tool-hero {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tool-hero .tools-overview-badge {
+  margin-bottom: 12px;
+}
+
+.tool-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 0;
+  margin-bottom: 8px;
+}
+
+.tool-subtitle {
+  max-width: 680px;
+  font-size: 15px;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+
 /* Mobile horizontal tool picker */
 .tools-mobile-nav {
   display: flex;
@@ -5056,6 +5105,50 @@ mark.body-highlight {
     flex-direction: column !important;
     gap: 12px !important;
   }
+
+  .utility-panel {
+    padding: 16px;
+  }
+
+  .utility-preview-row,
+  .font-pair-toolbar {
+    flex-direction: column;
+  }
+
+  .utility-preview-img,
+  .utility-preview-img.small {
+    width: 100%;
+    max-height: 260px;
+  }
+
+  .utility-grid-two,
+  .utility-grid-two.compact {
+    grid-template-columns: 1fr;
+  }
+
+  .utility-color-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .font-pair-preview {
+    padding: 20px;
+  }
+
+  .font-pair-preview h3 {
+    font-size: 32px;
+  }
+
+  .unicode-output {
+    font-size: 20px;
+  }
+
+  .lottie-color-row {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .lottie-color-row small {
+    grid-column: 2 / -1;
+  }
 }
 
 
@@ -5131,6 +5224,224 @@ mark.body-highlight {
 
 .tools-workbench-inner {
   margin-top: 18px;
+}
+
+.utility-panel {
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 26px;
+  margin-bottom: 24px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.04);
+}
+
+.utility-preview-row {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+}
+
+.utility-preview-img {
+  width: 240px;
+  max-height: 240px;
+  object-fit: contain;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  flex-shrink: 0;
+  padding: 8px;
+}
+
+.utility-preview-img.small {
+  width: 120px;
+  max-height: 120px;
+}
+
+.utility-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  flex: 1;
+}
+
+.utility-file-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.utility-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+.utility-select,
+.utility-textarea {
+  width: 100%;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  padding: 12px 14px;
+  font: inherit;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.utility-select:focus,
+.utility-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: var(--bg);
+  box-shadow: 0 0 0 4px var(--accent-tint);
+}
+
+.utility-textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.utility-grid-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.75fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.utility-grid-two.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.utility-color-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(72px, 1fr));
+  gap: 10px;
+}
+
+.utility-color-swatch {
+  min-height: 110px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  padding: 12px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.utility-color-swatch:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+.qr-preview-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+}
+
+.font-pair-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.font-pair-preview {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+}
+
+.font-pair-preview h3 {
+  font-size: clamp(30px, 5vw, 56px);
+  line-height: 1.02;
+  margin-bottom: 18px;
+  color: var(--text);
+  letter-spacing: 0;
+}
+
+.font-pair-preview p {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text-2);
+  max-width: 660px;
+}
+
+.unicode-output {
+  min-height: 86px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 24px;
+  line-height: 1.4;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.favicon-size-list {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.duotone-canvas {
+  width: 100%;
+  max-height: 520px;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  object-fit: contain;
+}
+
+.lottie-color-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.lottie-color-row {
+  display: grid;
+  grid-template-columns: auto 90px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  background: var(--bg-3);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.lottie-color-row small {
+  color: var(--text-3);
+  font-weight: 600;
+}
+
+.lottie-color-chip {
+  width: 26px;
+  height: 26px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
 }
 
 .tool-card {
@@ -5358,13 +5669,15 @@ mark.body-highlight {
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.15s, transform 0.15s;
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
   font-family: var(--font);
+  box-shadow: 0 10px 24px rgba(255, 111, 44, 0.18);
 }
 
 .btn-primary:hover {
   opacity: 0.88;
   transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(255, 111, 44, 0.24);
 }
 
 /* Background Remover Style Rules */
@@ -5374,25 +5687,34 @@ mark.body-highlight {
   align-items: center;
   justify-content: center;
   border: 2px dashed var(--border);
-  border-radius: 16px;
-  padding: 48px 24px;
-  background: var(--bg-2);
+  border-radius: 20px;
+  padding: 54px 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 111, 44, 0.035), transparent 54%),
+    var(--bg-2);
   cursor: pointer;
   transition: all var(--transition);
   text-align: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28);
 }
 
 .bg-remover-dropzone:hover,
 .bg-remover-dropzone.dragover {
   border-color: var(--accent);
-  background: var(--bg-3);
+  background:
+    linear-gradient(180deg, rgba(255, 111, 44, 0.08), transparent 58%),
+    var(--bg-3);
+  transform: translateY(-1px);
 }
 
 .bg-remover-dropzone-icon {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   color: var(--accent);
   margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--accent-tint);
 }
 
 .bg-remover-dropzone-title {
@@ -5575,9 +5897,9 @@ mark.body-highlight {
 }
 
 .bg-remover-preview-card {
-  background: var(--bg-2);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -5612,11 +5934,12 @@ mark.body-highlight {
 
 /* Image Compressor Tool */
 .ic-settings-panel {
-  background: var(--bg-2);
+  background: linear-gradient(180deg, var(--bg-2), var(--bg));
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
   margin-bottom: 24px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.04);
 }
 
 .ic-settings-header {
@@ -5793,9 +6116,9 @@ mark.body-highlight {
 }
 
 .ic-preview-card {
-  background: var(--bg-2);
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 18px;
   padding: 12px;
   display: flex;
   flex-direction: column;
