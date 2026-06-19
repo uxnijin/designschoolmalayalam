@@ -202,7 +202,9 @@ const ARTICLE_IDS = [
   "design-education-and-careers",
   "improve-as-ux-designer",
   "from-zero-clients-to-global-brands",
-  "cracking-ux-whiteboarding"
+  "cracking-ux-whiteboarding",
+  "become-ux-designer-at-google",
+  "ux-designer-google-salary-roadmap"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
