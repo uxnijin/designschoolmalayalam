@@ -4887,3 +4887,45 @@ mark.body-highlight {
 .floating-player-widget .sound-wave .bar {
   background-color: #ffffff;
 }
+
+/* ── LIGHT MODE FLOATING PLAYER ADAPTATION ── */
+@media (prefers-color-scheme: light) {
+  .floating-player-widget {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: var(--text);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+  }
+  
+  .floating-title {
+    color: var(--text);
+  }
+  
+  .floating-meta {
+    color: var(--text-2);
+  }
+  
+  .floating-close-btn {
+    color: var(--text-3);
+  }
+  
+  .floating-close-btn:hover {
+    color: var(--text-2);
+  }
+  
+  .floating-progress-container {
+    background: rgba(0, 0, 0, 0.08);
+  }
+  
+  .floating-player-widget .sound-wave .bar {
+    background-color: var(--accent);
+  }
+  
+  @media (max-width: 820px) {
+    .floating-player-widget {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+  }
+}
