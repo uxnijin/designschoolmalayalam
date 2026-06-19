@@ -707,6 +707,11 @@ function buildUrl(page, catId, subId, articleId, query) {
   }
   if (page === 'search') return `/search?q=${encodeURIComponent(query)}`;
   if (page === 'dashboard') return '/dashboard';
+  if (page === 'tools') {
+    let url = '/tools';
+    if (query) url += `?t=${encodeURIComponent(query)}`;
+    return url;
+  }
   return '/';
 }
 
@@ -728,16 +733,17 @@ function parseUrl() {
       if (hashPath.startsWith('/article/') || hashPath.startsWith('article/') ||
         hashPath.startsWith('/category/') || hashPath.startsWith('category/') ||
         hashPath.startsWith('/search') || hashPath.startsWith('search') ||
-        hashPath.startsWith('/dashboard') || hashPath.startsWith('dashboard')) {
+        hashPath.startsWith('/dashboard') || hashPath.startsWith('dashboard') ||
+        hashPath.startsWith('/tools') || hashPath.startsWith('tools')) {
         routePath = hashPath.startsWith('/') ? hashPath : '/' + hashPath;
       }
     }
 
     const searchParams = new URLSearchParams(location.search);
-    const query = searchParams.get('q') || searchParams.get('hl') || null;
+    const query = searchParams.get('q') || searchParams.get('hl') || searchParams.get('t') || null;
 
     // Support old query-parameter-based hash URLs for backwards compatibility
-    if (location.hash && !routePath.startsWith('/article/') && !routePath.startsWith('/category/') && !routePath.startsWith('/dashboard')) {
+    if (location.hash && !routePath.startsWith('/article/') && !routePath.startsWith('/category/') && !routePath.startsWith('/dashboard') && !routePath.startsWith('/tools')) {
       const hash = location.hash.replace('#', '');
       const params = {};
       hash.split('&').forEach(p => { const [k, v] = p.split('='); if (k && v) params[k] = decodeURIComponent(v); });
@@ -754,6 +760,11 @@ function parseUrl() {
 
     if (routePath.startsWith('/dashboard')) {
       return { page: 'dashboard', catId: null, subId: null, articleId: null, query: null };
+    }
+
+    if (routePath.startsWith('/tools')) {
+      const activeTool = searchParams.get('t') || 'tints-shades';
+      return { page: 'tools', catId: null, subId: null, articleId: null, query: activeTool };
     }
 
     if (routePath.startsWith('/search')) {
@@ -983,6 +994,10 @@ function renderPage(state) {
           content.innerHTML = renderDashboardPage(); 
           updateQuizView();
           break;
+        case 'tools':
+          content.innerHTML = renderToolsPage(query);
+          initToolsPageListeners(query);
+          break;
         default: content.innerHTML = renderHome();
       }
       initEmptyStateLottie();
@@ -993,6 +1008,7 @@ function renderPage(state) {
         cleanupScrollListeners();
       }
       updateSEO(state);
+      updateHeaderActiveState(page);
       syncPlayersVisibility(state);
       activeRenderTimeout = null;
     }, 400);
@@ -1010,6 +1026,10 @@ function renderPage(state) {
         content.innerHTML = renderDashboardPage(); 
         updateQuizView();
         break;
+      case 'tools':
+        content.innerHTML = renderToolsPage(query);
+        initToolsPageListeners(query);
+        break;
       default: content.innerHTML = renderHome();
     }
     updateNavActive(catId);
@@ -1021,6 +1041,7 @@ function renderPage(state) {
       cleanupScrollListeners();
     }
     updateSEO(state);
+    updateHeaderActiveState(page);
     syncPlayersVisibility(state);
   }
 }
@@ -1037,6 +1058,7 @@ function renderSkeletonForPage(state, content) {
     case 'article': content.innerHTML = renderArticleSkeleton(catId, subId, articleId); break;
     case 'search': content.innerHTML = renderSearchSkeleton(query); break;
     case 'dashboard': content.innerHTML = renderDashboardSkeleton(); break;
+    case 'tools': content.innerHTML = renderToolsSkeleton(); break;
     default: content.innerHTML = renderHomeSkeleton();
   }
 }
@@ -1342,12 +1364,16 @@ function renderArticleSkeleton(catId, subId, articleId) {
 
 function updateNavActive(activeCatId) {
   const otherCatIds = CATEGORIES.filter(c => c.id !== 'ui-design' && c.id !== 'ux-design').map(c => c.id);
+  const isToolsActive = window.location.pathname.includes('/tools') || window.location.hash.includes('tools');
+
   document.querySelectorAll('.nav-link').forEach(btn => {
     const btnCatId = btn.dataset.catId;
-    if (btnCatId === 'more') {
-      btn.classList.toggle('active', otherCatIds.includes(activeCatId));
+    if (btnCatId === 'interactive-tools') {
+      btn.classList.toggle('active', isToolsActive);
+    } else if (btnCatId === 'more') {
+      btn.classList.toggle('active', !isToolsActive && otherCatIds.includes(activeCatId));
     } else {
-      btn.classList.toggle('active', btnCatId === activeCatId);
+      btn.classList.toggle('active', !isToolsActive && btnCatId === activeCatId);
     }
   });
 }
@@ -1412,6 +1438,14 @@ function initNav() {
       `;
     }).join('');
 
+    const toolsHtml = `
+      <div class="nav-item-wrapper" data-cat-id="interactive-tools">
+        <button class="nav-link" data-cat-id="interactive-tools" onclick="navigate('tools'); return false;">
+          <span>Tools</span>
+        </button>
+      </div>
+    `;
+
     const otherCatsHtml = otherCats.map(cat => {
       const articleCount = getArticlesByCategory(cat.id).length;
       const countText = `${articleCount} ${articleCount === 1 ? 'article' : 'articles'}`;
@@ -1448,7 +1482,7 @@ function initNav() {
       </div>
     `;
 
-    navLinks.innerHTML = directHtml + moreHtml;
+    navLinks.innerHTML = directHtml + toolsHtml + moreHtml;
 
     setupDropdownHoverEvents();
   }
@@ -3600,6 +3634,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (navLogo) {
     navLogo.addEventListener('click', () => navigate('home'));
   }
+  const btnToolsNav = document.getElementById('btnToolsNav');
+  if (btnToolsNav) {
+    btnToolsNav.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigate('tools');
+    });
+  }
+
   const btnDashboardNav = document.getElementById('btnDashboardNav');
   if (btnDashboardNav) {
     btnDashboardNav.addEventListener('click', (e) => {
@@ -3627,4 +3669,648 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderPage(initialState);
   updateLiveVisitors();
 });
+
+// ── INTERACTIVE DESIGNER UTILITIES ───────────────────────────
+
+function updateHeaderActiveState(page) {
+  const btnToolsNav = document.getElementById('btnToolsNav');
+  if (btnToolsNav) {
+    btnToolsNav.classList.toggle('active', page === 'tools');
+  }
+
+  const btnDashboardNav = document.getElementById('btnDashboardNav');
+  if (btnDashboardNav) {
+    btnDashboardNav.classList.toggle('active', page === 'dashboard');
+  }
+}
+
+const WORKBENCH_TOOLS = [
+  {
+    id: "tints-shades",
+    title: "Tints & Shades",
+    description: "Create color variations",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 0-10 10h20A10 10 0 0 0 12 2z" fill="currentColor"></path>
+          </svg>`
+  },
+  {
+    id: "contrast-checker",
+    title: "Contrast Checker",
+    description: "Verify accessibility (A11y)",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a10 10 0 0 0 0 20 10 10 0 0 0 0-20z"></path>
+            <path d="M12 6a6 6 0 0 0 0 12 6 6 0 0 0 0-12z" fill="currentColor"></path>
+          </svg>`
+  }
+];
+
+function renderToolsPage(activeTool) {
+  const selectedTool = WORKBENCH_TOOLS.find(t => t.id === activeTool) || WORKBENCH_TOOLS[0];
+  
+  const sidebarMenuHtml = WORKBENCH_TOOLS.map(t => {
+    const isActive = t.id === selectedTool.id;
+    return `
+      <a href="/tools?t=${t.id}" class="tools-sidebar-item ${isActive ? 'active' : ''}" onclick="navigate('tools', null, null, null, '${t.id}'); return false;">
+        <div class="tools-sidebar-icon">${t.icon}</div>
+        <div class="tools-sidebar-info">
+          <div class="tools-sidebar-title">${t.title}</div>
+          <div class="tools-sidebar-desc">${t.description}</div>
+        </div>
+      </a>
+    `;
+  }).join('');
+
+  let toolWorkbenchHtml = '';
+  if (selectedTool.id === 'tints-shades') {
+    toolWorkbenchHtml = renderTintsShadesTool();
+  } else if (selectedTool.id === 'contrast-checker') {
+    toolWorkbenchHtml = renderContrastCheckerTool();
+  }
+
+  return `
+    <div class="layout-container tools-page-layout">
+      <!-- Left Sidebar Selector -->
+      <aside class="layout-left tools-sidebar">
+        <div class="sidebar-widget">
+          <h3 class="sidebar-widget-title" style="margin-bottom: 16px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); font-weight: 700;">Interactive Utilities</h3>
+          <div class="tools-sidebar-menu">
+            ${sidebarMenuHtml}
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Active Tool Workbench -->
+      <main class="layout-center tools-workbench">
+        <div class="header-navigation-row">
+          <button class="btn-back" onclick="navigate('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Home</span>
+          </button>
+          <div class="breadcrumb">
+            <span onclick="navigate('home')" style="cursor: pointer;">Home</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">${selectedTool.title}</span>
+          </div>
+        </div>
+
+        <div class="tools-workbench-inner">
+          ${toolWorkbenchHtml}
+        </div>
+      </main>
+
+      <!-- Right Column -->
+      <aside class="layout-right tools-info-panel">
+        <div class="sidebar-widget">
+          <h4 class="info-panel-title" style="margin-bottom: 12px; font-size: 15px; font-weight: 700; color: var(--text);">About ${selectedTool.title}</h4>
+          <p class="info-panel-text" style="font-size: 13.5px; line-height: 1.5; color: var(--text-2); margin-bottom: 16px;">
+            ${selectedTool.id === 'tints-shades' 
+              ? 'Tints and shades are created by mixing a base color with white (to tint) or black (to shade). This helps build consistent color scales for hover states, buttons, backgrounds, and borders in your design system.' 
+              : ''}
+          </p>
+          <div class="info-panel-tip" style="padding: 12px; background: var(--accent-tint); border-left: 3px solid var(--accent); border-radius: 6px; font-size: 12.5px; line-height: 1.4; color: var(--text);">
+            <strong>Pro Tip:</strong> Click any generated color block to copy its HEX value instantly to your clipboard!
+          </div>
+        </div>
+      </aside>
+    </div>
+  `;
+}
+
+function renderTintsShadesTool() {
+  const defaultColor = '#FF6F2C';
+  const presets = ['#FF6F2C', '#6366F1', '#10B981', '#3B82F6', '#EC4899', '#8B5CF6', '#F59E0B', '#64748B'];
+  
+  const presetsHtml = presets.map(p => `
+    <button class="preset-dot" data-color="${p}" style="background-color: ${p}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); transition: transform 0.15s, border-color 0.15s; cursor: pointer; padding: 0;" title="${p}"></button>
+  `).join('');
+
+  return `
+    <div class="tints-shades-tool-content" style="text-align: left;">
+      <div style="margin-bottom: 32px;">
+        <h2 class="tool-title" style="font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px;">Tints & Shades Generator</h2>
+        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Create lighter (tints) and darker (shades) variations of any base color. Essential for building design systems.</p>
+      </div>
+
+      <div class="modern-color-picker-container" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px; background: var(--bg-2); border: 1px solid var(--border); padding: 24px; border-radius: 16px; max-width: 440px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <label style="font-size: 13.5px; font-weight: 700; color: var(--text-2);">Select Color</label>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Custom circular picker wrapper -->
+            <div class="custom-color-picker-trigger" id="colorPickerTrigger" style="background-color: ${defaultColor}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s;">
+              <input type="color" id="baseColorPicker" value="${defaultColor}" style="position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer;">
+            </div>
+            <input type="text" id="baseColorInput" value="${defaultColor}" placeholder="#FFFFFF" maxlength="7" style="background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: monospace; font-size: 14px; font-weight: 700; width: 110px; text-transform: uppercase; text-align: center;">
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 16px;">
+          <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 10px;">Aesthetic Presets</div>
+          <div class="presets-row" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            ${presetsHtml}
+          </div>
+        </div>
+      </div>
+
+      <div class="palette-container" style="display: flex; flex-direction: column; gap: 36px;">
+        <!-- Tints Section -->
+        <div class="palette-group">
+          <h3 class="palette-group-title" style="font-size: 14.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; color: var(--text-2);">Tints (Mix with White)</h3>
+          <div class="palette-grid" id="tintsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px;"></div>
+        </div>
+
+        <!-- Shades Section -->
+        <div class="palette-group">
+          <h3 class="palette-group-title" style="font-size: 14.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; color: var(--text-2);">Shades (Mix with Black)</h3>
+          <div class="palette-grid" id="shadesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px;"></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderToolsSkeleton() {
+  return `
+    <div class="layout-container tools-page-layout">
+      <!-- Left Sidebar Skeleton -->
+      <aside class="layout-left tools-sidebar">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 120px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="tools-sidebar-menu">
+            <div class="shimmer" style="width: 100%; height: 58px; border-radius: 12px; margin-bottom: 8px;"></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Workbench Skeleton -->
+      <main class="layout-center tools-workbench">
+        <div class="header-navigation-row">
+          <div class="shimmer" style="width: 70px; height: 32px; border-radius: 99px;"></div>
+          <div class="shimmer" style="width: 140px; height: 16px; border-radius: 4px;"></div>
+        </div>
+        
+        <div class="tints-shades-tool-content">
+          <div style="margin-bottom: 32px;">
+            <div class="shimmer" style="width: 250px; height: 28px; border-radius: 6px; margin-bottom: 8px;"></div>
+            <div class="shimmer" style="width: 380px; height: 16px; border-radius: 4px;"></div>
+          </div>
+          
+          <div class="modern-color-picker-container" style="margin-top: 24px;">
+            <div class="shimmer" style="width: 120px; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
+            <div class="shimmer" style="width: 180px; height: 42px; border-radius: 8px;"></div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Column Skeleton -->
+      <aside class="layout-right tools-info-panel">
+        <div class="sidebar-widget">
+          <div class="shimmer" style="width: 110px; height: 14px; margin-bottom: 16px; border-radius: 4px;"></div>
+          <div class="shimmer" style="width: 90%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
+          <div class="shimmer" style="width: 95%; height: 14px; margin-bottom: 8px; border-radius: 4px;"></div>
+        </div>
+      </aside>
+    </div>
+  `;
+}
+
+function hexToRgb(hex) {
+  const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+  const fullHex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+function rgbToHex(r, g, b) {
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+}
+
+function mixColor(color, mixColor, factor) {
+  const r = Math.round(color.r * (1 - factor) + mixColor.r * factor);
+  const g = Math.round(color.g * (1 - factor) + mixColor.g * factor);
+  const b = Math.round(color.b * (1 - factor) + mixColor.b * factor);
+  return { r, g, b };
+}
+
+function generateTintsAndShades(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return null;
+
+  const white = { r: 255, g: 255, b: 255 };
+  const black = { r: 0, g: 0, b: 0 };
+
+  const tints = [];
+  const shades = [];
+
+  for (let i = 0; i <= 9; i++) {
+    const factor = i / 10;
+    const tintRgb = mixColor(rgb, white, factor);
+    const shadeRgb = mixColor(rgb, black, factor);
+    
+    tints.push({
+      percent: Math.round(factor * 100),
+      hex: rgbToHex(tintRgb.r, tintRgb.g, tintRgb.b)
+    });
+    shades.push({
+      percent: Math.round(factor * 100),
+      hex: rgbToHex(shadeRgb.r, shadeRgb.g, shadeRgb.b)
+    });
+  }
+
+  return { tints, shades };
+}
+
+function getContrastColor(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return '#FFFFFF';
+  const y = 0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b;
+  return y > 140 ? '#000000' : '#FFFFFF';
+}
+
+function renderContrastCheckerTool() {
+  const defaultFg = '#1A1A1A';
+  const defaultBg = '#FFFFFF';
+  
+  return `
+    <div class="contrast-checker-tool-content" style="text-align: left;">
+      <div style="margin-bottom: 32px;">
+        <h2 class="tool-title" style="font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px;">Color Contrast Checker</h2>
+        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Check the contrast ratio between text (foreground) and background colors to ensure compliance with WCAG 2.1 accessibility standards.</p>
+      </div>
+
+      <div class="contrast-inputs-row" style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-bottom: 36px;">
+        
+        <!-- Text Color (Foreground) -->
+        <div class="modern-color-picker-container" style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-2); border: 1px solid var(--border); padding: 20px; border-radius: 16px;">
+          <label style="font-size: 13.5px; font-weight: 700; color: var(--text-2);">Text Color (Foreground)</label>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="custom-color-picker-trigger" id="fgColorPickerTrigger" style="background-color: ${defaultFg}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s;">
+              <input type="color" id="fgColorPicker" value="${defaultFg}" style="position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer;">
+            </div>
+            <input type="text" id="fgColorInput" value="${defaultFg}" placeholder="#1A1A1A" maxlength="7" style="background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: monospace; font-size: 14px; font-weight: 700; width: 110px; text-transform: uppercase; text-align: center;">
+          </div>
+        </div>
+
+        <!-- Swap Button -->
+        <button id="btnSwapColors" style="background: var(--bg-2); border: 1px solid var(--border); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-2); transition: all 0.15s; flex-shrink: 0;" title="Swap Colors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+            <polyline points="17 1 21 5 17 9"></polyline>
+            <line x1="3" y1="5" x2="21" y2="5"></line>
+            <polyline points="7 23 3 19 7 15"></polyline>
+            <line x1="21" y1="19" x2="3" y2="19"></line>
+          </svg>
+        </button>
+
+        <!-- Background Color -->
+        <div class="modern-color-picker-container" style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-2); border: 1px solid var(--border); padding: 20px; border-radius: 16px;">
+          <label style="font-size: 13.5px; font-weight: 700; color: var(--text-2);">Background Color</label>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="custom-color-picker-trigger" id="bgColorPickerTrigger" style="background-color: ${defaultBg}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s;">
+              <input type="color" id="bgColorPicker" value="${defaultBg}" style="position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer;">
+            </div>
+            <input type="text" id="bgColorInput" value="${defaultBg}" placeholder="#FFFFFF" maxlength="7" style="background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: monospace; font-size: 14px; font-weight: 700; width: 110px; text-transform: uppercase; text-align: center;">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results & Preview Grid -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 40px;">
+        
+        <!-- Score & Rules -->
+        <div style="background: var(--bg-2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 24px;">
+          <div style="display: flex; align-items: center; gap: 20px;">
+            <div style="background: var(--bg-3); border-radius: 50%; width: 90px; height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid var(--border); transition: border-color 0.15s; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" id="contrastRatioCircle">
+              <span id="contrastRatioVal" style="font-size: 22px; font-weight: 800; color: var(--text);">4.5</span>
+              <span style="font-size: 9px; color: var(--text-3); font-weight: 700; text-transform: uppercase; margin-top: -2px; letter-spacing: 0.05em;">ratio</span>
+            </div>
+            <div>
+              <div id="contrastRatingText" style="font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px;">Very Good</div>
+              <div style="font-size: 13px; color: var(--text-2); line-height: 1.4;" id="contrastDescription">Passes normal AA standard accessibility.</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; border-top: 1px solid var(--border); padding-top: 20px;">
+            <!-- AA Normal -->
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--text-2);">AA Normal Text (4.5:1)</span>
+              <span id="badgeAANormal" class="contrast-badge">Pass</span>
+            </div>
+            <!-- AA Large -->
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--text-2);">AA Large Text (3.0:1)</span>
+              <span id="badgeAALarge" class="contrast-badge">Pass</span>
+            </div>
+            <!-- AAA Normal -->
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--text-2);">AAA Normal Text (7.0:1)</span>
+              <span id="badgeAAANormal" class="contrast-badge">Fail</span>
+            </div>
+            <!-- AAA Large -->
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 13.5px; font-weight: 600; color: var(--text-2);">AAA Large Text (4.5:1)</span>
+              <span id="badgeAAALarge" class="contrast-badge">Pass</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Preview Panel -->
+        <div id="contrastPreviewBox" style="border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 24px; transition: background-color 0.15s; background-color: #FFFFFF; justify-content: center;">
+          <div>
+            <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 8px;">Normal Text Preview</div>
+            <p style="font-size: 15px; font-weight: 500; margin: 0; line-height: 1.5; color: #1A1A1A;" id="previewNormalText">The quick brown fox jumps over the lazy dog. Good design is accessible to everyone.</p>
+          </div>
+          <div style="border-top: 1px solid var(--border); opacity: 0.15;"></div>
+          <div>
+            <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-3); margin-bottom: 8px;">Large Text Preview</div>
+            <p style="font-size: 24px; font-weight: 800; margin: 0; line-height: 1.3; color: #1A1A1A;" id="previewLargeText">A11y Contrast Checker</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+
+function getLuminance(r, g, b) {
+  const a = [r, g, b].map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+}
+
+function calculateContrastRatio(fgHex, bgHex) {
+  const fgRgb = hexToRgb(fgHex);
+  const bgRgb = hexToRgb(bgHex);
+  if (!fgRgb || !bgRgb) return 1;
+
+  const fgL = getLuminance(fgRgb.r, fgRgb.g, fgRgb.b);
+  const bgL = getLuminance(bgRgb.r, bgRgb.g, bgRgb.b);
+
+  const l1 = Math.max(fgL, bgL);
+  const l2 = Math.min(fgL, bgL);
+
+  return (l1 + 0.05) / (l2 + 0.05);
+}
+
+function initTintsShadesListeners() {
+  const picker = document.getElementById('baseColorPicker');
+  const input = document.getElementById('baseColorInput');
+  const trigger = document.getElementById('colorPickerTrigger');
+
+  if (!picker || !input) return;
+
+  const updatePalette = (hex) => {
+    if (!hex.startsWith('#')) hex = '#' + hex;
+    if (!/^#[0-9A-F]{6}$/i.test(hex) && !/^#[0-9A-F]{3}$/i.test(hex)) {
+      return;
+    }
+
+    if (trigger) {
+      trigger.style.backgroundColor = hex;
+    }
+
+    const data = generateTintsAndShades(hex);
+    if (!data) return;
+
+    const tintsGrid = document.getElementById('tintsGrid');
+    const shadesGrid = document.getElementById('shadesGrid');
+
+    if (tintsGrid) {
+      tintsGrid.innerHTML = data.tints.map(t => {
+        const textColor = getContrastColor(t.hex);
+        return `
+          <div class="color-block" style="background-color: ${t.hex}; color: ${textColor};" data-hex="${t.hex}">
+            <div class="color-block-percent">${t.percent === 0 ? 'Base' : t.percent + '%'}</div>
+            <div class="color-block-hex">${t.hex}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (shadesGrid) {
+      shadesGrid.innerHTML = data.shades.map(s => {
+        const textColor = getContrastColor(s.hex);
+        return `
+          <div class="color-block" style="background-color: ${s.hex}; color: ${textColor};" data-hex="${s.hex}">
+            <div class="color-block-percent">${s.percent === 0 ? 'Base' : s.percent + '%'}</div>
+            <div class="color-block-hex">${s.hex}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    document.querySelectorAll('.color-block').forEach(block => {
+      block.addEventListener('click', () => {
+        const hexVal = block.dataset.hex;
+        navigator.clipboard.writeText(hexVal).then(() => {
+          showClipboardToast(`Copied ${hexVal}!`);
+        }).catch(err => {
+          console.error('Could not copy text: ', err);
+        });
+      });
+    });
+  };
+
+  picker.addEventListener('input', (e) => {
+    const hex = e.target.value.toUpperCase();
+    input.value = hex;
+    updatePalette(hex);
+  });
+
+  input.addEventListener('input', (e) => {
+    let hex = e.target.value;
+    if (!hex.startsWith('#') && hex.length > 0) {
+      hex = '#' + hex;
+    }
+    if (/^#[0-9A-F]{6}$/i.test(hex)) {
+      picker.value = hex;
+    }
+    updatePalette(hex);
+  });
+
+  document.querySelectorAll('.preset-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const color = dot.dataset.color;
+      picker.value = color;
+      input.value = color;
+      updatePalette(color);
+    });
+  });
+
+  updatePalette(picker.value);
+}
+
+function initContrastCheckerListeners() {
+  const fgPicker = document.getElementById('fgColorPicker');
+  const fgInput = document.getElementById('fgColorInput');
+  const fgTrigger = document.getElementById('fgColorPickerTrigger');
+
+  const bgPicker = document.getElementById('bgColorPicker');
+  const bgInput = document.getElementById('bgColorInput');
+  const bgTrigger = document.getElementById('bgColorPickerTrigger');
+
+  const swapBtn = document.getElementById('btnSwapColors');
+
+  if (!fgPicker || !fgInput || !bgPicker || !bgInput) return;
+
+  const updateContrast = () => {
+    let fgHex = fgInput.value;
+    let bgHex = bgInput.value;
+
+    if (!fgHex.startsWith('#')) fgHex = '#' + fgHex;
+    if (!bgHex.startsWith('#')) bgHex = '#' + bgHex;
+
+    if (!/^#[0-9A-F]{6}$/i.test(fgHex) || !/^#[0-9A-F]{6}$/i.test(bgHex)) return;
+
+    if (fgTrigger) fgTrigger.style.backgroundColor = fgHex;
+    if (bgTrigger) bgTrigger.style.backgroundColor = bgHex;
+
+    const ratio = calculateContrastRatio(fgHex, bgHex);
+    
+    const ratioValEl = document.getElementById('contrastRatioVal');
+    if (ratioValEl) ratioValEl.textContent = ratio.toFixed(1);
+
+    const ratioCircle = document.getElementById('contrastRatioCircle');
+    let borderColor = 'var(--border)';
+    let rating = 'Poor';
+    let desc = 'Fails accessibility standards.';
+
+    if (ratio >= 7) {
+      borderColor = '#10B981';
+      rating = 'Excellent (AAA)';
+      desc = 'Passes enhanced Web content guidelines.';
+    } else if (ratio >= 4.5) {
+      borderColor = '#3B82F6';
+      rating = 'Very Good (AA)';
+      desc = 'Passes basic Web content guidelines.';
+    } else if (ratio >= 3) {
+      borderColor = '#F59E0B';
+      rating = 'Fair';
+      desc = 'Passes AA guidelines only for large text.';
+    } else {
+      borderColor = '#EF4444';
+      rating = 'Poor Contrast';
+      desc = 'Hard to read. Fails accessibility guidelines.';
+    }
+
+    if (ratioCircle) {
+      ratioCircle.style.borderColor = borderColor;
+    }
+
+    const ratingTextEl = document.getElementById('contrastRatingText');
+    if (ratingTextEl) ratingTextEl.textContent = rating;
+
+    const ratingDescEl = document.getElementById('contrastDescription');
+    if (ratingDescEl) ratingDescEl.textContent = desc;
+
+    const updateBadge = (id, condition) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = condition ? 'PASS' : 'FAIL';
+        el.className = 'contrast-badge ' + (condition ? 'pass' : 'fail');
+      }
+    };
+
+    updateBadge('badgeAANormal', ratio >= 4.5);
+    updateBadge('badgeAALarge', ratio >= 3.0);
+    updateBadge('badgeAAANormal', ratio >= 7.0);
+    updateBadge('badgeAAALarge', ratio >= 4.5);
+
+    const previewBox = document.getElementById('contrastPreviewBox');
+    if (previewBox) {
+      previewBox.style.backgroundColor = bgHex;
+    }
+
+    const previewNormal = document.getElementById('previewNormalText');
+    if (previewNormal) {
+      previewNormal.style.color = fgHex;
+    }
+
+    const previewLarge = document.getElementById('previewLargeText');
+    if (previewLarge) {
+      previewLarge.style.color = fgHex;
+    }
+  };
+
+  const setupColorListeners = (picker, input, trigger) => {
+    picker.addEventListener('input', (e) => {
+      const hex = e.target.value.toUpperCase();
+      input.value = hex;
+      updateContrast();
+    });
+
+    input.addEventListener('input', (e) => {
+      let hex = e.target.value;
+      if (!hex.startsWith('#') && hex.length > 0) {
+        hex = '#' + hex;
+      }
+      if (/^#[0-9A-F]{6}$/i.test(hex)) {
+        picker.value = hex;
+      }
+      updateContrast();
+    });
+  };
+
+  setupColorListeners(fgPicker, fgInput, fgTrigger);
+  setupColorListeners(bgPicker, bgInput, bgTrigger);
+
+  if (swapBtn) {
+    swapBtn.addEventListener('click', () => {
+      const tempVal = fgInput.value;
+      fgInput.value = bgInput.value;
+      fgPicker.value = bgInput.value;
+
+      bgInput.value = tempVal;
+      bgPicker.value = tempVal;
+
+      updateContrast();
+    });
+  }
+
+  updateContrast();
+}
+
+function initToolsPageListeners(activeTool) {
+  const toolId = activeTool || 'tints-shades';
+  if (toolId === 'tints-shades') {
+    initTintsShadesListeners();
+  } else if (toolId === 'contrast-checker') {
+    initContrastCheckerListeners();
+  }
+}
+
+function showClipboardToast(message) {
+  const existing = document.getElementById('clipboard-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'clipboard-toast';
+  toast.className = 'clipboard-toast';
+  toast.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"></polyline>
+    </svg>
+    <span>${message}</span>
+  `;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 10);
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
 
