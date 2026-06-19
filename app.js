@@ -4363,11 +4363,43 @@ function renderBgRemoverTool() {
 
       <!-- Loading State -->
       <div class="bg-remover-loading" id="bgLoading" style="display: none;">
-        <div class="bg-remover-spinner"></div>
-        <div class="bg-remover-loading-text" id="bgLoadingText">Preparing AI Model…</div>
-        <div class="bg-remover-loading-subtext" id="bgLoadingSubtext">This may take a moment on first run</div>
-        <div class="bg-remover-progress-container">
-          <div class="bg-remover-progress-bar" id="bgProgressBar"></div>
+        <!-- Blurred thumbnail backdrop -->
+        <div class="bg-loading-backdrop" id="bgLoadingBackdrop"></div>
+
+        <div class="bg-loading-card">
+          <!-- Step indicator -->
+          <div class="bg-loading-steps">
+            <div class="bg-loading-step active" id="bgStep1">
+              <div class="bg-loading-step-dot">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              </div>
+              <span>Load Model</span>
+            </div>
+            <div class="bg-loading-step-line"></div>
+            <div class="bg-loading-step" id="bgStep2">
+              <div class="bg-loading-step-dot">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg>
+              </div>
+              <span>Remove BG</span>
+            </div>
+            <div class="bg-loading-step-line"></div>
+            <div class="bg-loading-step" id="bgStep3">
+              <div class="bg-loading-step-dot">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <span>Finalise</span>
+            </div>
+          </div>
+
+          <!-- Main message -->
+          <div class="bg-loading-title" id="bgLoadingText">Loading AI Model…</div>
+          <div class="bg-loading-tip" id="bgLoadingSubtext">One-time download, cached for future use</div>
+
+          <!-- Progress bar -->
+          <div class="bg-remover-progress-container" style="max-width: 100%;">
+            <div class="bg-remover-progress-bar" id="bgProgressBar"></div>
+          </div>
+          <div class="bg-loading-pct" id="bgLoadingPct">0%</div>
         </div>
       </div>
 
@@ -4442,34 +4474,79 @@ async function initBgRemoverListeners() {
     dropzone.style.display = 'none';
     result.style.display = 'none';
     loading.style.display = 'flex';
+
+    const backdrop = document.getElementById('bgLoadingBackdrop');
+    const pctEl = document.getElementById('bgLoadingPct');
+    const step1 = document.getElementById('bgStep1');
+    const step2 = document.getElementById('bgStep2');
+    const step3 = document.getElementById('bgStep3');
+
+    // Set blurred backdrop to the original image
+    if (backdrop) backdrop.style.backgroundImage = `url(${originalUrl})`;
+
+    // Reset steps
+    [step1, step2, step3].forEach(s => s && s.classList.remove('active', 'done'));
+    if (step1) step1.classList.add('active');
     progressBar.style.width = '0%';
-    loadingText.textContent = 'Downloading AI Model…';
+    if (pctEl) pctEl.textContent = '0%';
+    loadingText.textContent = 'Loading AI Model…';
     loadingSubtext.textContent = 'One-time download, cached for future use';
+
+    // Rotate witty tips during loading
+    const tips = [
+      'The AI model runs entirely on your device 🔒',
+      'Your image never leaves your browser ✨',
+      'WebAssembly makes this lightning fast ⚡',
+      'No API keys. No sign-up. No limits 🚀',
+      'First run downloads the model, then it\'s instant 💾',
+    ];
+    let tipIdx = 0;
+    const tipInterval = setInterval(() => {
+      tipIdx = (tipIdx + 1) % tips.length;
+      if (loadingSubtext) loadingSubtext.textContent = tips[tipIdx];
+    }, 2200);
+
+    const setProgress = (pct) => {
+      progressBar.style.width = pct + '%';
+      if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+    };
 
     try {
       // Dynamically import the ESM library
       const { removeBackground } = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm');
 
-      loadingText.textContent = 'Processing Image…';
-      loadingSubtext.textContent = 'The AI is removing your background';
-      progressBar.style.width = '30%';
+      if (step1) { step1.classList.remove('active'); step1.classList.add('done'); }
+      if (step2) step2.classList.add('active');
+      loadingText.textContent = 'Removing Background…';
+      setProgress(30);
 
       const config = {
         progress: (key, current, total) => {
           if (total > 0) {
-            const pct = Math.round((current / total) * 100);
-            progressBar.style.width = Math.max(30, pct) + '%';
+            const pct = 30 + Math.round((current / total) * 65);
+            setProgress(Math.min(pct, 95));
           }
         }
       };
 
       const blob = await removeBackground(file, config);
-      progressBar.style.width = '100%';
+
+      if (step2) { step2.classList.remove('active'); step2.classList.add('done'); }
+      if (step3) step3.classList.add('active');
+      loadingText.textContent = 'Finalising…';
+      setProgress(98);
+      clearInterval(tipInterval);
+
+      // Small delay for the finalise step to register
+      await new Promise(r => setTimeout(r, 400));
+      setProgress(100);
+      if (step3) { step3.classList.remove('active'); step3.classList.add('done'); }
 
       resultBlobUrl = URL.createObjectURL(blob);
       resultImg.src = resultBlobUrl;
 
-      // Show result
+      // Slight pause then show results
+      await new Promise(r => setTimeout(r, 300));
       loading.style.display = 'none';
       result.style.display = 'block';
 
@@ -4483,10 +4560,11 @@ async function initBgRemoverListeners() {
       };
 
     } catch (err) {
+      clearInterval(tipInterval);
       console.error('Background removal failed:', err);
       loadingText.textContent = 'Something went wrong';
       loadingSubtext.textContent = 'Please try a different image or refresh the page';
-      progressBar.style.width = '0%';
+      setProgress(0);
       setTimeout(showDropzone, 3000);
     }
 
