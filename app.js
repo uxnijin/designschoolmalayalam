@@ -3088,6 +3088,12 @@ function renderAudioPlayer(article) {
             <line x1="12" y1="19" x2="12" y2="22"/>
           </svg>
           <span>Podcast Episode</span>
+          <div class="sound-wave paused" id="podcast-sound-wave" style="margin-left: 6px;">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
         </div>
         <div class="podcast-credit">
           Original video by <a href="${article.podcastCredit.youtubeUrl}" target="_blank" rel="noopener">${article.podcastCredit.channel}</a>
@@ -3157,16 +3163,19 @@ function initGlobalPlayers() {
     globalAudio.addEventListener('play', () => {
       updateGlobalPlayers();
       syncInlinePlayerPlayState(true);
+      syncSoundWaves(true);
     });
     
     globalAudio.addEventListener('pause', () => {
       updateGlobalPlayers();
       syncInlinePlayerPlayState(false);
+      syncSoundWaves(false);
     });
     
     globalAudio.addEventListener('ended', () => {
       updateGlobalPlayers();
       syncInlinePlayerPlayState(false);
+      syncSoundWaves(false);
     });
   }
 
@@ -3186,8 +3195,14 @@ function initGlobalPlayers() {
           <rect x="14" y="4" width="4" height="16"/>
         </svg>
       </button>
-      <div class="nav-mini-details" id="nmp-details-navigate" style="cursor: pointer;">
-        <div class="nav-mini-title" id="nmp-title">Title</div>
+      <div class="nav-mini-details" id="nmp-details-navigate" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <div class="nav-mini-title" id="nmp-title" style="flex: 1;">Title</div>
+        <div class="sound-wave paused" id="nmp-sound-wave">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
       </div>
       <div class="nav-mini-progress-container" id="nmp-progress-container">
         <div class="nav-mini-progress-bar" id="nmp-progress-bar"></div>
@@ -3223,9 +3238,17 @@ function initGlobalPlayers() {
             <rect x="14" y="4" width="4" height="16"/>
           </svg>
         </button>
-        <div class="floating-details" id="fp-details-navigate" style="cursor: pointer; flex: 1; min-width: 0;">
-          <div class="floating-title" id="fp-title">Title</div>
-          <div class="floating-meta" id="fp-meta">Meta</div>
+        <div class="floating-details" id="fp-details-navigate" style="cursor: pointer; flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px;">
+          <div style="flex: 1; min-width: 0;">
+            <div class="floating-title" id="fp-title">Title</div>
+            <div class="floating-meta" id="fp-meta">Meta</div>
+          </div>
+          <div class="sound-wave paused" id="fp-sound-wave">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
         </div>
         <button class="floating-close-btn" id="fp-close-btn" aria-label="Close player">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
@@ -3344,6 +3367,9 @@ function syncPlayersVisibility(state) {
     if (mini) mini.style.display = 'flex';
     if (float) float.style.display = 'flex';
     updateGlobalPlayers();
+    if (globalAudio) {
+      syncSoundWaves(!globalAudio.paused);
+    }
   }
 }
 
@@ -3359,6 +3385,16 @@ function syncInlinePlayerPlayState(isPlaying) {
       pauseSvg.style.display = 'none';
     }
   }
+}
+
+function syncSoundWaves(isPlaying) {
+  const ids = ['nmp-sound-wave', 'fp-sound-wave', 'podcast-sound-wave'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.toggle('paused', !isPlaying);
+    }
+  });
 }
 
 function syncInlinePlayerProgress() {
@@ -3439,9 +3475,11 @@ function initAudioPlayer(articleId) {
   if (!globalAudio.paused) {
     playSvg.style.display = 'none';
     pauseSvg.style.display = 'block';
+    syncSoundWaves(true);
   } else {
     playSvg.style.display = 'block';
     pauseSvg.style.display = 'none';
+    syncSoundWaves(false);
   }
   
   syncInlinePlayerProgress();

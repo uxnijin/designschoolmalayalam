@@ -4834,3 +4834,48 @@ mark.body-highlight {
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25) !important;
   }
 }
+
+/* ============================================================
+   SOUND WAVE VISUALIZER FOR PODCAST PLAYER
+   ============================================================ */
+
+.sound-wave {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.sound-wave .bar {
+  width: 2px;
+  height: 100%;
+  background-color: var(--accent);
+  border-radius: 1px;
+  animation: bounce 0.8s ease-in-out infinite alternate;
+  transform-origin: bottom;
+}
+
+.sound-wave .bar:nth-child(1) { animation-delay: 0.1s; height: 30%; }
+.sound-wave .bar:nth-child(2) { animation-delay: 0.4s; height: 60%; }
+.sound-wave .bar:nth-child(3) { animation-delay: 0.2s; height: 90%; }
+.sound-wave .bar:nth-child(4) { animation-delay: 0.6s; height: 40%; }
+
+@keyframes bounce {
+  0% {
+    transform: scaleY(0.3);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+.sound-wave.paused .bar {
+  animation-play-state: paused;
+  transform: scaleY(0.3);
+}
+
+.floating-player-widget .sound-wave .bar {
+  background-color: #ffffff;
+}
