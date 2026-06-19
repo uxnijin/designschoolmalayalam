@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["ux-designer-google-salary-roadmap"] = {
   date: "2026-06-19",
   
   tags: ["ux career", "google designer", "salary roadmap", "dhairya decodes", "podcast"],
-  audioUrl: "assets/podcasts/ux-designer-google-salary-roadmap.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/ux-designer-google-salary-roadmap.mp3",
   youtubeUrl: "https://youtu.be/fm2bBL3vQWg?si=y7FajT3PWfGBf8Ry",
   podcastCredit: {
     channel: "Dhairya Decodes",

@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["become-ux-designer-at-google"] = {
   date: "2026-06-19",
   
   tags: ["ux career", "google designer", "portfolio", "punit chawla", "podcast"],
-  audioUrl: "assets/podcasts/become-ux-designer-at-google.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/become-ux-designer-at-google.mp3",
   youtubeUrl: "https://youtu.be/UYbnGBKrC84?si=Jw6RqfF9wIVDzrj9",
   podcastCredit: {
     channel: "Punit Chawla",

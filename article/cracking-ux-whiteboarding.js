@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["cracking-ux-whiteboarding"] = {
   date: "2026-06-19",
   
   tags: ["ux interviews", "whiteboarding", "coinbase", "spotify", "podcast"],
-  audioUrl: "assets/podcasts/cracking-ux-whiteboarding.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/cracking-ux-whiteboarding.mp3",
   youtubeUrl: "https://youtu.be/2NKBILXZ5Yg?si=MyGPRH0Z8qYQGiDr",
   podcastCredit: {
     channel: "UX Masterclass Series",
