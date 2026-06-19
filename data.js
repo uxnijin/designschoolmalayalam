@@ -195,7 +195,11 @@ const ARTICLE_IDS = [
   "accessibility",
   "behavioral-economics-for-ux",
   "serial-task-switching",
-  "conversational-design-and-ui"
+  "conversational-design-and-ui",
+  "getting-hired-in-ux",
+  "product-design-wisdom",
+  "design-process-is-dead",
+  "design-education-and-careers"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
