@@ -5226,6 +5226,189 @@ mark.body-highlight {
   margin-top: 2px;
 }
 
+/* Generic Primary Button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+  font-family: var(--font);
+}
+
+.btn-primary:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+/* Background Remover Style Rules */
+.bg-remover-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: 16px;
+  padding: 48px 24px;
+  background: var(--bg-2);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+}
+
+.bg-remover-dropzone:hover,
+.bg-remover-dropzone.dragover {
+  border-color: var(--accent);
+  background: var(--bg-3);
+}
+
+.bg-remover-dropzone-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.bg-remover-dropzone-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.bg-remover-dropzone-desc {
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* Loading Panel */
+.bg-remover-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.bg-remover-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: bg-spinner-anim 0.8s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes bg-spinner-anim {
+  to { transform: rotate(360deg); }
+}
+
+.bg-remover-loading-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.bg-remover-loading-subtext {
+  font-size: 13px;
+  color: var(--text-2);
+  margin-bottom: 20px;
+}
+
+.bg-remover-progress-container {
+  width: 100%;
+  max-width: 320px;
+  height: 6px;
+  background: var(--bg-3);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.bg-remover-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 99px;
+  transition: width 0.15s ease;
+}
+
+/* Results Grid */
+.bg-remover-result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.bg-remover-preview-card {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bg-remover-preview-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-3);
+}
+
+.bg-remover-img-wrapper {
+  aspect-ratio: 4/3;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--bg-3);
+}
+
+.bg-remover-img-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Custom checkerboard background for transparency */
+.checkerboard-bg {
+  background-color: #ffffff;
+  background-image: linear-gradient(45deg, #f0f0f0 25%, transparent 25%),
+                    linear-gradient(-45deg, #f0f0f0 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, #f0f0f0 75%),
+                    linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .checkerboard-bg {
+    background-color: #1a1a1a;
+    background-image: linear-gradient(45deg, #242424 25%, transparent 25%),
+                      linear-gradient(-45deg, #242424 25%, transparent 25%),
+                      linear-gradient(45deg, transparent 75%, #242424 75%),
+                      linear-gradient(-45deg, transparent 75%, #242424 75%);
+  }
+}
+
 @media (prefers-color-scheme: light) {
   .clipboard-toast {
     background: rgba(255, 255, 255, 0.9);

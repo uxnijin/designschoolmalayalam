@@ -3703,6 +3703,15 @@ const WORKBENCH_TOOLS = [
             <path d="M12 2a10 10 0 0 0 0 20 10 10 0 0 0 0-20z"></path>
             <path d="M12 6a6 6 0 0 0 0 12 6 6 0 0 0 0-12z" fill="currentColor"></path>
           </svg>`
+  },
+  {
+    id: "bg-remover",
+    title: "Background Remover",
+    description: "AI-powered, runs in browser",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+            <path d="M3 9h18M9 21V9"></path>
+          </svg>`
   }
 ];
 
@@ -3727,6 +3736,8 @@ function renderToolsPage(activeTool) {
     toolWorkbenchHtml = renderTintsShadesTool();
   } else if (selectedTool.id === 'contrast-checker') {
     toolWorkbenchHtml = renderContrastCheckerTool();
+  } else if (selectedTool.id === 'bg-remover') {
+    toolWorkbenchHtml = renderBgRemoverTool();
   }
 
   return `
@@ -3804,6 +3815,24 @@ function renderAboutPanelContent(toolId) {
           </svg>
           <div>
             <strong>Pro Tip:</strong> Click the swap button in the center to quickly flip foreground and background color combinations.
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (toolId === 'bg-remover') {
+    return `
+      <div class="sidebar-widget">
+        <h4 class="info-panel-title">About Background Remover</h4>
+        <p class="info-panel-desc" style="margin-bottom: 24px;">
+          This tool runs a neural network model directly inside your browser using WebAssembly. Your images never leave your device, making it completely private, free, and unlimited.
+        </p>
+
+        <div class="info-panel-tip-card">
+          <svg class="info-panel-tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.5V19a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.5c0-.98-.4-1.9-1.077-2.506l-.547-.547z"></path>
+          </svg>
+          <div>
+            <strong>Pro Tip:</strong> The AI model (~5MB) is downloaded once on first use and cached by your browser for instant future sessions.
           </div>
         </div>
       </div>
@@ -4311,12 +4340,196 @@ function initContrastCheckerListeners() {
   updateContrast();
 }
 
+function renderBgRemoverTool() {
+  return `
+    <div class="bg-remover-tool-content" style="text-align: left;">
+      <div style="margin-bottom: 32px;">
+        <h2 class="tool-title" style="font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px;">Background Remover</h2>
+        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Remove the background from any image instantly. Powered by an AI model that runs 100% inside your browser — private, free, and unlimited.</p>
+      </div>
+
+      <!-- Dropzone -->
+      <div class="bg-remover-dropzone" id="bgDropzone">
+        <input type="file" id="bgFileInput" accept="image/*" style="display: none;">
+        <svg class="bg-remover-dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+        <div class="bg-remover-dropzone-title">Drop your image here</div>
+        <div class="bg-remover-dropzone-desc" style="margin-bottom: 20px;">or click to browse — supports JPG, PNG, WEBP</div>
+        <button class="btn-primary" id="bgPickBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px;">Choose Image</button>
+      </div>
+
+      <!-- Loading State -->
+      <div class="bg-remover-loading" id="bgLoading" style="display: none;">
+        <div class="bg-remover-spinner"></div>
+        <div class="bg-remover-loading-text" id="bgLoadingText">Preparing AI Model…</div>
+        <div class="bg-remover-loading-subtext" id="bgLoadingSubtext">This may take a moment on first run</div>
+        <div class="bg-remover-progress-container">
+          <div class="bg-remover-progress-bar" id="bgProgressBar"></div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="bgResult" style="display: none;">
+        <div class="bg-remover-result-grid">
+          <div class="bg-remover-preview-card">
+            <div class="bg-remover-preview-title">Original</div>
+            <div class="bg-remover-img-wrapper">
+              <img id="bgOriginalImg" src="" alt="Original">
+            </div>
+          </div>
+          <div class="bg-remover-preview-card">
+            <div class="bg-remover-preview-title">Background Removed</div>
+            <div class="bg-remover-img-wrapper checkerboard-bg">
+              <img id="bgResultImg" src="" alt="Result">
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button class="btn-primary" id="bgDownloadBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px; display: flex; align-items: center; gap: 8px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Download PNG
+          </button>
+          <button id="bgResetBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px; background: var(--bg-2); border: 1px solid var(--border); color: var(--text-2); cursor: pointer; transition: all var(--transition);">
+            Upload Another
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function initBgRemoverListeners() {
+  const dropzone = document.getElementById('bgDropzone');
+  const fileInput = document.getElementById('bgFileInput');
+  const pickBtn = document.getElementById('bgPickBtn');
+  const loading = document.getElementById('bgLoading');
+  const result = document.getElementById('bgResult');
+  const loadingText = document.getElementById('bgLoadingText');
+  const loadingSubtext = document.getElementById('bgLoadingSubtext');
+  const progressBar = document.getElementById('bgProgressBar');
+  const originalImg = document.getElementById('bgOriginalImg');
+  const resultImg = document.getElementById('bgResultImg');
+  const downloadBtn = document.getElementById('bgDownloadBtn');
+  const resetBtn = document.getElementById('bgResetBtn');
+
+  if (!dropzone) return;
+
+  let resultBlobUrl = null;
+
+  const showDropzone = () => {
+    dropzone.style.display = 'flex';
+    loading.style.display = 'none';
+    result.style.display = 'none';
+    if (resultBlobUrl) { URL.revokeObjectURL(resultBlobUrl); resultBlobUrl = null; }
+  };
+
+  const processFile = async (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+
+    // Show original preview
+    const originalUrl = URL.createObjectURL(file);
+    originalImg.src = originalUrl;
+
+    // Switch to loading state
+    dropzone.style.display = 'none';
+    result.style.display = 'none';
+    loading.style.display = 'flex';
+    progressBar.style.width = '0%';
+    loadingText.textContent = 'Downloading AI Model…';
+    loadingSubtext.textContent = 'One-time download, cached for future use';
+
+    try {
+      // Dynamically import the ESM library
+      const { removeBackground } = await import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm');
+
+      loadingText.textContent = 'Processing Image…';
+      loadingSubtext.textContent = 'The AI is removing your background';
+      progressBar.style.width = '30%';
+
+      const config = {
+        progress: (key, current, total) => {
+          if (total > 0) {
+            const pct = Math.round((current / total) * 100);
+            progressBar.style.width = Math.max(30, pct) + '%';
+          }
+        }
+      };
+
+      const blob = await removeBackground(file, config);
+      progressBar.style.width = '100%';
+
+      resultBlobUrl = URL.createObjectURL(blob);
+      resultImg.src = resultBlobUrl;
+
+      // Show result
+      loading.style.display = 'none';
+      result.style.display = 'block';
+
+      // Set up download
+      downloadBtn.onclick = () => {
+        const a = document.createElement('a');
+        a.href = resultBlobUrl;
+        const baseName = file.name.replace(/\.[^.]+$/, '');
+        a.download = baseName + '-no-bg.png';
+        a.click();
+      };
+
+    } catch (err) {
+      console.error('Background removal failed:', err);
+      loadingText.textContent = 'Something went wrong';
+      loadingSubtext.textContent = 'Please try a different image or refresh the page';
+      progressBar.style.width = '0%';
+      setTimeout(showDropzone, 3000);
+    }
+
+    URL.revokeObjectURL(originalUrl);
+  };
+
+  // Drag and drop
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+  });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    processFile(file);
+  });
+
+  // Click to open file picker
+  pickBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fileInput.click();
+  });
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files[0];
+    processFile(file);
+    fileInput.value = '';
+  });
+
+  // Reset button
+  resetBtn.addEventListener('click', showDropzone);
+}
+
 function initToolsPageListeners(activeTool) {
   const toolId = activeTool || 'tints-shades';
   if (toolId === 'tints-shades') {
     initTintsShadesListeners();
   } else if (toolId === 'contrast-checker') {
     initContrastCheckerListeners();
+  } else if (toolId === 'bg-remover') {
+    initBgRemoverListeners();
   }
 }
 
