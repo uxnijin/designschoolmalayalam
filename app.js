@@ -1341,8 +1341,14 @@ function renderArticleSkeleton(catId, subId, articleId) {
 // ── NAV ──────────────────────────────────────────────────────
 
 function updateNavActive(activeCatId) {
+  const otherCatIds = CATEGORIES.filter(c => c.id !== 'ui-design' && c.id !== 'ux-design').map(c => c.id);
   document.querySelectorAll('.nav-link').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.catId === activeCatId);
+    const btnCatId = btn.dataset.catId;
+    if (btnCatId === 'more') {
+      btn.classList.toggle('active', otherCatIds.includes(activeCatId));
+    } else {
+      btn.classList.toggle('active', btnCatId === activeCatId);
+    }
   });
 }
 
@@ -1357,7 +1363,10 @@ function initNav() {
   if (navLinks) {
     if (!NAV.showCategoryLinks) { navLinks.innerHTML = ''; return; }
 
-    navLinks.innerHTML = CATEGORIES.map(cat => {
+    const directCats = CATEGORIES.filter(c => c.id === 'ui-design' || c.id === 'ux-design');
+    const otherCats = CATEGORIES.filter(c => c.id !== 'ui-design' && c.id !== 'ux-design');
+
+    const directHtml = directCats.map(cat => {
       let gridCols = 1;
       if (cat.subcategories.length > 8) {
         gridCols = 3;
@@ -1402,6 +1411,44 @@ function initNav() {
         </div>
       `;
     }).join('');
+
+    const otherCatsHtml = otherCats.map(cat => {
+      const articleCount = getArticlesByCategory(cat.id).length;
+      const countText = `${articleCount} ${articleCount === 1 ? 'article' : 'articles'}`;
+      return `
+        <a href="/category/${cat.id}" class="nav-dropdown-item" onclick="navigate('category','${cat.id}'); return false;">
+          <div class="nav-dropdown-item-title">${cat.title}</div>
+          <div class="nav-dropdown-item-desc">${cat.description}</div>
+          <div class="nav-dropdown-item-count">${countText}</div>
+        </a>
+      `;
+    }).join('');
+
+    const moreHtml = `
+      <div class="nav-item-wrapper" data-cat-id="more">
+        <button class="nav-link" data-cat-id="more" onclick="return false;">
+          <span>More</span>
+          <svg class="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+        <div class="nav-dropdown-menu cols-2">
+          <div class="nav-dropdown-inner">
+            <div class="nav-dropdown-header">
+              <div class="nav-dropdown-title">
+                <span>More Topics</span>
+              </div>
+              <div class="nav-dropdown-desc">Explore Figma, Graphic Design, Podcasts, Tools and Resources.</div>
+            </div>
+            <div class="nav-dropdown-grid">
+              ${otherCatsHtml}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    navLinks.innerHTML = directHtml + moreHtml;
 
     setupDropdownHoverEvents();
   }
