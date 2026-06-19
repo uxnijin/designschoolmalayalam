@@ -3195,8 +3195,8 @@ function initGlobalPlayers() {
           <rect x="14" y="4" width="4" height="16"/>
         </svg>
       </button>
-      <div class="nav-mini-details" id="nmp-details-navigate" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
-        <div class="nav-mini-title" id="nmp-title" style="flex: 1;">Title</div>
+      <div class="nav-mini-details" id="nmp-details-navigate" style="cursor: pointer;">
+        <div class="nav-mini-title" id="nmp-title">Title</div>
         <div class="sound-wave paused" id="nmp-sound-wave">
           <div class="bar"></div>
           <div class="bar"></div>

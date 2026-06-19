@@ -4636,7 +4636,8 @@ mark.body-highlight {
 
 .nav-mini-details {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
   flex: 1;
 }
@@ -4649,6 +4650,8 @@ mark.body-highlight {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.2;
+  flex: 1;
+  min-width: 0;
 }
 
 .nav-mini-meta {
