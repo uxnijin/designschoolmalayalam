@@ -199,7 +199,9 @@ const ARTICLE_IDS = [
   "getting-hired-in-ux",
   "product-design-wisdom",
   "design-process-is-dead",
-  "design-education-and-careers"
+  "design-education-and-careers",
+  "improve-as-ux-designer",
+  "from-zero-clients-to-global-brands"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
