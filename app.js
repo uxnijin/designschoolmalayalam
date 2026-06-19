@@ -3765,20 +3765,51 @@ function renderToolsPage(activeTool) {
 
       <!-- Right Column -->
       <aside class="layout-right tools-info-panel">
-        <div class="sidebar-widget">
-          <h4 class="info-panel-title" style="margin-bottom: 12px; font-size: 15px; font-weight: 700; color: var(--text);">About ${selectedTool.title}</h4>
-          <p class="info-panel-text" style="font-size: 13.5px; line-height: 1.5; color: var(--text-2); margin-bottom: 16px;">
-            ${selectedTool.id === 'tints-shades' 
-              ? 'Tints and shades are created by mixing a base color with white (to tint) or black (to shade). This helps build consistent color scales for hover states, buttons, backgrounds, and borders in your design system.' 
-              : ''}
-          </p>
-          <div class="info-panel-tip" style="padding: 12px; background: var(--accent-tint); border-left: 3px solid var(--accent); border-radius: 6px; font-size: 12.5px; line-height: 1.4; color: var(--text);">
-            <strong>Pro Tip:</strong> Click any generated color block to copy its HEX value instantly to your clipboard!
-          </div>
-        </div>
+        ${renderAboutPanelContent(selectedTool.id)}
       </aside>
     </div>
   `;
+}
+
+function renderAboutPanelContent(toolId) {
+  if (toolId === 'tints-shades') {
+    return `
+      <div class="sidebar-widget">
+        <h4 class="info-panel-title">About Tints & Shades</h4>
+        <p class="info-panel-desc" style="margin-bottom: 24px;">
+          Tints and shades are monochromatic variations of a base color. Tints are created by mixing the color with white, while shades are mixed with black. Use them to build cohesive color scales for borders, backgrounds, and interactive states.
+        </p>
+
+        <div class="info-panel-tip-card">
+          <svg class="info-panel-tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.5V19a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.5c0-.98-.4-1.9-1.077-2.506l-.547-.547z"></path>
+          </svg>
+          <div>
+            <strong>Pro Tip:</strong> Click any color box in the grid to copy its hex value instantly to clipboard.
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (toolId === 'contrast-checker') {
+    return `
+      <div class="sidebar-widget">
+        <h4 class="info-panel-title">About Contrast Checker</h4>
+        <p class="info-panel-desc" style="margin-bottom: 24px;">
+          Relative contrast measures readability between text and its background color. Testing your color palette ensures compliance with WCAG 2.1 accessibility standards (AA and AAA) for all users.
+        </p>
+
+        <div class="info-panel-tip-card">
+          <svg class="info-panel-tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.5V19a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.5c0-.98-.4-1.9-1.077-2.506l-.547-.547z"></path>
+          </svg>
+          <div>
+            <strong>Pro Tip:</strong> Click the swap button in the center to quickly flip foreground and background color combinations.
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  return '';
 }
 
 function renderTintsShadesTool() {
