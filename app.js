@@ -3238,8 +3238,8 @@ function initGlobalPlayers() {
             <rect x="14" y="4" width="4" height="16"/>
           </svg>
         </button>
-        <div class="floating-details" id="fp-details-navigate" style="cursor: pointer; flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px;">
-          <div style="flex: 1; min-width: 0;">
+        <div class="floating-details" id="fp-details-navigate" style="cursor: pointer;">
+          <div class="floating-details-text">
             <div class="floating-title" id="fp-title">Title</div>
             <div class="floating-meta" id="fp-meta">Meta</div>
           </div>
