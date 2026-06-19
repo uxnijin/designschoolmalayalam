@@ -3801,7 +3801,7 @@ function renderTintsShadesTool() {
           <label style="font-size: 13.5px; font-weight: 700; color: var(--text-2);">Select Color</label>
           <div style="display: flex; align-items: center; gap: 12px;">
             <!-- Custom circular picker wrapper -->
-            <div class="custom-color-picker-trigger" id="colorPickerTrigger" style="background-color: ${defaultColor}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s;">
+            <div class="custom-color-picker-trigger" id="colorPickerTrigger" style="background-color: ${defaultColor}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; transition: transform 0.15s;">
               <input type="color" id="baseColorPicker" value="${defaultColor}" style="position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer;">
             </div>
             <input type="text" id="baseColorInput" value="${defaultColor}" placeholder="#FFFFFF" maxlength="7" style="background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: monospace; font-size: 14px; font-weight: 700; width: 110px; text-transform: uppercase; text-align: center;">
@@ -3952,7 +3952,7 @@ function renderContrastCheckerTool() {
         <div class="modern-color-picker-container" style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-2); border: 1px solid var(--border); padding: 20px; border-radius: 16px;">
           <label style="font-size: 13.5px; font-weight: 700; color: var(--text-2);">Text Color (Foreground)</label>
           <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="custom-color-picker-trigger" id="fgColorPickerTrigger" style="background-color: ${defaultFg}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s;">
+            <div class="custom-color-picker-trigger" id="fgColorPickerTrigger" style="background-color: ${defaultFg}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; transition: transform 0.15s;">
               <input type="color" id="fgColorPicker" value="${defaultFg}" style="position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer;">
             </div>
             <input type="text" id="fgColorInput" value="${defaultFg}" placeholder="#1A1A1A" maxlength="7" style="background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: monospace; font-size: 14px; font-weight: 700; width: 110px; text-transform: uppercase; text-align: center;">
@@ -3973,7 +3973,7 @@ function renderContrastCheckerTool() {
         <div class="modern-color-picker-container" style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 12px; background: var(--bg-2); border: 1px solid var(--border); padding: 20px; border-radius: 16px;">
           <label style="font-size: 13.5px; font-weight: 700; color: var(--text-2);">Background Color</label>
           <div style="display: flex; align-items: center; gap: 12px;">
-            <div class="custom-color-picker-trigger" id="bgColorPickerTrigger" style="background-color: ${defaultBg}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.15s;">
+            <div class="custom-color-picker-trigger" id="bgColorPickerTrigger" style="background-color: ${defaultBg}; border: 3px solid var(--border); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; position: relative; transition: transform 0.15s;">
               <input type="color" id="bgColorPicker" value="${defaultBg}" style="position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; cursor: pointer;">
             </div>
             <input type="text" id="bgColorInput" value="${defaultBg}" placeholder="#FFFFFF" maxlength="7" style="background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 8px 12px; font-family: monospace; font-size: 14px; font-weight: 700; width: 110px; text-transform: uppercase; text-align: center;">
@@ -3988,7 +3988,7 @@ function renderContrastCheckerTool() {
         <!-- Score & Rules -->
         <div style="background: var(--bg-2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 24px;">
           <div style="display: flex; align-items: center; gap: 20px;">
-            <div style="background: var(--bg-3); border-radius: 50%; width: 90px; height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid var(--border); transition: border-color 0.15s; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" id="contrastRatioCircle">
+            <div style="background: var(--bg-3); border-radius: 50%; width: 90px; height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 4px solid var(--border); transition: border-color 0.15s; flex-shrink: 0;" id="contrastRatioCircle">
               <span id="contrastRatioVal" style="font-size: 22px; font-weight: 800; color: var(--text);">4.5</span>
               <span style="font-size: 9px; color: var(--text-3); font-weight: 700; text-transform: uppercase; margin-top: -2px; letter-spacing: 0.05em;">ratio</span>
             </div>
