@@ -763,7 +763,7 @@ function parseUrl() {
     }
 
     if (routePath.startsWith('/tools')) {
-      const activeTool = searchParams.get('t') || 'tints-shades';
+      const activeTool = searchParams.get('t') || null; // null = show overview grid
       return { page: 'tools', catId: null, subId: null, articleId: null, query: activeTool };
     }
 
@@ -1676,7 +1676,54 @@ function renderAuthBanner() {
   }
 }
 
+function renderDashboardSignInGate() {
+  return `
+    <div class="page-wide">
+      <div class="dashboard-signin-gate">
+        <div class="signin-gate-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="9" y1="21" x2="9" y2="9"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+          </svg>
+        </div>
+        <h1 class="signin-gate-title">Learning Dashboard</h1>
+        <p class="signin-gate-desc">Sign in with Google to track your reading progress, unlock achievements, and sync your learning across all devices.</p>
+        <div class="signin-gate-perks">
+          <div class="signin-gate-perk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Track reading progress across all articles</span>
+          </div>
+          <div class="signin-gate-perk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+            <span>Unlock design achievements as you learn</span>
+          </div>
+          <div class="signin-gate-perk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+            <span>Synced across phone, tablet and desktop</span>
+          </div>
+        </div>
+        <button class="btn-signin-gate" onclick="handleGoogleSignIn()">
+          <svg viewBox="0 0 24 24" width="20" height="20">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-1.14 2.77-2.4 3.61v3h3.86c2.26-2.09 3.59-5.17 3.59-8.46z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.98-3.09z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
+          </svg>
+          <span>Sign in with Google</span>
+        </button>
+        <p class="signin-gate-note">Free forever. No email required beyond your Google account.</p>
+      </div>
+    </div>
+  `;
+}
+
 function renderDashboardPage() {
+  // Show sign-in gate for unauthenticated users
+  if (!currentUser) {
+    return renderDashboardSignInGate();
+  }
+
   const completedList = getCompletedArticles();
   const completedArticles = ARTICLES.filter(a => completedList.includes(a.id))
     .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -3682,6 +3729,22 @@ function updateHeaderActiveState(page) {
   if (btnDashboardNav) {
     btnDashboardNav.classList.toggle('active', page === 'dashboard');
   }
+
+  // Sync mobile bottom navbar
+  const bnHome = document.getElementById('bnHome');
+  const bnTools = document.getElementById('bnTools');
+  const bnDashboard = document.getElementById('bnDashboard');
+  if (bnHome) bnHome.classList.toggle('active', page === 'home' || page === 'category' || page === 'subcategory' || page === 'article' || page === 'search');
+  if (bnTools) bnTools.classList.toggle('active', page === 'tools');
+  if (bnDashboard) bnDashboard.classList.toggle('active', page === 'dashboard');
+}
+
+function handleBottomNavDashboard() {
+  if (currentUser) {
+    navigate('dashboard');
+  } else {
+    handleGoogleSignIn();
+  }
 }
 
 const WORKBENCH_TOOLS = [
@@ -3712,10 +3775,73 @@ const WORKBENCH_TOOLS = [
             <rect x="3" y="3" width="18" height="18" rx="2"></rect>
             <path d="M3 9h18M9 21V9"></path>
           </svg>`
+  },
+  {
+    id: "img-compressor",
+    title: "Image Compressor",
+    description: "Reduce file size instantly",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="8 17 12 21 16 17"></polyline>
+            <line x1="12" y1="21" x2="12" y2="7"></line>
+            <path d="M20 7H4"></path>
+            <path d="M17 4H7"></path>
+          </svg>`
   }
 ];
 
+function renderToolsOverview() {
+  const toolCards = WORKBENCH_TOOLS.map(t => `
+    <a href="/tools?t=${t.id}" class="tools-overview-card" onclick="navigate('tools', null, null, null, '${t.id}'); return false;">
+      <div class="tools-overview-icon">${t.icon}</div>
+      <div class="tools-overview-info">
+        <div class="tools-overview-title">${t.title}</div>
+        <div class="tools-overview-desc">${t.description}</div>
+      </div>
+      <div class="tools-overview-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+    </a>
+  `).join('');
+
+  return `
+    <div class="page-wide">
+      <div class="header-navigation-row">
+        <button class="btn-back" onclick="navigate('home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Home</span>
+        </button>
+        <div class="breadcrumb">
+          <span onclick="navigate('home')" style="cursor: pointer;">Home</span>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">Tools</span>
+        </div>
+      </div>
+
+      <div class="tools-overview-header">
+        <div class="tools-overview-badge">Designer Utilities</div>
+        <h1 class="tools-overview-title-main">Interactive Tools</h1>
+        <p class="tools-overview-subtitle">Browser-based utilities built for UI/UX designers. No installs, no sign-in — just pick a tool and start creating.</p>
+      </div>
+
+      <div class="tools-overview-grid">
+        ${toolCards}
+      </div>
+    </div>
+  `;
+}
+
 function renderToolsPage(activeTool) {
+  // Show overview grid when no specific tool is selected
+  if (!activeTool) {
+    return renderToolsOverview();
+  }
+
   const selectedTool = WORKBENCH_TOOLS.find(t => t.id === activeTool) || WORKBENCH_TOOLS[0];
   
   const sidebarMenuHtml = WORKBENCH_TOOLS.map(t => {
@@ -3738,6 +3864,8 @@ function renderToolsPage(activeTool) {
     toolWorkbenchHtml = renderContrastCheckerTool();
   } else if (selectedTool.id === 'bg-remover') {
     toolWorkbenchHtml = renderBgRemoverTool();
+  } else if (selectedTool.id === 'img-compressor') {
+    toolWorkbenchHtml = renderImgCompressorTool();
   }
 
   return `
@@ -3755,19 +3883,22 @@ function renderToolsPage(activeTool) {
       <!-- Center Active Tool Workbench -->
       <main class="layout-center tools-workbench">
         <div class="header-navigation-row">
-          <button class="btn-back" onclick="navigate('home')">
+          <button class="btn-back" onclick="navigate('tools')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"></line>
               <polyline points="12 19 5 12 12 5"></polyline>
             </svg>
-            <span>Home</span>
+            <span>Tools</span>
           </button>
           <div class="breadcrumb">
             <span onclick="navigate('home')" style="cursor: pointer;">Home</span>
             <span class="breadcrumb-separator">/</span>
+            <span onclick="navigate('tools')" style="cursor: pointer;">Tools</span>
+            <span class="breadcrumb-separator">/</span>
             <span class="breadcrumb-current">${selectedTool.title}</span>
           </div>
         </div>
+
 
         <div class="tools-workbench-inner">
           ${toolWorkbenchHtml}
@@ -3833,6 +3964,24 @@ function renderAboutPanelContent(toolId) {
           </svg>
           <div>
             <strong>Pro Tip:</strong> The AI model (~5MB) is downloaded once on first use and cached by your browser for instant future sessions.
+          </div>
+        </div>
+      </div>
+    `;
+  } else if (toolId === 'img-compressor') {
+    return `
+      <div class="sidebar-widget">
+        <h4 class="info-panel-title">About Image Compressor</h4>
+        <p class="info-panel-desc" style="margin-bottom: 24px;">
+          Compress JPEG, PNG, and WEBP images right inside your browser. The library automatically handles image rotation metadata and lets you target a specific maximum file size.
+        </p>
+
+        <div class="info-panel-tip-card">
+          <svg class="info-panel-tip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.5V19a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.5c0-.98-.4-1.9-1.077-2.506l-.547-.547z"></path>
+          </svg>
+          <div>
+            <strong>Pro Tip:</strong> For web use, try targeting under 200KB. For social media, under 500KB is usually ideal.
           </div>
         </div>
       </div>
@@ -4600,6 +4749,269 @@ async function initBgRemoverListeners() {
   resetBtn.addEventListener('click', showDropzone);
 }
 
+function renderImgCompressorTool() {
+  return `
+    <div class="img-compressor-tool-content" style="text-align: left;">
+      <div style="margin-bottom: 32px;">
+        <h2 class="tool-title" style="font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px;">Image Compressor</h2>
+        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Reduce image file size without a noticeable loss in quality — entirely in your browser. No uploads, no accounts, no limits.</p>
+      </div>
+
+      <!-- Dropzone -->
+      <div class="bg-remover-dropzone" id="icDropzone">
+        <input type="file" id="icFileInput" accept="image/*" style="display: none;">
+        <svg class="bg-remover-dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="8 17 12 21 16 17"></polyline>
+          <line x1="12" y1="21" x2="12" y2="3"></line>
+          <path d="M20 7H4M17 4H7"></path>
+        </svg>
+        <div class="bg-remover-dropzone-title">Drop your image here</div>
+        <div class="bg-remover-dropzone-desc" style="margin-bottom: 20px;">or click to browse — JPG, PNG, WEBP</div>
+        <button class="btn-primary" id="icPickBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px;">Choose Image</button>
+      </div>
+
+      <!-- Settings + Result -->
+      <div id="icWorkspace" style="display: none;">
+
+        <!-- Settings Panel -->
+        <div class="ic-settings-panel">
+          <div class="ic-settings-header">
+            <div class="ic-original-thumb-wrap">
+              <img id="icOriginalThumb" src="" alt="">
+            </div>
+            <div class="ic-settings-info">
+              <div class="ic-filename" id="icFilename">image.jpg</div>
+              <div class="ic-original-size" id="icOriginalSize">Original: — KB</div>
+            </div>
+          </div>
+
+          <div class="ic-controls">
+            <!-- Max Size -->
+            <div class="ic-control-row">
+              <div class="ic-control-label">
+                <span>Max file size</span>
+                <strong id="icMaxSizeVal">1 MB</strong>
+              </div>
+              <input type="range" id="icMaxSizeSlider" min="0.1" max="5" step="0.1" value="1" class="ic-slider">
+            </div>
+
+            <!-- Max Dimension -->
+            <div class="ic-control-row">
+              <div class="ic-control-label">
+                <span>Max dimension</span>
+                <strong id="icMaxDimVal">1920 px</strong>
+              </div>
+              <input type="range" id="icMaxDimSlider" min="320" max="4096" step="64" value="1920" class="ic-slider">
+            </div>
+
+            <button class="btn-primary" id="icCompressBtn" style="width: 100%; border-radius: 12px; padding: 12px; font-size: 14px;">
+              Compress Image
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="ic-progress" id="icProgress" style="display: none;">
+          <div class="bg-remover-progress-container" style="max-width: 100%;">
+            <div class="bg-remover-progress-bar ic-progress-bar" id="icProgressBar"></div>
+          </div>
+          <div style="font-size: 13px; color: var(--text-2); margin-top: 8px; text-align: center;">Compressing…</div>
+        </div>
+
+        <!-- Result -->
+        <div id="icResult" style="display: none;">
+          <!-- Before / After Stats -->
+          <div class="ic-stats-row">
+            <div class="ic-stat-card">
+              <div class="ic-stat-label">Original</div>
+              <div class="ic-stat-size" id="icStatOriginal">—</div>
+            </div>
+            <div class="ic-stat-arrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </div>
+            <div class="ic-stat-card ic-stat-card--result">
+              <div class="ic-stat-label">Compressed</div>
+              <div class="ic-stat-size" id="icStatCompressed">—</div>
+            </div>
+            <div class="ic-stat-card ic-stat-card--savings">
+              <div class="ic-stat-label">Saved</div>
+              <div class="ic-stat-size ic-stat-savings" id="icStatSavings">—</div>
+            </div>
+          </div>
+
+          <!-- Preview comparison -->
+          <div class="ic-preview-grid">
+            <div class="ic-preview-card">
+              <div class="ic-preview-label">Original</div>
+              <div class="ic-preview-img-wrap"><img id="icPreviewOriginal" src="" alt="Original"></div>
+            </div>
+            <div class="ic-preview-card">
+              <div class="ic-preview-label">Compressed</div>
+              <div class="ic-preview-img-wrap"><img id="icPreviewCompressed" src="" alt="Compressed"></div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn-primary" id="icDownloadBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px; display: flex; align-items: center; gap: 8px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              Download
+            </button>
+            <button id="icCompressAgainBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px; background: var(--bg-2); border: 1px solid var(--border); color: var(--text-2); cursor: pointer; transition: all var(--transition);">
+              Compress Again
+            </button>
+            <button id="icResetBtn" style="font-size: 13.5px; padding: 10px 24px; border-radius: 99px; background: var(--bg-2); border: 1px solid var(--border); color: var(--text-2); cursor: pointer; transition: all var(--transition);">
+              New Image
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+async function initImgCompressorListeners() {
+  const dropzone = document.getElementById('icDropzone');
+  const fileInput = document.getElementById('icFileInput');
+  const pickBtn = document.getElementById('icPickBtn');
+  const workspace = document.getElementById('icWorkspace');
+  const progress = document.getElementById('icProgress');
+  const progressBar = document.getElementById('icProgressBar');
+  const result = document.getElementById('icResult');
+
+  const maxSizeSlider = document.getElementById('icMaxSizeSlider');
+  const maxSizeVal = document.getElementById('icMaxSizeVal');
+  const maxDimSlider = document.getElementById('icMaxDimSlider');
+  const maxDimVal = document.getElementById('icMaxDimVal');
+  const compressBtn = document.getElementById('icCompressBtn');
+  const downloadBtn = document.getElementById('icDownloadBtn');
+  const compressAgainBtn = document.getElementById('icCompressAgainBtn');
+  const resetBtn = document.getElementById('icResetBtn');
+
+  if (!dropzone) return;
+
+  let currentFile = null;
+  let compressedBlob = null;
+  let compressedUrl = null;
+
+  // Slider live labels
+  maxSizeSlider.addEventListener('input', () => {
+    maxSizeVal.textContent = parseFloat(maxSizeSlider.value).toFixed(1) + ' MB';
+  });
+  maxDimSlider.addEventListener('input', () => {
+    maxDimVal.textContent = parseInt(maxDimSlider.value) + ' px';
+  });
+
+  const loadFile = (file) => {
+    if (!file || !file.type.startsWith('image/')) return;
+    currentFile = file;
+
+    // Populate settings header
+    document.getElementById('icFilename').textContent = file.name;
+    document.getElementById('icOriginalSize').textContent = 'Original: ' + formatBytes(file.size);
+    const thumb = document.getElementById('icOriginalThumb');
+    if (thumb) { URL.revokeObjectURL(thumb.src); thumb.src = URL.createObjectURL(file); }
+    document.getElementById('icPreviewOriginal').src = thumb.src;
+
+    dropzone.style.display = 'none';
+    result.style.display = 'none';
+    progress.style.display = 'none';
+    workspace.style.display = 'block';
+  };
+
+  const doCompress = async () => {
+    if (!currentFile) return;
+
+    compressBtn.disabled = true;
+    result.style.display = 'none';
+    progress.style.display = 'block';
+    progressBar.style.width = '10%';
+
+    const options = {
+      maxSizeMB: parseFloat(maxSizeSlider.value),
+      maxWidthOrHeight: parseInt(maxDimSlider.value),
+      useWebWorker: true,
+      onProgress: (pct) => {
+        progressBar.style.width = pct + '%';
+      }
+    };
+
+    try {
+      // `imageCompression` is the global from the CDN script
+      compressedBlob = await imageCompression(currentFile, options);
+
+      if (compressedUrl) URL.revokeObjectURL(compressedUrl);
+      compressedUrl = URL.createObjectURL(compressedBlob);
+
+      // Stats
+      document.getElementById('icStatOriginal').textContent = formatBytes(currentFile.size);
+      document.getElementById('icStatCompressed').textContent = formatBytes(compressedBlob.size);
+      const saved = Math.max(0, currentFile.size - compressedBlob.size);
+      const pct = currentFile.size > 0 ? Math.round((saved / currentFile.size) * 100) : 0;
+      document.getElementById('icStatSavings').textContent = formatBytes(saved) + ' (' + pct + '% smaller)';
+
+      // Preview
+      document.getElementById('icPreviewCompressed').src = compressedUrl;
+
+      // Download
+      downloadBtn.onclick = () => {
+        const a = document.createElement('a');
+        a.href = compressedUrl;
+        const ext = currentFile.name.match(/\.([^.]+)$/) ? currentFile.name.match(/\.([^.]+)$/)[1] : 'jpg';
+        a.download = currentFile.name.replace(/\.[^.]+$/, '') + '-compressed.' + ext;
+        a.click();
+      };
+
+      progress.style.display = 'none';
+      result.style.display = 'block';
+
+    } catch (err) {
+      console.error('Compression error:', err);
+      progress.style.display = 'none';
+      result.style.display = 'none';
+    }
+
+    compressBtn.disabled = false;
+  };
+
+  // Drag and drop
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault(); dropzone.classList.remove('dragover');
+    loadFile(e.dataTransfer.files[0]);
+  });
+
+  // Click to open file picker
+  pickBtn.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
+  dropzone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => { loadFile(fileInput.files[0]); fileInput.value = ''; });
+
+  // Compress button
+  compressBtn.addEventListener('click', doCompress);
+
+  // Compress Again (go back to settings, keep same file)
+  compressAgainBtn.addEventListener('click', () => {
+    result.style.display = 'none';
+  });
+
+  // New Image reset
+  resetBtn.addEventListener('click', () => {
+    currentFile = null;
+    if (compressedUrl) { URL.revokeObjectURL(compressedUrl); compressedUrl = null; }
+    workspace.style.display = 'none';
+    result.style.display = 'none';
+    progress.style.display = 'none';
+    dropzone.style.display = 'flex';
+  });
+}
+
 function initToolsPageListeners(activeTool) {
   const toolId = activeTool || 'tints-shades';
   if (toolId === 'tints-shades') {
@@ -4608,6 +5020,8 @@ function initToolsPageListeners(activeTool) {
     initContrastCheckerListeners();
   } else if (toolId === 'bg-remover') {
     initBgRemoverListeners();
+  } else if (toolId === 'img-compressor') {
+    initImgCompressorListeners();
   }
 }
 
