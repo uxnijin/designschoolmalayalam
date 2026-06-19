@@ -2369,9 +2369,8 @@ ol {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--accent-tint);
-  border: 1px solid rgba(255, 111, 44, 0.2);
-  color: var(--accent);
+  background: var(--accent);
+  color: #fff;
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
@@ -2386,9 +2385,9 @@ ol {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--accent);
+  background: #ffffff;
   display: inline-block;
-  box-shadow: 0 0 6px var(--accent);
+  box-shadow: 0 0 6px #ffffff;
 }
 
 .quiz-question {
