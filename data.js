@@ -201,7 +201,8 @@ const ARTICLE_IDS = [
   "design-process-is-dead",
   "design-education-and-careers",
   "improve-as-ux-designer",
-  "from-zero-clients-to-global-brands"
+  "from-zero-clients-to-global-brands",
+  "cracking-ux-whiteboarding"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
