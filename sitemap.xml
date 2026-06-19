@@ -131,6 +131,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://designschool.site/category/podcasts</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://designschool.site/category/podcasts/conversational-ui</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://designschool.site/category/tools</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -646,6 +656,12 @@
   <url>
     <loc>https://designschool.site/article/serial-task-switching</loc>
     <lastmod>2025-05-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://designschool.site/article/conversational-design-and-ui</loc>
+    <lastmod>2026-06-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

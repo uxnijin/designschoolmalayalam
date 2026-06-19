@@ -86,6 +86,14 @@ const CATEGORIES = [
     ],
   },
   {
+    id: "podcasts",
+    title: "Podcasts",
+    description: "Listen to design conversations and stories",
+    subcategories: [
+      { id: "conversational-ui", title: "Conversational UI", description: "Design principles for voice, chat, and AI interaction" }
+    ],
+  },
+  {
     id: "tools",
     title: "Tools & Resources",
     description: "Curated catalogs of design tools, assets, books, and resources",
@@ -186,7 +194,8 @@ const ARTICLE_IDS = [
   "adaptive-design",
   "accessibility",
   "behavioral-economics-for-ux",
-  "serial-task-switching"
+  "serial-task-switching",
+  "conversational-design-and-ui"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
