@@ -3693,11 +3693,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (btnDashboardNav) {
     btnDashboardNav.addEventListener('click', (e) => {
       e.preventDefault();
-      if (currentUser) {
-        navigate('dashboard');
-      } else {
-        handleGoogleSignIn();
-      }
+      navigate('dashboard');
     });
     updateNavAuthButton();
   }
@@ -3740,11 +3736,7 @@ function updateHeaderActiveState(page) {
 }
 
 function handleBottomNavDashboard() {
-  if (currentUser) {
-    navigate('dashboard');
-  } else {
-    handleGoogleSignIn();
-  }
+  navigate('dashboard');
 }
 
 const WORKBENCH_TOOLS = [
