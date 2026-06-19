@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["become-ux-designer-at-google"] = {
   id: "become-ux-designer-at-google",
-  thumbnail: "assets/thumbnails/become-ux-designer-at-google.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "Become a UX/UI Designer at Google: Sahil Pandita's Playbook",

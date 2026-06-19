@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["ux-designer-google-salary-roadmap"] = {
   id: "ux-designer-google-salary-roadmap",
-  thumbnail: "assets/thumbnails/ux-designer-google-salary-roadmap.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "Google UX Designer: 40 LPA Salary Roadmap for Freshers",

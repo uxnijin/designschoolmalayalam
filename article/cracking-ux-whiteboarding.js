@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["cracking-ux-whiteboarding"] = {
   id: "cracking-ux-whiteboarding",
-  thumbnail: "assets/thumbnails/cracking-ux-whiteboarding.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "Cracking UX Whiteboarding Interviews: Step-by-Step Guide",
