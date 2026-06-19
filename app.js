@@ -957,7 +957,6 @@ function updateSEO(state) {
 // ── RENDER ───────────────────────────────────────────────────
 
 function renderPage(state) {
-  cleanupAudioPlayer();
   const { page, catId, subId, articleId, query } = state;
   const content = document.getElementById('content');
 
@@ -994,6 +993,7 @@ function renderPage(state) {
         cleanupScrollListeners();
       }
       updateSEO(state);
+      syncPlayersVisibility(state);
       activeRenderTimeout = null;
     }, 400);
 
@@ -3026,16 +3026,8 @@ async function updateLiveVisitors() {
 
 // ── CUSTOM PODCAST PLAYER ──────────────────────────────────────
 
-let currentAudio = null;
-
-function cleanupAudioPlayer() {
-  if (currentAudio) {
-    try {
-      currentAudio.pause();
-    } catch (e) {}
-    currentAudio = null;
-  }
-}
+let globalAudio = null;
+let activePodcast = null;
 
 function renderAudioPlayer(article) {
   return `
@@ -3100,16 +3092,254 @@ function renderAudioPlayer(article) {
           <input type="range" class="volume-slider" id="podcast-volume-slider" min="0" max="1" step="0.05" value="0.8" aria-label="Volume slider">
         </div>
       </div>
-      <audio id="podcast-audio-elem" src="${article.audioUrl}" preload="metadata" style="display: none;"></audio>
     </div>
   `;
+}
+
+function initGlobalPlayers() {
+  if (!globalAudio) {
+    globalAudio = new Audio();
+    globalAudio.preload = 'metadata';
+    
+    globalAudio.addEventListener('timeupdate', () => {
+      updateGlobalPlayers();
+      syncInlinePlayerProgress();
+    });
+    
+    globalAudio.addEventListener('play', () => {
+      updateGlobalPlayers();
+      syncInlinePlayerPlayState(true);
+    });
+    
+    globalAudio.addEventListener('pause', () => {
+      updateGlobalPlayers();
+      syncInlinePlayerPlayState(false);
+    });
+    
+    globalAudio.addEventListener('ended', () => {
+      updateGlobalPlayers();
+      syncInlinePlayerPlayState(false);
+    });
+  }
+
+  const nav = document.querySelector('.nav');
+  if (nav && !document.getElementById('nav-mini-player')) {
+    const miniPlayer = document.createElement('div');
+    miniPlayer.id = 'nav-mini-player';
+    miniPlayer.className = 'nav-mini-player';
+    miniPlayer.style.display = 'none';
+    miniPlayer.innerHTML = `
+      <button class="nav-mini-play-btn" id="nmp-play-btn" aria-label="Play/Pause">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" id="nmp-play-svg">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12" id="nmp-pause-svg" style="display: none;">
+          <rect x="6" y="4" width="4" height="16"/>
+          <rect x="14" y="4" width="4" height="16"/>
+        </svg>
+      </button>
+      <div class="nav-mini-details" id="nmp-details-navigate" style="cursor: pointer;">
+        <div class="nav-mini-title" id="nmp-title">Title</div>
+        <div class="nav-mini-meta" id="nmp-meta">Meta</div>
+      </div>
+      <div class="nav-mini-progress-container" id="nmp-progress-container">
+        <div class="nav-mini-progress-bar" id="nmp-progress-bar"></div>
+      </div>
+      <button class="nav-mini-close-btn" id="nmp-close-btn" aria-label="Close player">&times;</button>
+    `;
+    
+    const searchWrapper = document.getElementById('navSearchWrapper');
+    if (searchWrapper) {
+      nav.insertBefore(miniPlayer, searchWrapper);
+    } else {
+      nav.appendChild(miniPlayer);
+    }
+
+    document.getElementById('nmp-play-btn').addEventListener('click', toggleGlobalPlay);
+    document.getElementById('nmp-details-navigate').addEventListener('click', navigateToActivePodcast);
+    document.getElementById('nmp-close-btn').addEventListener('click', closeGlobalPlayer);
+  }
+
+  if (!document.getElementById('floating-podcast-player')) {
+    const floatingPlayer = document.createElement('div');
+    floatingPlayer.id = 'floating-podcast-player';
+    floatingPlayer.className = 'floating-player-widget';
+    floatingPlayer.style.display = 'none';
+    floatingPlayer.innerHTML = `
+      <div class="floating-player-content">
+        <button class="floating-play-btn" id="fp-play-btn" aria-label="Play/Pause">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" id="fp-play-svg">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" id="fp-pause-svg" style="display: none;">
+            <rect x="6" y="4" width="4" height="16"/>
+            <rect x="14" y="4" width="4" height="16"/>
+          </svg>
+        </button>
+        <div class="floating-details" id="fp-details-navigate" style="cursor: pointer; flex: 1; min-width: 0;">
+          <div class="floating-title" id="fp-title">Title</div>
+          <div class="floating-meta" id="fp-meta">Meta</div>
+        </div>
+        <button class="floating-close-btn" id="fp-close-btn" aria-label="Close player">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      <div class="floating-progress-container" id="fp-progress-container">
+        <div class="floating-progress-bar" id="fp-progress-bar"></div>
+      </div>
+    `;
+    document.body.appendChild(floatingPlayer);
+
+    document.getElementById('fp-play-btn').addEventListener('click', toggleGlobalPlay);
+    document.getElementById('fp-details-navigate').addEventListener('click', navigateToActivePodcast);
+    document.getElementById('fp-close-btn').addEventListener('click', closeGlobalPlayer);
+  }
+}
+
+function toggleGlobalPlay() {
+  if (!globalAudio) return;
+  if (globalAudio.paused) {
+    globalAudio.play().catch(err => console.warn("Global audio play blocked:", err));
+  } else {
+    globalAudio.pause();
+  }
+}
+
+function navigateToActivePodcast() {
+  if (activePodcast) {
+    navigate('article', activePodcast.categoryId, activePodcast.subcategoryId, activePodcast.id);
+  }
+}
+
+function closeGlobalPlayer() {
+  if (globalAudio) {
+    globalAudio.pause();
+  }
+  const mini = document.getElementById('nav-mini-player');
+  if (mini) mini.style.display = 'none';
+  const float = document.getElementById('floating-podcast-player');
+  if (float) float.style.display = 'none';
+  activePodcast = null;
+}
+
+function updateGlobalPlayers() {
+  if (!globalAudio || !activePodcast) return;
+  
+  const titleText = activePodcast.podcastCredit?.episode || activePodcast.title;
+  const metaText = activePodcast.podcastCredit 
+    ? `${activePodcast.podcastCredit.host} • ${activePodcast.podcastCredit.guest}` 
+    : 'Podcast';
+  
+  const mini = document.getElementById('nav-mini-player');
+  if (mini) {
+    document.getElementById('nmp-title').textContent = titleText;
+    document.getElementById('nmp-meta').textContent = metaText;
+    
+    const playSvg = document.getElementById('nmp-play-svg');
+    const pauseSvg = document.getElementById('nmp-pause-svg');
+    if (globalAudio.paused) {
+      if (playSvg) playSvg.style.display = 'block';
+      if (pauseSvg) pauseSvg.style.display = 'none';
+    } else {
+      if (playSvg) playSvg.style.display = 'none';
+      if (pauseSvg) pauseSvg.style.display = 'block';
+    }
+    
+    const pct = globalAudio.duration ? (globalAudio.currentTime / globalAudio.duration) * 100 : 0;
+    const bar = document.getElementById('nmp-progress-bar');
+    if (bar) bar.style.width = `${pct}%`;
+  }
+
+  const float = document.getElementById('floating-podcast-player');
+  if (float) {
+    document.getElementById('fp-title').textContent = titleText;
+    document.getElementById('fp-meta').textContent = metaText;
+    
+    const playSvg = document.getElementById('fp-play-svg');
+    const pauseSvg = document.getElementById('fp-pause-svg');
+    if (globalAudio.paused) {
+      if (playSvg) playSvg.style.display = 'block';
+      if (pauseSvg) pauseSvg.style.display = 'none';
+    } else {
+      if (playSvg) playSvg.style.display = 'none';
+      if (pauseSvg) pauseSvg.style.display = 'block';
+    }
+    
+    const pct = globalAudio.duration ? (globalAudio.currentTime / globalAudio.duration) * 100 : 0;
+    const bar = document.getElementById('fp-progress-bar');
+    if (bar) bar.style.width = `${pct}%`;
+  }
+}
+
+function syncPlayersVisibility(state) {
+  const mini = document.getElementById('nav-mini-player');
+  const float = document.getElementById('floating-podcast-player');
+  
+  if (!activePodcast) {
+    if (mini) mini.style.display = 'none';
+    if (float) float.style.display = 'none';
+    return;
+  }
+  
+  const isCurrentlyOnActivePodcastPage = state.page === 'article' && state.articleId === activePodcast.id;
+  
+  if (isCurrentlyOnActivePodcastPage) {
+    if (mini) mini.style.display = 'none';
+    if (float) float.style.display = 'none';
+  } else {
+    if (mini) mini.style.display = 'flex';
+    if (float) float.style.display = 'flex';
+    updateGlobalPlayers();
+  }
+}
+
+function syncInlinePlayerPlayState(isPlaying) {
+  const playSvg = document.getElementById('play-svg');
+  const pauseSvg = document.getElementById('pause-svg');
+  if (playSvg && pauseSvg) {
+    if (isPlaying) {
+      playSvg.style.display = 'none';
+      pauseSvg.style.display = 'block';
+    } else {
+      playSvg.style.display = 'block';
+      pauseSvg.style.display = 'none';
+    }
+  }
+}
+
+function syncInlinePlayerProgress() {
+  if (!globalAudio) return;
+  const currentTimeLabel = document.getElementById('podcast-current-time');
+  const durationLabel = document.getElementById('podcast-duration');
+  const progressBar = document.getElementById('podcast-progress-bar');
+  const progressThumb = document.getElementById('podcast-progress-thumb');
+  
+  if (currentTimeLabel && durationLabel && progressBar && progressThumb) {
+    const formatTime = (secs) => {
+      if (isNaN(secs) || secs === Infinity) return '0:00';
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
+    
+    currentTimeLabel.textContent = formatTime(globalAudio.currentTime);
+    durationLabel.textContent = formatTime(globalAudio.duration);
+    
+    if (globalAudio.duration) {
+      const pct = (globalAudio.currentTime / globalAudio.duration) * 100;
+      progressBar.style.width = `${pct}%`;
+      progressThumb.style.left = `${pct}%`;
+    }
+  }
 }
 
 function initAudioPlayer(articleId) {
   const card = document.querySelector('.podcast-player-card');
   if (!card) return;
 
-  const audio = document.getElementById('podcast-audio-elem');
   const playBtn = document.getElementById('podcast-play-btn');
   const playSvg = document.getElementById('play-svg');
   const pauseSvg = document.getElementById('pause-svg');
@@ -3124,10 +3354,19 @@ function initAudioPlayer(articleId) {
   const volumeSvg = document.getElementById('volume-svg');
   const muteSvg = document.getElementById('mute-svg');
 
-  if (!audio || !playBtn) return;
+  if (!playBtn) return;
 
-  cleanupAudioPlayer();
-  currentAudio = audio;
+  const article = ARTICLES.find(a => a.id === articleId);
+  if (!article) return;
+
+  if (!activePodcast || activePodcast.id !== articleId) {
+    if (globalAudio && !globalAudio.paused) {
+      globalAudio.pause();
+    }
+    activePodcast = article;
+    globalAudio.src = article.audioUrl;
+    globalAudio.load();
+  }
 
   const formatTime = (secs) => {
     if (isNaN(secs) || secs === Infinity) return '0:00';
@@ -3137,23 +3376,47 @@ function initAudioPlayer(articleId) {
   };
 
   const updateDuration = () => {
-    durationLabel.textContent = formatTime(audio.duration);
+    durationLabel.textContent = formatTime(globalAudio.duration);
   };
   
-  if (audio.readyState >= 1) {
+  if (globalAudio.readyState >= 1) {
     updateDuration();
   } else {
-    audio.addEventListener('loadedmetadata', updateDuration);
+    globalAudio.addEventListener('loadedmetadata', updateDuration);
   }
 
+  if (!globalAudio.paused) {
+    playSvg.style.display = 'none';
+    pauseSvg.style.display = 'block';
+  } else {
+    playSvg.style.display = 'block';
+    pauseSvg.style.display = 'none';
+  }
+  
+  syncInlinePlayerProgress();
+  
+  speedBtn.textContent = `${globalAudio.playbackRate}x`;
+  volumeSlider.value = globalAudio.volume;
+  
+  const updateVolumeIcon = (vol) => {
+    if (vol === 0 || globalAudio.muted) {
+      volumeSvg.style.display = 'none';
+      muteSvg.style.display = 'block';
+    } else {
+      volumeSvg.style.display = 'block';
+      muteSvg.style.display = 'none';
+    }
+  };
+  updateVolumeIcon(globalAudio.volume);
+
   const togglePlay = () => {
-    if (audio.paused) {
-      audio.play().then(() => {
+    if (globalAudio.paused) {
+      globalAudio.play().then(() => {
         playSvg.style.display = 'none';
         pauseSvg.style.display = 'block';
       }).catch(err => console.warn("Audio play blocked:", err));
     } else {
-      audio.pause();
+      globalAudio.pause();
       playSvg.style.display = 'block';
       pauseSvg.style.display = 'none';
     }
@@ -3161,41 +3424,12 @@ function initAudioPlayer(articleId) {
 
   playBtn.addEventListener('click', togglePlay);
 
-  audio.addEventListener('play', () => {
-    playSvg.style.display = 'none';
-    pauseSvg.style.display = 'block';
-  });
-
-  audio.addEventListener('pause', () => {
-    playSvg.style.display = 'block';
-    pauseSvg.style.display = 'none';
-  });
-
-  audio.addEventListener('ended', () => {
-    playSvg.style.display = 'block';
-    pauseSvg.style.display = 'none';
-    progressBar.style.width = '0%';
-    progressThumb.style.left = '0%';
-    currentTimeLabel.textContent = '0:00';
-  });
-
-  const updateProgress = () => {
-    if (audio.duration) {
-      const pct = (audio.currentTime / audio.duration) * 100;
-      progressBar.style.width = `${pct}%`;
-      progressThumb.style.left = `${pct}%`;
-      currentTimeLabel.textContent = formatTime(audio.currentTime);
-    }
-  };
-
-  audio.addEventListener('timeupdate', updateProgress);
-
   const seek = (e) => {
-    if (audio.duration) {
+    if (globalAudio.duration) {
       const rect = progressContainer.getBoundingClientRect();
       const posPct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-      audio.currentTime = posPct * audio.duration;
-      updateProgress();
+      globalAudio.currentTime = posPct * globalAudio.duration;
+      syncInlinePlayerProgress();
     }
   };
 
@@ -3207,58 +3441,62 @@ function initAudioPlayer(articleId) {
     seek(e);
   });
 
-  window.addEventListener('mousemove', (e) => {
+  const onMouseMove = (e) => {
     if (isDraggingProgress) {
       seek(e);
     }
-  });
+  };
 
-  window.addEventListener('mouseup', () => {
+  const onMouseUp = () => {
     isDraggingProgress = false;
-  });
+  };
+
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', onMouseUp);
 
   const speeds = [1, 1.25, 1.5, 2];
-  let currentSpeedIdx = 0;
+  let currentSpeedIdx = speeds.indexOf(globalAudio.playbackRate);
+  if (currentSpeedIdx === -1) currentSpeedIdx = 0;
+  
   speedBtn.addEventListener('click', () => {
     currentSpeedIdx = (currentSpeedIdx + 1) % speeds.length;
     const nextSpeed = speeds[currentSpeedIdx];
-    audio.playbackRate = nextSpeed;
+    globalAudio.playbackRate = nextSpeed;
     speedBtn.textContent = `${nextSpeed}x`;
   });
 
-  let lastVolume = 0.8;
-  const updateVolumeIcon = (vol) => {
-    if (vol === 0 || audio.muted) {
-      volumeSvg.style.display = 'none';
-      muteSvg.style.display = 'block';
-    } else {
-      volumeSvg.style.display = 'block';
-      muteSvg.style.display = 'none';
-    }
-  };
-
+  let lastVolume = globalAudio.volume || 0.8;
   volumeSlider.addEventListener('input', (e) => {
     const vol = parseFloat(e.target.value);
-    audio.volume = vol;
-    audio.muted = false;
+    globalAudio.volume = vol;
+    globalAudio.muted = false;
     lastVolume = vol;
     updateVolumeIcon(vol);
   });
 
   muteBtn.addEventListener('click', () => {
-    if (audio.muted || audio.volume === 0) {
-      audio.muted = false;
-      audio.volume = lastVolume || 0.8;
-      volumeSlider.value = audio.volume;
-      updateVolumeIcon(audio.volume);
+    if (globalAudio.muted || globalAudio.volume === 0) {
+      globalAudio.muted = false;
+      globalAudio.volume = lastVolume || 0.8;
+      volumeSlider.value = globalAudio.volume;
+      updateVolumeIcon(globalAudio.volume);
     } else {
-      lastVolume = audio.volume;
-      audio.muted = true;
-      audio.volume = 0;
+      lastVolume = globalAudio.volume;
+      globalAudio.muted = true;
+      globalAudio.volume = 0;
       volumeSlider.value = 0;
       updateVolumeIcon(0);
     }
   });
+
+  const observer = new MutationObserver((mutations, obs) => {
+    if (!document.body.contains(card)) {
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      obs.disconnect();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
 }
 
 // ── INIT ─────────────────────────────────────────────────────
@@ -3267,6 +3505,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadArticles();
   initNav();
   initSearch();
+  initGlobalPlayers();
 
   const navLogo = document.getElementById('navLogo');
   if (navLogo) {
