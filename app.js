@@ -1021,6 +1021,7 @@ function renderPage(state) {
       cleanupScrollListeners();
     }
     updateSEO(state);
+    syncPlayersVisibility(state);
   }
 }
 
@@ -3235,8 +3236,10 @@ function updateGlobalPlayers() {
   
   const mini = document.getElementById('nav-mini-player');
   if (mini) {
-    document.getElementById('nmp-title').textContent = titleText;
-    document.getElementById('nmp-meta').textContent = metaText;
+    const titleEl = document.getElementById('nmp-title');
+    const metaEl = document.getElementById('nmp-meta');
+    if (titleEl) titleEl.textContent = titleText;
+    if (metaEl) metaEl.textContent = metaText;
     
     const playSvg = document.getElementById('nmp-play-svg');
     const pauseSvg = document.getElementById('nmp-pause-svg');
@@ -3255,8 +3258,10 @@ function updateGlobalPlayers() {
 
   const float = document.getElementById('floating-podcast-player');
   if (float) {
-    document.getElementById('fp-title').textContent = titleText;
-    document.getElementById('fp-meta').textContent = metaText;
+    const titleEl = document.getElementById('fp-title');
+    const metaEl = document.getElementById('fp-meta');
+    if (titleEl) titleEl.textContent = titleText;
+    if (metaEl) metaEl.textContent = metaText;
     
     const playSvg = document.getElementById('fp-play-svg');
     const pauseSvg = document.getElementById('fp-pause-svg');
