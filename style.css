@@ -4599,7 +4599,7 @@ mark.body-highlight {
   border-radius: 99px;
   padding: 4px 16px 4px 6px;
   height: 38px;
-  max-width: 320px;
+  max-width: 200px;
   flex: 1;
   min-width: 0;
   margin: 0 12px;

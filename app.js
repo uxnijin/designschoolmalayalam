@@ -3188,7 +3188,6 @@ function initGlobalPlayers() {
       </button>
       <div class="nav-mini-details" id="nmp-details-navigate" style="cursor: pointer;">
         <div class="nav-mini-title" id="nmp-title">Title</div>
-        <div class="nav-mini-meta" id="nmp-meta">Meta</div>
       </div>
       <div class="nav-mini-progress-container" id="nmp-progress-container">
         <div class="nav-mini-progress-bar" id="nmp-progress-bar"></div>
