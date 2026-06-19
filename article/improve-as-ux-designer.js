@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["improve-as-ux-designer"] = {
   id: "improve-as-ux-designer",
-  thumbnail: "assets/thumbnails/improve-as-ux-designer.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "How to Improve as a UX Designer: Lessons from Don Norman",
@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["improve-as-ux-designer"] = {
   date: "2026-06-19",
   
   tags: ["ux design", "don norman", "design philosophy", "humanity-centered design", "podcast"],
-  audioUrl: "assets/podcasts/improve-as-ux-designer.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/improve-as-ux-designer.mp3",
   youtubeUrl: "https://youtu.be/DRbjdXjHPBc?si=2OdJpj8ifdUsdy12",
   podcastCredit: {
     channel: "Ansh Mehra",

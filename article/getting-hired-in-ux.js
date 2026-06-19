@@ -4,15 +4,15 @@
 
 ARTICLE_REGISTRY["getting-hired-in-ux"] = {
   id: "getting-hired-in-ux",
-  thumbnail: "assets/thumbnails/getting-hired-in-ux.svg",
-  subcategoryId: "conversational-ui", // Let's put it in the same subcategory or we can add a new subcategory if needed. Since podcasts only has conversational-ui, let's keep it here or we can put it in a general subcategory. Let's see if we should create a subcategory in data.js.
+  thumbnail: "",
+  subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "Getting Hired in UX: What to Do When Apply-and-Wait Isn't Enough",
   description: "Evan Sunwall, Director of Self-Paced Training at Nielsen Norman Group, joins the UX Podcast to share real-world preparation tactics for a tough UX job market.",
   date: "2026-06-19",
   
   tags: ["ux careers", "ux job market", "portfolio", "interviewing", "career advice"],
-  audioUrl: "assets/podcasts/getting-hired-in-ux.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/getting-hired-in-ux.mp3",
   youtubeUrl: "https://youtu.be/VlQNonLD2sQ?si=s1hqreO1NX9Z_i2M",
   podcastCredit: {
     channel: "Nielsen Norman Group (NN/G) UX Podcast",

@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["conversational-design-and-ui"] = {
   id: "conversational-design-and-ui",
-  thumbnail: "assets/thumbnails/conversational-design-ui.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "Conversational Design & UI: Why Language Matters More Than Ever",
@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["conversational-design-and-ui"] = {
   date: "2026-06-19",
   
   tags: ["ux design", "conversational ui", "podcast", "ai", "interaction design"],
-  audioUrl: "assets/podcasts/conversational-design-ui.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/conversational-design-ui.mp3",
   youtubeUrl: "https://youtu.be/P-nMVkBcNAE?si=gr1jzU3iYeK1jvj6",
   podcastCredit: {
     channel: "Nielsen Norman Group (NN/G) UX Podcast",

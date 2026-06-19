@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["product-design-wisdom"] = {
   id: "product-design-wisdom",
-  thumbnail: "assets/thumbnails/product-design-wisdom.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "Product Design Wisdom: 35 Years of Lessons from Apple & Beyond",
@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["product-design-wisdom"] = {
   date: "2026-06-19",
   
   tags: ["product design", "design leadership", "steve jobs", "apple", "podcast"],
-  audioUrl: "assets/podcasts/product-design-wisdom.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/product-design-wisdom.mp3",
   youtubeUrl: "https://youtu.be/X-83gvgVaWc?si=AnbW1s6vQZ2eA13K",
   podcastCredit: {
     channel: "Lenny's Podcast",

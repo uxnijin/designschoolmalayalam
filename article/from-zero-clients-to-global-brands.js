@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["from-zero-clients-to-global-brands"] = {
   id: "from-zero-clients-to-global-brands",
-  thumbnail: "assets/thumbnails/from-zero-clients-to-global-brands.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "From Zero Clients to Global Brands: Jack Chitty's Story",
@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["from-zero-clients-to-global-brands"] = {
   date: "2026-06-19",
   
   tags: ["brand design", "freelancing", "creative legends", "storytelling", "podcast"],
-  audioUrl: "assets/podcasts/from-zero-clients-to-global-brands.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/from-zero-clients-to-global-brands.mp3",
   youtubeUrl: "https://youtu.be/otVe9fm0yC0?si=3G03Zv5AoWyxoZua",
   podcastCredit: {
     channel: "Creative Legends",

@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["design-process-is-dead"] = {
   id: "design-process-is-dead",
-  thumbnail: "assets/thumbnails/design-process-is-dead.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "The Design Process is Dead. Here's What's Replacing It.",
@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["design-process-is-dead"] = {
   date: "2026-06-19",
   
   tags: ["ai design", "design process", "anthropic", "claude", "podcast"],
-  audioUrl: "assets/podcasts/design-process-is-dead.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/design-process-is-dead.mp3",
   youtubeUrl: "https://youtu.be/eh8bcBIAAFo?si=24t8gfwdItG21j0f",
   podcastCredit: {
     channel: "Lenny's Podcast",

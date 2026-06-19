@@ -4,7 +4,7 @@
 
 ARTICLE_REGISTRY["design-education-and-careers"] = {
   id: "design-education-and-careers",
-  thumbnail: "assets/thumbnails/design-education-and-careers.svg",
+  thumbnail: "",
   subcategoryId: "conversational-ui",
   categoryId: "podcasts",
   title: "Design Education & Careers: Lessons from an NID Dropout and Google UXer",
@@ -12,7 +12,7 @@ ARTICLE_REGISTRY["design-education-and-careers"] = {
   date: "2026-06-19",
   
   tags: ["design education", "ux careers", "google", "salesforce", "podcast"],
-  audioUrl: "assets/podcasts/design-education-and-careers.mp3",
+  audioUrl: "https://github.com/uxnijin/designschoolmalayalam/releases/download/v1.0.0-audio/design-education-and-careers.mp3",
   youtubeUrl: "https://youtu.be/hrx19F12g8U?si=kqM15vX5EGav8p1S",
   podcastCredit: {
     channel: "D Talks - The Design Podcast",
