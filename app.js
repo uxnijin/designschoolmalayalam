@@ -53,9 +53,9 @@ auth.onAuthStateChanged((user) => {
   // Update nav button text/icon immediately
   updateNavAuthButton();
 
-  // Trigger UI update immediately if we are on dashboard, home page, or article page
+  // Trigger UI update immediately if we are on dashboard, home page, article page, or jobs page
   const state = history.state || parseUrl();
-  if (state.page === 'dashboard' || state.page === 'home' || state.page === 'article' || state.page === 'jobs-admin') {
+  if (state.page === 'dashboard' || state.page === 'home' || state.page === 'article' || state.page === 'jobs-admin' || state.page === 'jobs') {
     renderPage(state);
   }
 
@@ -64,7 +64,7 @@ auth.onAuthStateChanged((user) => {
     syncLocalDataToCloud().then(() => {
       // Re-render after sync completes to reflect merged progress
       const currentState = history.state || parseUrl();
-      if (currentState.page === 'dashboard' || currentState.page === 'home' || currentState.page === 'article' || currentState.page === 'jobs-admin') {
+      if (currentState.page === 'dashboard' || currentState.page === 'home' || currentState.page === 'article' || currentState.page === 'jobs-admin' || currentState.page === 'jobs') {
         renderPage(currentState);
       }
     });
@@ -1498,7 +1498,6 @@ function initNav() {
       <div class="nav-item-wrapper" data-cat-id="jobs">
         <button class="nav-link" id="btnJobsNav" data-cat-id="jobs" onclick="navigate('jobs'); return false;">
           <span>Jobs</span>
-          <span class="nav-jobs-live-dot"></span>
         </button>
       </div>
     `;
@@ -6470,6 +6469,11 @@ const JOB_CATEGORIES = [
   { id: 'content-writing',   label: 'Content Writing' },
   { id: 'digital-marketing', label: 'Digital Marketing' },
   { id: 'production',        label: 'Production' },
+  { id: '3d-cgi',            label: '3D Design / CGI' },
+  { id: 'motion-design-vfx', label: 'Motion Design / VFX' },
+  { id: 'packaging-print',   label: 'Packaging & Print' },
+  { id: 'web-ui-dev',        label: 'Web & UI Developer' },
+  { id: 'photography-shoot', label: 'Photography & Shoot' },
 ];
 
 let _jobsData = [];
@@ -6515,10 +6519,6 @@ function renderJobsPage() {
   return `
     <div class="page-wide" id="jobsPageRoot">
       <div class="jobs-page-hero">
-        <div class="jobs-page-badge">
-          <span class="jobs-live-pulse"></span>
-          Live Job Board
-        </div>
         <h1 class="jobs-page-title">Find Your Next<br><span class="jobs-title-gradient">Creative Role</span></h1>
         <p class="jobs-page-subtitle">Curated listings for designers, editors, illustrators &amp; marketers — updated in real time.</p>
       </div>
@@ -6544,6 +6544,13 @@ function renderJobsPage() {
             </svg>
           </button>
         </div>
+        <button class="jobs-post-btn-top" onclick="openPostJobModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Post a Job
+        </button>
       </div>
 
       <div class="jobs-filter-bar" id="jobsFilterBar">
@@ -6569,14 +6576,23 @@ function renderJobsPage() {
             <strong>Hiring a designer?</strong>
             <span>Reach thousands of creative professionals — post a job for free.</span>
           </div>
-          <a href="https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent('Hi! I want to post a job on Design School.')}" target="_blank" rel="noopener" class="jobs-post-btn">
+          <button class="jobs-post-btn" onclick="openPostJobModal()">
             Post a Job
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"/>
               <polyline points="12 5 19 12 12 19"/>
             </svg>
-          </a>
+          </button>
         </div>
+      </div>
+
+      <!-- User submitted jobs section (shown last) -->
+      <div id="userSubmittedJobsSection" class="user-submitted-jobs-section" style="display:none;">
+        <div class="user-submitted-jobs-header">
+          <h3 class="user-submitted-jobs-title">Your Job Postings (<span id="userSubmittedEmail"></span>)</h3>
+          <p class="user-submitted-jobs-desc">Manage the job listings you have submitted. Only you can edit or delete them.</p>
+        </div>
+        <div id="userJobsList" class="user-jobs-list"></div>
       </div>
     </div>
   `;
@@ -6597,14 +6613,14 @@ function renderJobCard(job) {
       })()
     : '';
 
-  const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || '';
+  const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category || '';
 
   const logoHtml = job.logo
     ? `<img src="${job.logo}" alt="${job.company || ''}" class="job-card-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="job-card-logo-fallback" style="display:none">${(job.company || 'C').charAt(0).toUpperCase()}</div>`
     : `<div class="job-card-logo-fallback">${(job.company || 'C').charAt(0).toUpperCase()}</div>`;
 
   return `
-    <a class="job-card ${job.featured ? 'job-card--featured' : ''}" href="${job.link || '#'}" target="_blank" rel="noopener noreferrer" id="job-${job.id}">
+    <div class="job-card ${job.featured ? 'job-card--featured' : ''}" onclick="openJobDetailModal('${job.id}')" id="job-${job.id}" style="cursor: pointer;">
       ${job.featured ? '<span class="job-card-featured-badge">⭐ Featured</span>' : ''}
       <div class="job-card-top">
         <div class="job-card-logo-wrap">
@@ -6634,7 +6650,7 @@ function renderJobCard(job) {
         ${catLabel ? `<span class="job-tag job-tag--cat">${catLabel}</span>` : ''}
         ${postedDate ? `<span class="job-tag job-tag--date">${postedDate}</span>` : ''}
       </div>
-    </a>
+    </div>
   `;
 }
 
@@ -6747,7 +6763,9 @@ function initJobsPage() {
       _jobsData = snapshot.docs
         .map(doc => ({ id: doc.id, ...doc.data() }))
         .filter(j => j.active !== false);
+      renderJobsFilterBar();
       renderJobsGrid(getFilteredJobs());
+      renderUserSubmittedJobs();
     }, err => {
       console.error('Jobs load failed:', err);
       const grid = document.getElementById('jobsGrid');
@@ -6873,12 +6891,18 @@ function renderJobsAdminPage() {
 
               <div class="form-group">
                 <label for="jobCategory">Category <span class="required">*</span></label>
-                <select id="jobCategory" required>
+                <select id="jobCategory" required onchange="handleCategoryChange(this, 'adminCustomCategoryGroup')">
                   ${JOB_CATEGORIES.filter(c => c.id !== 'all').map(c => `
                     <option value="${c.id}">${c.label}</option>
                   `).join('')}
+                  <option value="custom">Other / Custom Category...</option>
                 </select>
               </div>
+            </div>
+
+            <div class="form-group" id="adminCustomCategoryGroup" style="display:none;">
+              <label for="jobCustomCategory">Custom Category Name <span class="required">*</span></label>
+              <input type="text" id="jobCustomCategory" placeholder="e.g. 3D Animator">
             </div>
 
             <div class="form-group">
@@ -6886,9 +6910,31 @@ function renderJobsAdminPage() {
               <input type="url" id="jobLink" required placeholder="e.g. https://linkedin.com/jobs/...">
             </div>
 
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="jobSalary">Salary Range <span class="optional">(Optional)</span></label>
+                <input type="text" id="jobSalary" placeholder="e.g. ₹30k - ₹50k / mo">
+              </div>
+
+              <div class="form-group">
+                <label for="jobExperience">Experience Required <span class="optional">(Optional)</span></label>
+                <input type="text" id="jobExperience" placeholder="e.g. 2+ years">
+              </div>
+            </div>
+
             <div class="form-group">
-              <label for="jobDescription">Short Description <span class="required">*</span></label>
-              <textarea id="jobDescription" required rows="3" placeholder="Brief summary of the role, requirements, key skills..."></textarea>
+              <label for="jobSkills">Required Skills <span class="optional">(Optional - Comma separated)</span></label>
+              <input type="text" id="jobSkills" placeholder="e.g. Figma, UI Design, Prototyping">
+            </div>
+
+            <div class="form-group">
+              <label for="jobCompanyDesc">About the Company <span class="optional">(Optional)</span></label>
+              <textarea id="jobCompanyDesc" rows="2" placeholder="Brief info about the company..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="jobDescription">Job Description <span class="required">*</span></label>
+              <textarea id="jobDescription" required rows="3" placeholder="Detailed key responsibilities, requirements, tools..."></textarea>
             </div>
 
             <div class="form-checkbox-group">
@@ -6979,7 +7025,7 @@ function renderAdminJobsList() {
 
   listDiv.innerHTML = _adminJobsData.map(job => {
     const isEditing = _adminEditingJobId === job.id;
-    const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.category;
+    const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category;
     
     const logoHtml = job.logo
       ? `<img src="${job.logo}" alt="${job.company || ''}" class="admin-job-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="admin-job-logo-fallback" style="display:none">${(job.company || 'C').charAt(0).toUpperCase()}</div>`
@@ -7052,8 +7098,33 @@ function editJob(jobId) {
   document.getElementById('jobLogo').value = job.logo || '';
   document.getElementById('jobLocation').value = job.location || '';
   document.getElementById('jobType').value = job.type || 'Full-time';
-  document.getElementById('jobCategory').value = job.category || 'ui-ux';
+  
+  const isDefaultCategory = JOB_CATEGORIES.some(c => c.id === job.category);
+  if (job.category && !isDefaultCategory) {
+    document.getElementById('jobCategory').value = 'custom';
+    const customGroup = document.getElementById('adminCustomCategoryGroup');
+    if (customGroup) {
+      customGroup.style.display = 'flex';
+      const customInput = customGroup.querySelector('input');
+      customInput.required = true;
+      customInput.value = job.customCategoryLabel || '';
+    }
+  } else {
+    document.getElementById('jobCategory').value = job.category || 'ui-ux';
+    const customGroup = document.getElementById('adminCustomCategoryGroup');
+    if (customGroup) {
+      customGroup.style.display = 'none';
+      const customInput = customGroup.querySelector('input');
+      customInput.required = false;
+      customInput.value = '';
+    }
+  }
+
   document.getElementById('jobLink').value = job.link || '';
+  document.getElementById('jobSalary').value = job.salary || '';
+  document.getElementById('jobExperience').value = job.experience || '';
+  document.getElementById('jobSkills').value = job.skills || '';
+  document.getElementById('jobCompanyDesc').value = job.companyDesc || '';
   document.getElementById('jobDescription').value = job.description || '';
   document.getElementById('jobFeatured').checked = !!job.featured;
   document.getElementById('jobActive').checked = job.active !== false;
@@ -7074,6 +7145,8 @@ function cancelJobEdit() {
   _adminEditingJobId = null;
 
   document.getElementById('jobForm').reset();
+  document.getElementById('adminCustomCategoryGroup').style.display = 'none';
+  document.getElementById('adminCustomCategoryGroup').querySelector('input').required = false;
   // Keep active default checked
   document.getElementById('jobActive').checked = true;
 
@@ -7114,17 +7187,35 @@ function handleJobFormSubmit(event) {
   const featured = document.getElementById('jobFeatured').checked;
   const active = document.getElementById('jobActive').checked;
 
+  const salary = document.getElementById('jobSalary').value.trim();
+  const experience = document.getElementById('jobExperience').value.trim();
+  const skills = document.getElementById('jobSkills').value.trim();
+  const companyDesc = document.getElementById('jobCompanyDesc').value.trim();
+
+  let finalCategory = category;
+  let customCategoryLabel = '';
+  if (category === 'custom') {
+    const customText = document.getElementById('jobCustomCategory').value.trim();
+    finalCategory = slugify(customText);
+    customCategoryLabel = customText;
+  }
+
   const jobData = {
     title,
     company,
     logo,
     location,
     type,
-    category,
+    category: finalCategory,
+    customCategoryLabel,
     link,
     description,
     featured,
-    active
+    active,
+    salary,
+    experience,
+    skills,
+    companyDesc
   };
 
   const btnSubmit = document.getElementById('btnSubmitForm');
@@ -7146,6 +7237,8 @@ function handleJobFormSubmit(event) {
     db.collection('jobs').add(jobData).then(() => {
       alert("Job listing published!");
       document.getElementById('jobForm').reset();
+      document.getElementById('adminCustomCategoryGroup').style.display = 'none';
+      document.getElementById('adminCustomCategoryGroup').querySelector('input').required = false;
       document.getElementById('jobActive').checked = true;
       btnSubmit.disabled = false;
       btnSubmit.innerText = originalText;
@@ -7155,4 +7248,466 @@ function handleJobFormSubmit(event) {
       btnSubmit.innerText = originalText;
     });
   }
+}
+
+// ── CUSTOM CATEGORIES & USER SUBMISSIONS HELPERS ───────────────
+
+function slugify(text) {
+  return 'custom-' + text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+function handleCategoryChange(selectElem, customGroupId) {
+  const customGroup = document.getElementById(customGroupId);
+  if (customGroup) {
+    if (selectElem.value === 'custom') {
+      customGroup.style.display = 'flex';
+      customGroup.querySelector('input').required = true;
+    } else {
+      customGroup.style.display = 'none';
+      const input = customGroup.querySelector('input');
+      input.required = false;
+      input.value = '';
+    }
+  }
+}
+
+function getActiveCategories(jobsData) {
+  const list = [...JOB_CATEGORIES];
+  jobsData.forEach(job => {
+    if (job.category && !list.some(c => c.id === job.category)) {
+      const label = job.customCategoryLabel || job.category.replace('custom-', '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      list.push({ id: job.category, label });
+    }
+  });
+  return list;
+}
+
+function renderJobsFilterBar() {
+  const filterBar = document.getElementById('jobsFilterBar');
+  if (!filterBar) return;
+  const categories = getActiveCategories(_jobsData);
+  filterBar.innerHTML = categories.map(cat => `
+    <button
+      class="jobs-filter-pill ${cat.id === _jobsActiveCategory ? 'active' : ''}"
+      data-cat="${cat.id}"
+      onclick="setJobsCategory('${cat.id}')"
+    >${cat.label}</button>
+  `).join('');
+}
+
+// ── FULLSCREEN JOB DETAILS MODAL ──────────────────────────────
+
+function openJobDetailModal(jobId) {
+  let job = _jobsData.find(j => j.id === jobId);
+  if (!job) {
+    job = _adminJobsData.find(j => j.id === jobId);
+  }
+  if (!job) return;
+
+  const postedDate = job.postedAt
+    ? (() => {
+        try {
+          const d = job.postedAt.toDate ? job.postedAt.toDate() : new Date(job.postedAt);
+          return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+        } catch(e) { return ''; }
+      })()
+    : '';
+
+  const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category || '';
+  
+  const logoHtml = job.logo
+    ? `<img src="${job.logo}" alt="${job.company || ''}" class="job-modal-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="job-modal-logo-fallback" style="display:none">${(job.company || 'C').charAt(0).toUpperCase()}</div>`
+    : `<div class="job-modal-logo-fallback">${(job.company || 'C').charAt(0).toUpperCase()}</div>`;
+
+  const skillsHtml = job.skills
+    ? job.skills.split(',').map(s => `<span class="job-detail-skill-tag">${s.trim()}</span>`).join('')
+    : '';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'jobDetailModal';
+  overlay.className = 'job-details-modal-overlay';
+  overlay.onclick = (e) => {
+    if (e.target === overlay) closeJobDetailModal();
+  };
+
+  overlay.innerHTML = `
+    <div class="job-details-modal-content">
+      <button class="job-modal-close" onclick="closeJobDetailModal()" aria-label="Close details">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="job-modal-header">
+        <div class="job-modal-logo-wrap">
+          ${logoHtml}
+        </div>
+        <div class="job-modal-header-text">
+          <h2 class="job-modal-title">${job.title || 'Untitled Role'}</h2>
+          <div class="job-modal-company">${job.company || ''}</div>
+        </div>
+      </div>
+
+      <div class="job-modal-badges">
+        ${job.type ? `<span class="job-modal-badge job-modal-badge--type">${job.type}</span>` : ''}
+        ${job.location ? `<span class="job-modal-badge job-modal-badge--location">📍 ${job.location}</span>` : ''}
+        ${catLabel ? `<span class="job-modal-badge job-modal-badge--cat">${catLabel}</span>` : ''}
+        ${postedDate ? `<span class="job-modal-badge job-modal-badge--date">📅 ${postedDate}</span>` : ''}
+        ${job.featured ? `<span class="job-modal-badge job-modal-badge--featured">⭐ Featured</span>` : ''}
+      </div>
+
+      <div class="job-modal-grid">
+        ${job.salary ? `
+          <div class="job-modal-grid-card">
+            <span class="job-modal-card-label">Salary Range</span>
+            <span class="job-modal-card-value">${job.salary}</span>
+          </div>
+        ` : ''}
+        ${job.experience ? `
+          <div class="job-modal-grid-card">
+            <span class="job-modal-card-label">Experience Required</span>
+            <span class="job-modal-card-value">${job.experience}</span>
+          </div>
+        ` : ''}
+      </div>
+
+      ${skillsHtml ? `
+        <div class="job-modal-section">
+          <h3>Required Skills</h3>
+          <div class="job-detail-skills-wrap">
+            ${skillsHtml}
+          </div>
+        </div>
+      ` : ''}
+
+      ${job.companyDesc ? `
+        <div class="job-modal-section">
+          <h3>About the Company</h3>
+          <p class="job-modal-text-block">${job.companyDesc}</p>
+        </div>
+      ` : ''}
+
+      <div class="job-modal-section">
+        <h3>Job Description</h3>
+        <p class="job-modal-text-block">${job.description || ''}</p>
+      </div>
+
+      <div class="job-modal-footer">
+        ${job.createdBy ? `<span class="job-modal-submitted-by">Posted by: <strong>${job.createdBy}</strong></span>` : ''}
+        <a href="${job.link || '#'}" target="_blank" rel="noopener noreferrer" class="btn-job-apply-now">
+          Apply Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeJobDetailModal() {
+  const modal = document.getElementById('jobDetailModal');
+  if (modal) modal.remove();
+  if (!document.getElementById('postJobModal')) {
+    document.body.style.overflow = '';
+  }
+}
+
+// ── VISITOR JOB POSTING & MODAL ────────────────────────────────
+
+let _visitorEditingJobId = null;
+
+function openPostJobModal(editJobId = null) {
+  _visitorEditingJobId = editJobId;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'postJobModal';
+  overlay.className = 'job-details-modal-overlay';
+  overlay.onclick = (e) => {
+    if (e.target === overlay) closePostJobModal();
+  };
+
+  if (!currentUser) {
+    overlay.innerHTML = `
+      <div class="jobs-admin-auth-card" style="margin: auto; max-width: 420px; position: relative;">
+        <button class="job-modal-close" onclick="closePostJobModal()" aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <div class="jobs-admin-auth-icon">🔐</div>
+        <h2>Sign In Required</h2>
+        <p>You must sign in with your Google account to post a job listing and manage it later.</p>
+        <button class="btn-submit" onclick="handleGoogleSignIn()">Sign In with Google</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  let job = null;
+  if (editJobId) {
+    job = _jobsData.find(j => j.id === editJobId);
+  }
+
+  const isCustomCategory = job && !JOB_CATEGORIES.some(c => c.id === job.category);
+
+  overlay.innerHTML = `
+    <div class="job-details-modal-content" style="max-width: 600px;">
+      <button class="job-modal-close" onclick="closePostJobModal()" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <h3 class="visitor-form-title" id="visitorFormTitle">${editJobId ? 'Edit Job Posting' : 'Post a New Job'}</h3>
+      <p class="visitor-form-subtitle">Reach thousands of creative professionals in our community.</p>
+
+      <form id="visitorJobForm" onsubmit="handleVisitorJobFormSubmit(event)" class="jobs-admin-form" style="margin-top: 20px;">
+        <div class="form-group">
+          <label for="visitorJobTitle">Job Title <span class="required">*</span></label>
+          <input type="text" id="visitorJobTitle" required placeholder="e.g. Graphic Designer" value="${job ? job.title || '' : ''}">
+        </div>
+        
+        <div class="form-group">
+          <label for="visitorJobCompany">Company Name <span class="required">*</span></label>
+          <input type="text" id="visitorJobCompany" required placeholder="e.g. Kochi Design Studio" value="${job ? job.company || '' : ''}">
+        </div>
+
+        <div class="form-group">
+          <label for="visitorJobLogo">Company Logo URL <span class="optional">(Optional)</span></label>
+          <input type="url" id="visitorJobLogo" placeholder="e.g. https://domain.com/logo.png" value="${job ? job.logo || '' : ''}">
+        </div>
+
+        <div class="form-group">
+          <label for="visitorJobLocation">Location <span class="required">*</span></label>
+          <input type="text" id="visitorJobLocation" required placeholder="e.g. Kochi (On-site) / Remote" value="${job ? job.location || '' : ''}">
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="visitorJobType">Job Type <span class="required">*</span></label>
+            <select id="visitorJobType" required>
+              <option value="Full-time" ${job && job.type === 'Full-time' ? 'selected' : ''}>Full-time</option>
+              <option value="Part-time" ${job && job.type === 'Part-time' ? 'selected' : ''}>Part-time</option>
+              <option value="Freelance" ${job && job.type === 'Freelance' ? 'selected' : ''}>Freelance</option>
+              <option value="Internship" ${job && job.type === 'Internship' ? 'selected' : ''}>Internship</option>
+              <option value="Contract" ${job && job.type === 'Contract' ? 'selected' : ''}>Contract</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="visitorJobCategory">Category <span class="required">*</span></label>
+            <select id="visitorJobCategory" required onchange="handleCategoryChange(this, 'visitorCustomCategoryGroup')">
+              ${JOB_CATEGORIES.filter(c => c.id !== 'all').map(c => `
+                <option value="${c.id}" ${job && job.category === c.id ? 'selected' : ''}>${c.label}</option>
+              `).join('')}
+              <option value="custom" ${isCustomCategory ? 'selected' : ''}>Other / Custom Category...</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="visitorCustomCategoryGroup" style="display: ${isCustomCategory ? 'flex' : 'none'};">
+          <label for="visitorJobCustomCategory">Custom Category Name <span class="required">*</span></label>
+          <input type="text" id="visitorJobCustomCategory" placeholder="e.g. 3D Animator" value="${isCustomCategory ? job.customCategoryLabel || '' : ''}" ${isCustomCategory ? 'required' : ''}>
+        </div>
+
+        <div class="form-group">
+          <label for="visitorJobLink">Apply Link / URL <span class="required">*</span></label>
+          <input type="url" id="visitorJobLink" required placeholder="e.g. LinkedIn Apply URL or WhatsApp link" value="${job ? job.link || '' : ''}">
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="visitorJobSalary">Salary Range <span class="optional">(Optional)</span></label>
+            <input type="text" id="visitorJobSalary" placeholder="e.g. ₹25k - ₹40k / mo" value="${job ? job.salary || '' : ''}">
+          </div>
+
+          <div class="form-group">
+            <label for="visitorJobExperience">Experience Required <span class="optional">(Optional)</span></label>
+            <input type="text" id="visitorJobExperience" placeholder="e.g. 1-2 years" value="${job ? job.experience || '' : ''}">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="visitorJobSkills">Required Skills <span class="optional">(Optional - Comma separated)</span></label>
+          <input type="text" id="visitorJobSkills" placeholder="e.g. Photoshop, Premiere Pro, Color Grading" value="${job ? job.skills || '' : ''}">
+        </div>
+
+        <div class="form-group">
+          <label for="visitorJobCompanyDesc">About the Company <span class="optional">(Optional)</span></label>
+          <textarea id="visitorJobCompanyDesc" rows="2" placeholder="Brief info about your agency or studio...">${job ? job.companyDesc || '' : ''}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="visitorJobDescription">Job Description <span class="required">*</span></label>
+          <textarea id="visitorJobDescription" required rows="4" placeholder="Detail the roles, responsibilities, work schedule, requirements...">${job ? job.description || '' : ''}</textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="btnSubmitVisitorForm" class="btn-submit">${editJobId ? 'Save Changes' : 'Submit Job Post'}</button>
+          <button type="button" class="btn-cancel" onclick="closePostJobModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  document.body.style.overflow = 'hidden';
+}
+
+function closePostJobModal() {
+  const modal = document.getElementById('postJobModal');
+  if (modal) modal.remove();
+  document.body.style.overflow = '';
+}
+
+function handleVisitorJobFormSubmit(event) {
+  event.preventDefault();
+
+  const title = document.getElementById('visitorJobTitle').value.trim();
+  const company = document.getElementById('visitorJobCompany').value.trim();
+  const logo = document.getElementById('visitorJobLogo').value.trim();
+  const location = document.getElementById('visitorJobLocation').value.trim();
+  const type = document.getElementById('visitorJobType').value;
+  const category = document.getElementById('visitorJobCategory').value;
+  const link = document.getElementById('visitorJobLink').value.trim();
+  const salary = document.getElementById('visitorJobSalary').value.trim();
+  const experience = document.getElementById('visitorJobExperience').value.trim();
+  const skills = document.getElementById('visitorJobSkills').value.trim();
+  const companyDesc = document.getElementById('visitorJobCompanyDesc').value.trim();
+  const description = document.getElementById('visitorJobDescription').value.trim();
+
+  let finalCategory = category;
+  let customCategoryLabel = '';
+  if (category === 'custom') {
+    const customText = document.getElementById('visitorJobCustomCategory').value.trim();
+    finalCategory = slugify(customText);
+    customCategoryLabel = customText;
+  }
+
+  const jobData = {
+    title,
+    company,
+    logo,
+    location,
+    type,
+    category: finalCategory,
+    customCategoryLabel,
+    link,
+    salary,
+    experience,
+    skills,
+    companyDesc,
+    description,
+    active: true
+  };
+
+  const btnSubmit = document.getElementById('btnSubmitVisitorForm');
+  btnSubmit.disabled = true;
+  const originalText = btnSubmit.innerText;
+  btnSubmit.innerText = "Submitting...";
+
+  if (_visitorEditingJobId) {
+    db.collection('jobs').doc(_visitorEditingJobId).update(jobData).then(() => {
+      alert("Job posting updated successfully!");
+      closePostJobModal();
+    }).catch(err => {
+      alert("Failed to update job: " + err.message);
+      btnSubmit.disabled = false;
+      btnSubmit.innerText = originalText;
+    });
+  } else {
+    jobData.postedAt = firebase.firestore.FieldValue.serverTimestamp();
+    jobData.createdBy = currentUser.email;
+    jobData.featured = false;
+
+    db.collection('jobs').add(jobData).then(() => {
+      alert("Job posting submitted successfully!");
+      closePostJobModal();
+    }).catch(err => {
+      alert("Failed to submit job: " + err.message);
+      btnSubmit.disabled = false;
+      btnSubmit.innerText = originalText;
+    });
+  }
+}
+
+function editVisitorJob(jobId) {
+  openPostJobModal(jobId);
+}
+
+function deleteVisitorJob(jobId) {
+  const confirmed = confirm("Are you sure you want to permanently delete your job posting?");
+  if (!confirmed) return;
+
+  db.collection('jobs').doc(jobId).delete().then(() => {
+    alert("Job posting deleted.");
+  }).catch(err => {
+    alert("Failed to delete job: " + err.message);
+  });
+}
+
+function renderUserSubmittedJobs() {
+  const section = document.getElementById('userSubmittedJobsSection');
+  const list = document.getElementById('userJobsList');
+  const emailSpan = document.getElementById('userSubmittedEmail');
+  if (!section || !list) return;
+
+  if (!currentUser) {
+    section.style.display = 'none';
+    return;
+  }
+
+  const userJobs = _jobsData.filter(j => j.createdBy === currentUser.email);
+  
+  if (userJobs.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  if (emailSpan) emailSpan.innerText = currentUser.email;
+  section.style.display = 'block';
+
+  list.innerHTML = userJobs.map(job => {
+    const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category;
+    
+    return `
+      <div class="user-job-row" id="user-job-${job.id}">
+        <div class="user-job-details">
+          <div class="user-job-title">${job.title || 'Untitled Role'}</div>
+          <div class="user-job-company-row">
+            <span>${job.company || ''}</span>
+            <span class="user-job-dot">•</span>
+            <span>${catLabel}</span>
+            <span class="user-job-dot">•</span>
+            <span>${job.type || ''}</span>
+          </div>
+        </div>
+        <div class="user-job-actions">
+          <button class="btn-user-action btn-user-action--edit" onclick="editVisitorJob('${job.id}')">
+            Edit
+          </button>
+          <button class="btn-user-action btn-user-action--delete" onclick="deleteVisitorJob('${job.id}')">
+            Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
