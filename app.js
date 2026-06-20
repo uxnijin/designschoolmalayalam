@@ -49,7 +49,7 @@ let currentUser = null;
 // Listen for auth state changes
 auth.onAuthStateChanged((user) => {
   currentUser = user;
-  
+
   // Update nav button text/icon immediately
   updateNavAuthButton();
 
@@ -102,16 +102,16 @@ async function syncLocalDataToCloud() {
   try {
     const docRef = db.collection('users').doc(currentUser.uid);
     const doc = await docRef.get();
-    
+
     let localArticles = [];
     try {
       localArticles = JSON.parse(localStorage.getItem('ds_completed_articles') || '[]');
-    } catch(e) {}
-    
+    } catch (e) { }
+
     let localQuizScores = {};
     try {
       localQuizScores = JSON.parse(localStorage.getItem('ds_quiz_scores') || '{}');
-    } catch(e) {}
+    } catch (e) { }
 
     let mergedArticles = [...localArticles];
     let mergedQuizScores = { ...localQuizScores };
@@ -123,7 +123,7 @@ async function syncLocalDataToCloud() {
 
       // Merge unique articles
       mergedArticles = Array.from(new Set([...localArticles, ...cloudArticles]));
-      
+
       // Merge quiz scores keeping the highest
       const allKeys = new Set([...Object.keys(localQuizScores), ...Object.keys(cloudScores)]);
       for (const key of allKeys) {
@@ -334,7 +334,7 @@ async function saveQuizScore(trackId, scorePercent) {
     const currentHigh = scores[trackId] || 0;
     if (scorePercent > currentHigh) {
       scores[trackId] = scorePercent;
-      
+
       // Update local storage
       localStorage.setItem('ds_quiz_scores', JSON.stringify(scores));
 
@@ -359,16 +359,16 @@ async function saveQuizScore(trackId, scorePercent) {
 function startQuiz(trackId) {
   const track = QUIZ_TRACKS.find(t => t.id === trackId);
   if (!track) return;
-  
+
   const questions = track.articleIds
     .map(id => ({ ...QUIZZES[id], articleId: id }))
     .filter(q => q && q.question);
-    
+
   if (questions.length === 0) {
     alert('This quiz track has no questions yet. Coming soon!');
     return;
   }
-  
+
   activeQuizState = {
     trackId: trackId,
     currentQuestionIdx: 0,
@@ -376,14 +376,14 @@ function startQuiz(trackId) {
     selectedOptionIdx: null,
     answers: []
   };
-  
+
   updateQuizView();
 }
 
 function updateQuizView() {
   const container = document.getElementById('quizArenaContainer');
   if (!container) return;
-  
+
   const layout = document.querySelector('.dashboard-page-layout');
   if (layout) {
     if (activeQuizState.trackId === null) {
@@ -392,7 +392,7 @@ function updateQuizView() {
       layout.classList.add('quiz-active-mode');
     }
   }
-  
+
   if (activeQuizState.trackId === null) {
     container.innerHTML = renderQuizArena();
   } else {
@@ -400,14 +400,14 @@ function updateQuizView() {
     const questions = track.articleIds
       .map(id => ({ ...QUIZZES[id], articleId: id }))
       .filter(q => q && q.question);
-      
+
     if (activeQuizState.currentQuestionIdx < questions.length) {
       container.innerHTML = renderActiveQuiz(track, questions);
     } else {
       container.innerHTML = renderQuizResults(track, questions);
     }
   }
-  
+
   const rect = container.getBoundingClientRect();
   const absoluteTop = window.pageYOffset + rect.top;
   window.scrollTo({ top: absoluteTop - 80, behavior: 'smooth' });
@@ -415,19 +415,19 @@ function updateQuizView() {
 
 function handleQuizPlaySelection(idx) {
   if (activeQuizState.selectedOptionIdx !== null) return;
-  
+
   const track = QUIZ_TRACKS.find(t => t.id === activeQuizState.trackId);
   const questions = track.articleIds
     .map(id => ({ ...QUIZZES[id], articleId: id }))
     .filter(q => q && q.question);
-    
+
   const q = questions[activeQuizState.currentQuestionIdx];
   activeQuizState.selectedOptionIdx = idx;
-  
+
   const isCorrect = idx === q.answerIndex;
   activeQuizState.answers.push(isCorrect);
   if (isCorrect) activeQuizState.score++;
-  
+
   updateQuizView();
 }
 
@@ -450,16 +450,16 @@ function handleTrackCardClick(e, trackId) {
 
 function renderQuizArena() {
   const scores = getQuizScores();
-  
+
   const tracksHtml = QUIZ_TRACKS.map(track => {
     const questions = track.articleIds
       .map(id => ({ ...QUIZZES[id], articleId: id }))
       .filter(q => q && q.question);
-      
+
     const totalQ = questions.length;
     const highScore = scores[track.id];
     const scoreText = highScore !== undefined ? `Best: <strong>${highScore}%</strong>` : 'Not started';
-    
+
     return `
       <div class="quiz-track-card" onclick="handleTrackCardClick(event, '${track.id}')">
         <div class="quiz-track-header">
@@ -479,7 +479,7 @@ function renderQuizArena() {
       </div>
     `;
   }).join('');
-  
+
   return `
     <div class="quiz-arena-grid">
       ${tracksHtml}
@@ -492,20 +492,20 @@ function renderActiveQuiz(track, questions) {
   const q = questions[qIdx];
   const total = questions.length;
   const progressPercent = Math.round((qIdx / total) * 100);
-  
+
   const optionsHtml = q.options.map((opt, idx) => {
     const isSelected = activeQuizState.selectedOptionIdx === idx;
     const isRevealed = activeQuizState.selectedOptionIdx !== null;
     const isCorrectOption = idx === q.answerIndex;
-    
+
     let statusClass = '';
     if (isRevealed) {
       if (isCorrectOption) statusClass = 'correct';
       else if (isSelected) statusClass = 'incorrect';
     }
-    
+
     const disabledAttr = isRevealed ? 'disabled' : '';
-    
+
     return `
       <button class="quiz-play-option ${statusClass}" ${disabledAttr} onclick="handleQuizPlaySelection(${idx})">
         <span class="quiz-play-letter">${String.fromCharCode(65 + idx)}</span>
@@ -513,9 +513,9 @@ function renderActiveQuiz(track, questions) {
       </button>
     `;
   }).join('');
-  
+
   const hasSelected = activeQuizState.selectedOptionIdx !== null;
-  
+
   return `
     <div class="quiz-play-box">
       <div class="quiz-play-header">
@@ -567,23 +567,23 @@ function renderQuizResults(track, questions) {
   const total = questions.length;
   const correct = activeQuizState.score;
   const scorePercent = Math.round((correct / total) * 100);
-  
+
   const isNewHigh = saveQuizScore(track.id, scorePercent);
-  
+
   let confettiHtml = '';
   if (scorePercent >= 80) {
     confettiHtml = `
       <div class="confetti-container">
         ${Array(30).fill(0).map((_, i) => {
-          const left = Math.random() * 100;
-          const delay = Math.random() * 2;
-          const color = ['#FF6F2C', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B'][Math.floor(Math.random() * 5)];
-          return `<div class="confetti-particle" style="left: ${left}%; animation-delay: ${delay}s; background: ${color}"></div>`;
-        }).join('')}
+      const left = Math.random() * 100;
+      const delay = Math.random() * 2;
+      const color = ['#FF6F2C', '#3B82F6', '#10B981', '#8B5CF6', '#F59E0B'][Math.floor(Math.random() * 5)];
+      return `<div class="confetti-particle" style="left: ${left}%; animation-delay: ${delay}s; background: ${color}"></div>`;
+    }).join('')}
       </div>
     `;
   }
-  
+
   return `
     <div class="quiz-results-box">
       ${confettiHtml}
@@ -607,9 +607,9 @@ function renderQuizResults(track, questions) {
         <div class="callout-icon">${scorePercent >= 80 ? '🏆' : '📖'}</div>
         <div class="callout-content">
           <p class="callout-text">
-            ${scorePercent >= 80 
-              ? '<strong>Expert Score!</strong> You scored a high result. Excellent mastery of these concepts!' 
-              : '<strong>Practice makes perfect!</strong> Keep reading and try again to master this track.'}
+            ${scorePercent >= 80
+      ? '<strong>Expert Score!</strong> You scored a high result. Excellent mastery of these concepts!'
+      : '<strong>Practice makes perfect!</strong> Keep reading and try again to master this track.'}
           </p>
         </div>
       </div>
@@ -995,8 +995,8 @@ function renderPage(state) {
         case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
         case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId, query); break;
         case 'search': content.innerHTML = renderSearchPage(query); break;
-        case 'dashboard': 
-          content.innerHTML = renderDashboardPage(); 
+        case 'dashboard':
+          content.innerHTML = renderDashboardPage();
           updateQuizView();
           break;
         case 'tools':
@@ -1027,8 +1027,8 @@ function renderPage(state) {
       case 'subcategory': content.innerHTML = renderSubcategoryPage(catId, subId); break;
       case 'article': content.innerHTML = renderArticlePage(catId, subId, articleId, query); break;
       case 'search': content.innerHTML = renderSearchPage(query); break;
-      case 'dashboard': 
-        content.innerHTML = renderDashboardPage(); 
+      case 'dashboard':
+        content.innerHTML = renderDashboardPage();
         updateQuizView();
         break;
       case 'tools':
@@ -1642,10 +1642,10 @@ function renderAuthBanner() {
   if (currentUser) {
     const avatarUrl = currentUser.photoURL || '';
     const name = currentUser.displayName || currentUser.email || 'User';
-    const avatarHtml = avatarUrl 
+    const avatarHtml = avatarUrl
       ? `<img class="auth-avatar" src="${avatarUrl}" alt="Avatar">`
       : `<div class="auth-avatar-letter">${name.charAt(0).toUpperCase()}</div>`;
-      
+
     return `
       <div class="auth-banner-card signed-in stagger-item" style="--stagger: 1.2">
         <div class="auth-banner-left">
@@ -1732,7 +1732,7 @@ function renderDashboardPage() {
   const completedList = getCompletedArticles();
   const completedArticles = ARTICLES.filter(a => completedList.includes(a.id))
     .sort((a, b) => new Date(b.date) - new Date(a.date));
-  
+
   let completedListHtml = '';
   if (completedArticles.length > 0) {
     completedListHtml = completedArticles.map(a => {
@@ -1782,9 +1782,9 @@ function renderDashboardPage() {
             <span>Back</span>
           </button>
           ${renderBreadcrumb([
-            { label: 'Home', action: `navigate('home')` },
-            { label: 'Learning Dashboard' }
-          ], 1)}
+    { label: 'Home', action: `navigate('home')` },
+    { label: 'Learning Dashboard' }
+  ], 1)}
         </div>
         
         <div class="subcategory-banner stagger-item" style="--stagger: 1.5">
@@ -1861,7 +1861,7 @@ function renderCompactLearningDashboard() {
   const completedList = getCompletedArticles();
   const totalArticles = ARTICLES.length;
   const completedCount = completedList.length;
-  
+
   // if (completedCount === 0) {
   //   return `
   //     <div class="learning-dashboard empty stagger-item" style="--stagger: 0.8">
@@ -1872,9 +1872,9 @@ function renderCompactLearningDashboard() {
   //     </div>
   //   `;
   // }
-  
+
   const overallPercent = Math.round((completedCount / totalArticles) * 100);
-  
+
   // const badges = checkBadges();
   // const unlockedBadges = badges.filter(b => b.unlocked);
   let unlockedBadgesHtml = '';
@@ -1894,7 +1894,7 @@ function renderCompactLearningDashboard() {
     `;
   }
   */
-  
+
   return `
     <div class="learning-dashboard compact stagger-item" style="--stagger: 0.8" onclick="navigate('dashboard')">
       <div class="dashboard-compact-inner">
@@ -3240,24 +3240,24 @@ function initGlobalPlayers() {
   if (!globalAudio) {
     globalAudio = new Audio();
     globalAudio.preload = 'metadata';
-    
+
     globalAudio.addEventListener('timeupdate', () => {
       updateGlobalPlayers();
       syncInlinePlayerProgress();
     });
-    
+
     globalAudio.addEventListener('play', () => {
       updateGlobalPlayers();
       syncInlinePlayerPlayState(true);
       syncSoundWaves(true);
     });
-    
+
     globalAudio.addEventListener('pause', () => {
       updateGlobalPlayers();
       syncInlinePlayerPlayState(false);
       syncSoundWaves(false);
     });
-    
+
     globalAudio.addEventListener('ended', () => {
       updateGlobalPlayers();
       syncInlinePlayerPlayState(false);
@@ -3295,7 +3295,7 @@ function initGlobalPlayers() {
       </div>
       <button class="nav-mini-close-btn" id="nmp-close-btn" aria-label="Close player">&times;</button>
     `;
-    
+
     const searchWrapper = document.getElementById('navSearchWrapper');
     if (searchWrapper) {
       nav.insertBefore(miniPlayer, searchWrapper);
@@ -3383,19 +3383,19 @@ function closeGlobalPlayer() {
 
 function updateGlobalPlayers() {
   if (!globalAudio || !activePodcast) return;
-  
+
   const titleText = activePodcast.podcastCredit?.episode || activePodcast.title;
-  const metaText = activePodcast.podcastCredit 
-    ? `${activePodcast.podcastCredit.host} • ${activePodcast.podcastCredit.guest}` 
+  const metaText = activePodcast.podcastCredit
+    ? `${activePodcast.podcastCredit.host} • ${activePodcast.podcastCredit.guest}`
     : 'Podcast';
-  
+
   const mini = document.getElementById('nav-mini-player');
   if (mini) {
     const titleEl = document.getElementById('nmp-title');
     const metaEl = document.getElementById('nmp-meta');
     if (titleEl) titleEl.textContent = titleText;
     if (metaEl) metaEl.textContent = metaText;
-    
+
     const playSvg = document.getElementById('nmp-play-svg');
     const pauseSvg = document.getElementById('nmp-pause-svg');
     if (globalAudio.paused) {
@@ -3405,7 +3405,7 @@ function updateGlobalPlayers() {
       if (playSvg) playSvg.style.display = 'none';
       if (pauseSvg) pauseSvg.style.display = 'block';
     }
-    
+
     const pct = globalAudio.duration ? (globalAudio.currentTime / globalAudio.duration) * 100 : 0;
     const bar = document.getElementById('nmp-progress-bar');
     if (bar) bar.style.width = `${pct}%`;
@@ -3417,7 +3417,7 @@ function updateGlobalPlayers() {
     const metaEl = document.getElementById('fp-meta');
     if (titleEl) titleEl.textContent = titleText;
     if (metaEl) metaEl.textContent = metaText;
-    
+
     const playSvg = document.getElementById('fp-play-svg');
     const pauseSvg = document.getElementById('fp-pause-svg');
     if (globalAudio.paused) {
@@ -3427,7 +3427,7 @@ function updateGlobalPlayers() {
       if (playSvg) playSvg.style.display = 'none';
       if (pauseSvg) pauseSvg.style.display = 'block';
     }
-    
+
     const pct = globalAudio.duration ? (globalAudio.currentTime / globalAudio.duration) * 100 : 0;
     const bar = document.getElementById('fp-progress-bar');
     if (bar) bar.style.width = `${pct}%`;
@@ -3437,15 +3437,15 @@ function updateGlobalPlayers() {
 function syncPlayersVisibility(state) {
   const mini = document.getElementById('nav-mini-player');
   const float = document.getElementById('floating-podcast-player');
-  
+
   if (!activePodcast) {
     if (mini) mini.style.display = 'none';
     if (float) float.style.display = 'none';
     return;
   }
-  
+
   const isCurrentlyOnActivePodcastPage = state.page === 'article' && state.articleId === activePodcast.id;
-  
+
   if (isCurrentlyOnActivePodcastPage) {
     if (mini) mini.style.display = 'none';
     if (float) float.style.display = 'none';
@@ -3489,7 +3489,7 @@ function syncInlinePlayerProgress() {
   const durationLabel = document.getElementById('podcast-duration');
   const progressBar = document.getElementById('podcast-progress-bar');
   const progressThumb = document.getElementById('podcast-progress-thumb');
-  
+
   if (currentTimeLabel && durationLabel && progressBar && progressThumb) {
     const formatTime = (secs) => {
       if (isNaN(secs) || secs === Infinity) return '0:00';
@@ -3497,10 +3497,10 @@ function syncInlinePlayerProgress() {
       const s = Math.floor(secs % 60);
       return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
-    
+
     currentTimeLabel.textContent = formatTime(globalAudio.currentTime);
     durationLabel.textContent = formatTime(globalAudio.duration);
-    
+
     if (globalAudio.duration) {
       const pct = (globalAudio.currentTime / globalAudio.duration) * 100;
       progressBar.style.width = `${pct}%`;
@@ -3551,7 +3551,7 @@ function initAudioPlayer(articleId) {
   const updateDuration = () => {
     durationLabel.textContent = formatTime(globalAudio.duration);
   };
-  
+
   if (globalAudio.readyState >= 1) {
     updateDuration();
   } else {
@@ -3567,12 +3567,12 @@ function initAudioPlayer(articleId) {
     pauseSvg.style.display = 'none';
     syncSoundWaves(false);
   }
-  
+
   syncInlinePlayerProgress();
-  
+
   speedBtn.textContent = `${globalAudio.playbackRate}x`;
   volumeSlider.value = globalAudio.volume;
-  
+
   const updateVolumeIcon = (vol) => {
     if (vol === 0 || globalAudio.muted) {
       volumeSvg.style.display = 'none';
@@ -3632,7 +3632,7 @@ function initAudioPlayer(articleId) {
   const speeds = [1, 1.25, 1.5, 2];
   let currentSpeedIdx = speeds.indexOf(globalAudio.playbackRate);
   if (currentSpeedIdx === -1) currentSpeedIdx = 0;
-  
+
   speedBtn.addEventListener('click', () => {
     currentSpeedIdx = (currentSpeedIdx + 1) % speeds.length;
     const nextSpeed = speeds[currentSpeedIdx];
@@ -3828,42 +3828,11 @@ const WORKBENCH_TOOLS = [
           </svg>`
   },
   {
-    id: "unicode-text",
-    title: "Stylish Text Converter",
-    description: "Unicode fonts for bios",
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 7V4h16v3"></path>
-            <path d="M5 20h6"></path>
-            <path d="M8 4v16"></path>
-            <path d="M17 13v7"></path>
-            <path d="M14 16h6"></path>
-          </svg>`
-  },
-  {
     id: "favicon-generator",
     title: "Favicon Package Generator",
     description: "Export icons as a ZIP",
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 3z"></path>
-          </svg>`
-  },
-  {
-    id: "duotone-filter",
-    title: "Duotone Photo Filter",
-    description: "Spotify-style image colors",
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9"></circle>
-            <path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"></path>
-          </svg>`
-  },
-  {
-    id: "lottie-color-editor",
-    title: "Lottie Color Editor",
-    description: "Recolor animation JSON",
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <path d="M14 2v6h6"></path>
-            <path d="M8 15h2l1 2 2-6 1 4h2"></path>
           </svg>`
   }
 ];
@@ -3940,14 +3909,8 @@ function renderToolsPage(activeTool) {
     toolWorkbenchHtml = renderQrGeneratorTool();
   } else if (selectedTool.id === 'font-pairing') {
     toolWorkbenchHtml = renderFontPairingTool();
-  } else if (selectedTool.id === 'unicode-text') {
-    toolWorkbenchHtml = renderUnicodeTextTool();
   } else if (selectedTool.id === 'favicon-generator') {
     toolWorkbenchHtml = renderFaviconGeneratorTool();
-  } else if (selectedTool.id === 'duotone-filter') {
-    toolWorkbenchHtml = renderDuotoneFilterTool();
-  } else if (selectedTool.id === 'lottie-color-editor') {
-    toolWorkbenchHtml = renderLottieColorEditorTool();
   }
 
   return `
@@ -4058,7 +4021,7 @@ function renderAboutPanelContent(toolId) {
 function renderTintsShadesTool() {
   const defaultColor = '#FF6F2C';
   const presets = ['#FF6F2C', '#6366F1', '#10B981', '#3B82F6', '#EC4899', '#8B5CF6', '#F59E0B', '#64748B'];
-  
+
   const presetsHtml = presets.map(p => `
     <button class="preset-dot" data-color="${p}" style="background-color: ${p}; width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); transition: transform 0.15s, border-color 0.15s; cursor: pointer; padding: 0;" title="${p}"></button>
   `).join('');
@@ -4188,7 +4151,7 @@ function generateTintsAndShades(hex) {
     const factor = i / 10;
     const tintRgb = mixColor(rgb, white, factor);
     const shadeRgb = mixColor(rgb, black, factor);
-    
+
     tints.push({
       percent: Math.round(factor * 100),
       hex: rgbToHex(tintRgb.r, tintRgb.g, tintRgb.b)
@@ -4212,7 +4175,7 @@ function getContrastColor(hex) {
 function renderContrastCheckerTool() {
   const defaultFg = '#1A1A1A';
   const defaultBg = '#FFFFFF';
-  
+
   return `
     <div class="contrast-checker-tool-content" style="text-align: left;">
       <div style="margin-bottom: 32px;">
@@ -4450,7 +4413,7 @@ function initContrastCheckerListeners() {
     if (bgTrigger) bgTrigger.style.backgroundColor = bgHex;
 
     const ratio = calculateContrastRatio(fgHex, bgHex);
-    
+
     const ratioValEl = document.getElementById('contrastRatioVal');
     if (ratioValEl) ratioValEl.textContent = ratio.toFixed(1);
 
@@ -5155,21 +5118,50 @@ function renderImageFormatConverterTool() {
     <div class="simple-tool-content" style="text-align: left;">
       ${renderToolIntro('Image Format Converter', 'Convert JPG, PNG, and WebP files in your browser using canvas export. Great for web-ready assets and quick client handoffs.')}
       ${renderSimpleDropzone('ifc', 'Drop an image to convert', 'JPG, PNG, or WebP')}
+      
       <div id="ifcWorkspace" class="utility-panel" style="display:none;">
-        <div class="utility-preview-row">
-          <img id="ifcPreview" class="utility-preview-img" alt="Image preview">
-          <div class="utility-stack">
-            <div class="utility-file-name" id="ifcFilename">image.png</div>
-            <label class="utility-label">Export format</label>
-            <select id="ifcFormat" class="utility-select">
-              <option value="image/png">PNG</option>
-              <option value="image/jpeg">JPG</option>
-              <option value="image/webp">WebP</option>
-            </select>
-            <label class="utility-label">Quality <strong id="ifcQualityVal">92%</strong></label>
-            <input type="range" id="ifcQuality" min="0.4" max="1" step="0.01" value="0.92" class="ic-slider">
-            <button class="btn-primary" id="ifcConvertBtn" style="border-radius: 12px; padding: 12px 18px;">Convert & Download</button>
+        <div class="utility-grid-two">
+          
+          <!-- Left Column: Visual Preview (Normal Design) -->
+          <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <img id="ifcPreview" class="utility-preview-img" alt="Image preview">
           </div>
+          
+          <!-- Right Column: Export Settings & Controls -->
+          <div class="utility-stack" style="justify-content: center;">
+            <div class="utility-file-name" id="ifcFilename" style="margin-bottom: 8px;">image.png</div>
+            
+            <div class="utility-label">
+              <span>Export Format</span>
+              <div class="tool-segmented-control" data-tool="ifc">
+                <button class="tool-segment-btn active" data-value="image/png">PNG</button>
+                <button class="tool-segment-btn" data-value="image/jpeg">JPG</button>
+                <button class="tool-segment-btn" data-value="image/webp">WebP</button>
+              </div>
+            </div>
+            
+            <div class="premium-range-group" id="ifcQualityGroup" style="opacity: 0.5; pointer-events: none; transition: opacity var(--transition);">
+              <div class="premium-slider-header">
+                <span class="utility-label" style="gap: 0;">Quality</span>
+                <div class="premium-slider-info">
+                  <span class="premium-slider-badge" id="ifcQualityVal">92%</span>
+                  <span id="ifcQualityDesc" style="font-size:11px; color:var(--text-3); font-weight:600;">Lossless (PNG)</span>
+                </div>
+              </div>
+              <input type="range" id="ifcQuality" min="0.4" max="1" step="0.01" value="0.92" class="premium-slider">
+            </div>
+            
+            <div class="tool-action-row">
+              <button class="btn-primary" id="ifcConvertBtn" style="flex: 1; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Convert & Download
+              </button>
+              <button id="ifcResetBtn" style="border-radius: 12px; padding: 12px 18px; background: var(--bg-3); border: 1px solid var(--border); color: var(--text-2); cursor: pointer; transition: all var(--transition);">
+                New Image
+              </button>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -5180,16 +5172,55 @@ async function initImageFormatConverterListeners() {
   const workspace = document.getElementById('ifcWorkspace');
   const preview = document.getElementById('ifcPreview');
   const filename = document.getElementById('ifcFilename');
-  const format = document.getElementById('ifcFormat');
   const quality = document.getElementById('ifcQuality');
   const qualityVal = document.getElementById('ifcQualityVal');
+  const qualityDesc = document.getElementById('ifcQualityDesc');
+  const qualityGroup = document.getElementById('ifcQualityGroup');
   const convertBtn = document.getElementById('ifcConvertBtn');
+  const resetBtn = document.getElementById('ifcResetBtn');
+  
   let currentFile = null;
   let currentImage = null;
   let currentUrl = null;
+  let selectedFormat = 'image/png'; // default selected active segment
 
   if (!workspace) return;
-  quality.addEventListener('input', () => qualityVal.textContent = Math.round(parseFloat(quality.value) * 100) + '%');
+
+  const updateQualityDesc = (val) => {
+    qualityVal.textContent = Math.round(val * 100) + '%';
+    if (selectedFormat === 'image/png') {
+      qualityDesc.textContent = 'Lossless (PNG)';
+    } else {
+      if (val < 0.6) qualityDesc.textContent = 'Low Size / Low Quality';
+      else if (val < 0.8) qualityDesc.textContent = 'Medium Size / Good';
+      else if (val < 0.95) qualityDesc.textContent = 'Balanced / High Quality';
+      else qualityDesc.textContent = 'Large Size / Max Quality';
+    }
+  };
+
+  quality.addEventListener('input', () => {
+    updateQualityDesc(parseFloat(quality.value));
+  });
+
+  // Setup custom format switcher chips
+  const formatButtons = document.querySelectorAll('.tool-segmented-control[data-tool="ifc"] .tool-segment-btn');
+  formatButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      formatButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedFormat = btn.dataset.value;
+      
+      if (selectedFormat === 'image/png') {
+        qualityGroup.style.opacity = '0.5';
+        qualityGroup.style.pointerEvents = 'none';
+        updateQualityDesc(parseFloat(quality.value));
+      } else {
+        qualityGroup.style.opacity = '1';
+        qualityGroup.style.pointerEvents = 'auto';
+        updateQualityDesc(parseFloat(quality.value));
+      }
+    });
+  });
 
   wireDropzone('ifc', async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
@@ -5199,7 +5230,11 @@ async function initImageFormatConverterListeners() {
     currentImage = loaded.img;
     currentUrl = loaded.url;
     preview.src = currentUrl;
-    filename.textContent = `${file.name} · ${currentImage.naturalWidth}x${currentImage.naturalHeight}`;
+    
+    const sizeStr = formatBytes(file.size);
+    filename.textContent = `${file.name} · ${currentImage.naturalWidth}x${currentImage.naturalHeight} (${sizeStr})`;
+    
+    document.getElementById('ifcDropzone').style.display = 'none';
     workspace.style.display = 'block';
   });
 
@@ -5209,14 +5244,39 @@ async function initImageFormatConverterListeners() {
     canvas.width = currentImage.naturalWidth;
     canvas.height = currentImage.naturalHeight;
     const ctx = canvas.getContext('2d');
-    if (format.value === 'image/jpeg') {
+    
+    if (selectedFormat === 'image/jpeg') {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
+    
     ctx.drawImage(currentImage, 0, 0);
-    const blob = await canvasToBlob(canvas, format.value, parseFloat(quality.value));
-    const ext = format.value === 'image/jpeg' ? 'jpg' : format.value.split('/')[1];
+    const qVal = selectedFormat === 'image/png' ? 1.0 : parseFloat(quality.value);
+    const blob = await canvasToBlob(canvas, selectedFormat, qVal);
+    const ext = selectedFormat === 'image/jpeg' ? 'jpg' : selectedFormat.split('/')[1];
+    
+    // Add micro-animation/toast checkmark on convertBtn
+    const origHtml = convertBtn.innerHTML;
+    convertBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      Downloaded!
+    `;
+    convertBtn.style.background = '#4CAF50';
+    
+    setTimeout(() => {
+      convertBtn.innerHTML = origHtml;
+      convertBtn.style.background = '';
+    }, 2000);
+
     downloadBlob(blob, currentFile.name.replace(/\.[^.]+$/, '') + '.' + ext);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    currentFile = null;
+    currentImage = null;
+    if (currentUrl) { URL.revokeObjectURL(currentUrl); currentUrl = null; }
+    workspace.style.display = 'none';
+    document.getElementById('ifcDropzone').style.display = 'flex';
   });
 }
 
@@ -5225,13 +5285,44 @@ function renderPaletteExtractorTool() {
     <div class="simple-tool-content" style="text-align: left;">
       ${renderToolIntro('Color Palette Extractor', 'Upload an image and extract five dominant colors you can copy straight into your design file.')}
       ${renderSimpleDropzone('pe', 'Drop an inspirational image', 'Extracts 5 dominant colors')}
+      
       <div id="peResult" style="display:none;">
-        <div class="utility-preview-row">
-          <img id="pePreview" class="utility-preview-img" alt="Palette source">
-          <div class="utility-stack" style="flex:1;">
-            <div class="utility-file-name" id="peFilename"></div>
-            <div class="utility-color-grid" id="peColors"></div>
+        <div class="palette-dashboard-grid">
+          
+          <!-- Left side: Image and details (Normal Design, No Card Wrapper) -->
+          <div class="utility-stack" style="gap: 16px;">
+            <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+              <img id="pePreview" class="utility-preview-img" alt="Palette source">
+            </div>
+            
+            <div class="palette-export-actions">
+              <div class="utility-file-name" style="font-size:13px; text-transform:uppercase; color:var(--text-3); font-weight:700; letter-spacing:0.05em; margin-bottom: 4px;">Export Palette</div>
+              <div class="tool-action-row-grid">
+                <button class="btn-primary" id="peCopyAllBtn" style="font-size:12.5px; padding: 11px 14px; border-radius: 10px; display:flex; align-items:center; justify-content:center; gap:6px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  Copy HEX
+                </button>
+                <button id="peDownloadCssBtn" class="btn-secondary" style="font-size:12.5px; padding: 11px 14px; border-radius: 10px; background:var(--bg-3); border:1px solid var(--border); color:var(--text); cursor:pointer; transition:all var(--transition); display:flex; align-items:center; justify-content:center; gap:6px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  CSS Var
+                </button>
+                <button id="peDownloadJsonBtn" class="btn-secondary" style="font-size:12.5px; padding: 11px 14px; border-radius: 10px; background:var(--bg-3); border:1px solid var(--border); color:var(--text); cursor:pointer; transition:all var(--transition); display:flex; align-items:center; justify-content:center; gap:6px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  JSON File
+                </button>
+                <button id="peResetBtn" class="btn-secondary" style="font-size:12.5px; padding: 11px 14px; border-radius: 10px; background:var(--bg-3); border:1px solid var(--border); color:var(--text-2); cursor:pointer; transition:all var(--transition);">
+                  New Image
+                </button>
+              </div>
+            </div>
           </div>
+          
+          <!-- Right side: Extracted colors -->
+          <div class="utility-stack" style="gap: 16px;">
+            <div class="utility-file-name" id="peFilename" style="margin-bottom: 4px;">image.png</div>
+            <div class="palette-swatches-grid" id="peColors"></div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -5243,20 +5334,127 @@ async function initPaletteExtractorListeners() {
   const preview = document.getElementById('pePreview');
   const colorsEl = document.getElementById('peColors');
   const filename = document.getElementById('peFilename');
+  
+  const copyAllBtn = document.getElementById('peCopyAllBtn');
+  const downloadCssBtn = document.getElementById('peDownloadCssBtn');
+  const downloadJsonBtn = document.getElementById('peDownloadJsonBtn');
+  const resetBtn = document.getElementById('peResetBtn');
+  
+  let extractedColors = [];
+
   if (!result) return;
 
   wireDropzone('pe', async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
     const loaded = await loadImageFromFile(file);
     preview.src = loaded.url;
-    filename.textContent = file.name;
+    
+    const sizeStr = formatBytes(file.size);
+    filename.textContent = file.name + ' · ' + loaded.img.naturalWidth + 'x' + loaded.img.naturalHeight + ' (' + sizeStr + ')';
+    
     const colorThief = new ColorThief();
     const palette = colorThief.getPalette(loaded.img, 5);
-    colorsEl.innerHTML = palette.map(rgb => {
-      const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
-      return `<button class="utility-color-swatch" style="background:${hex}; color:${getContrastColor(hex)}" onclick="copyToClipboard('${hex}')"><span>${hex}</span></button>`;
+    
+    extractedColors = palette.map(rgb => rgbToHex(rgb[0], rgb[1], rgb[2]));
+    
+    colorsEl.innerHTML = palette.map((rgb, idx) => {
+      const hex = extractedColors[idx];
+      
+      const ratioWhite = calculateContrastRatio(hex, '#FFFFFF');
+      const ratioBlack = calculateContrastRatio(hex, '#111111');
+      
+      let wcagText = 'Low Contrast';
+      let wcagClass = 'fail';
+      
+      if (ratioWhite >= 4.5) {
+        wcagText = 'AA White text';
+        wcagClass = 'pass';
+      } else if (ratioBlack >= 4.5) {
+        wcagText = 'AA Dark text';
+        wcagClass = 'pass';
+      }
+      
+      return `
+        <div class="palette-swatch-card" data-hex="${hex}">
+          <div class="palette-swatch-color" style="background:${hex}">
+            <button class="palette-swatch-copy-btn" title="Copy Hex">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="palette-swatch-info">
+            <div class="palette-swatch-hex">${hex}</div>
+            <div class="palette-swatch-rgb">rgb(${rgb.join(', ')})</div>
+            <span class="palette-contrast-badge ${wcagClass}">${wcagText}</span>
+          </div>
+        </div>
+      `;
     }).join('');
+    
+    const cards = colorsEl.querySelectorAll('.palette-swatch-card');
+    cards.forEach(card => {
+      card.addEventListener('click', (e) => {
+        const hex = card.dataset.hex;
+        copyToClipboard(hex);
+        
+        const copyBtn = card.querySelector('.palette-swatch-copy-btn');
+        const origSvg = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+        copyBtn.style.background = '#4CAF50';
+        copyBtn.style.opacity = '1';
+        copyBtn.style.transform = 'scale(1)';
+        
+        setTimeout(() => {
+          copyBtn.innerHTML = origSvg;
+          copyBtn.style.background = '';
+          copyBtn.style.opacity = '';
+          copyBtn.style.transform = '';
+        }, 1200);
+      });
+    });
+    
+    document.getElementById('peDropzone').style.display = 'none';
     result.style.display = 'block';
+  });
+
+  copyAllBtn.addEventListener('click', () => {
+    if (extractedColors.length === 0) return;
+    const textStr = extractedColors.join(', ');
+    copyToClipboard(textStr);
+    
+    const origHtml = copyAllBtn.innerHTML;
+    copyAllBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      HEX Codes Copied!
+    `;
+    copyAllBtn.style.background = '#4CAF50';
+    
+    setTimeout(() => {
+      copyAllBtn.innerHTML = origHtml;
+      copyAllBtn.style.background = '';
+    }, 1500);
+  });
+
+  downloadCssBtn.addEventListener('click', () => {
+    if (extractedColors.length === 0) return;
+    const cssVars = ':root {\n' + extractedColors.map((hex, i) => '  --extracted-color-' + (i + 1) + ': ' + hex + ';').join('\n') + '\n}\n';
+    const blob = new Blob([cssVars], { type: 'text/css' });
+    downloadBlob(blob, 'extracted-palette.css');
+  });
+
+  downloadJsonBtn.addEventListener('click', () => {
+    if (extractedColors.length === 0) return;
+    const jsonStr = JSON.stringify({ colors: extractedColors }, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    downloadBlob(blob, 'extracted-palette.json');
+  });
+
+  resetBtn.addEventListener('click', () => {
+    extractedColors = [];
+    result.style.display = 'none';
+    document.getElementById('peDropzone').style.display = 'flex';
   });
 }
 
@@ -5264,18 +5462,94 @@ function renderQrGeneratorTool() {
   return `
     <div class="simple-tool-content" style="text-align: left;">
       ${renderToolIntro('QR Code Generator', 'Create QR codes for packaging mockups, business cards, print layouts, and launch materials.')}
+      
       <div class="utility-panel">
         <div class="utility-grid-two">
-          <div class="utility-stack">
-            <label class="utility-label">URL or text</label>
-            <textarea id="qrText" class="utility-textarea" rows="5">https://designschool.site</textarea>
-            <div class="utility-grid-two compact">
-              <label class="utility-label">Foreground <input type="color" id="qrForeground" value="#111111"></label>
-              <label class="utility-label">Background <input type="color" id="qrBackground" value="#FFFFFF"></label>
+          
+          <!-- Left: Customizer Panel -->
+          <div class="utility-stack" style="gap: 16px;">
+            <div class="utility-label">
+              <span>URL or Text</span>
+              <textarea id="qrText" class="utility-textarea" rows="4" style="font-family: inherit;">https://designschool.site</textarea>
             </div>
-            <button class="btn-primary" id="qrDownloadBtn" style="border-radius: 12px; padding: 12px 18px;">Download PNG</button>
+            
+            <div class="utility-grid-two compact">
+              <div class="utility-label">
+                <span>Foreground Color</span>
+                <div class="custom-picker-row">
+                  <div class="custom-picker-trigger" id="qrFgTrigger" style="background-color: #111111;">
+                    <input type="color" id="qrForeground" value="#111111">
+                  </div>
+                  <input type="text" id="qrFgHex" class="custom-picker-input" value="#111111" maxlength="7">
+                </div>
+              </div>
+              
+              <div class="utility-label">
+                <span>Background Color</span>
+                <div class="custom-picker-row">
+                  <div class="custom-picker-trigger" id="qrBgTrigger" style="background-color: #FFFFFF;">
+                    <input type="color" id="qrBackground" value="#FFFFFF">
+                  </div>
+                  <input type="text" id="qrBgHex" class="custom-picker-input" value="#FFFFFF" maxlength="7">
+                </div>
+              </div>
+            </div>
+            
+            <div class="color-presets-wrapper">
+              <span class="utility-label">Designer Presets</span>
+              <div class="color-presets-list" id="qrPresets">
+                <button class="color-preset-btn active" data-fg="#111111" data-bg="#FFFFFF">
+                  <span class="preset-color-dot" style="background: #111111;"></span> Classic
+                </button>
+                <button class="color-preset-btn" data-fg="#8A2BE2" data-bg="#000000">
+                  <span class="preset-color-dot" style="background: #8A2BE2;"></span> Cyberpunk
+                </button>
+                <button class="color-preset-btn" data-fg="#1DB954" data-bg="#191414">
+                  <span class="preset-color-dot" style="background: #1DB954;"></span> Spotify
+                </button>
+                <button class="color-preset-btn" data-fg="#FF8C00" data-bg="#111111">
+                  <span class="preset-color-dot" style="background: #FF8C00;"></span> Sunset
+                </button>
+                <button class="color-preset-btn" data-fg="#05C46B" data-bg="#0F172A">
+                  <span class="preset-color-dot" style="background: #05C46B;"></span> Emerald
+                </button>
+              </div>
+            </div>
+
+            <div class="utility-label">
+              <span>Module Style</span>
+              <div class="tool-segmented-control" data-tool="qrStyle">
+                <button class="tool-segment-btn active" data-value="square">Square</button>
+                <button class="tool-segment-btn" data-value="rounded">Rounded</button>
+              </div>
+            </div>
+            
+            <div class="premium-range-group">
+              <div class="premium-slider-header">
+                <span class="utility-label" style="gap:0;">Export Size</span>
+                <span class="premium-slider-badge" id="qrSizeVal">260 px</span>
+              </div>
+              <input type="range" id="qrSize" min="200" max="1000" step="10" value="260" class="premium-slider">
+            </div>
           </div>
-          <div class="qr-preview-box"><canvas id="qrCanvas" width="260" height="260"></canvas></div>
+          
+          <!-- Right: QR Canvas -->
+          <div class="utility-stack qr-canvas-col" style="gap: 16px; align-items: center; justify-content: center;">
+            <div style="background: #FFFFFF; padding: 18px; border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.06); display: flex; align-items: center; justify-content: center;" id="qrCanvasWrap">
+              <canvas id="qrCanvas" width="220" height="220" style="display:block; max-width: 100%; height: auto;"></canvas>
+            </div>
+            <div class="tool-action-row">
+              <button class="btn-primary" id="qrDownloadBtn" style="flex: 1; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Download PNG
+              </button>
+              <button class="btn-secondary" id="qrCopyBtn" style="border-radius: 12px; padding: 12px 18px; background:var(--bg-3); border:1px solid var(--border); color:var(--text); cursor:pointer; transition:all var(--transition); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy QR
+              </button>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
@@ -5287,42 +5561,322 @@ function initQrGeneratorListeners() {
   const text = document.getElementById('qrText');
   const foreground = document.getElementById('qrForeground');
   const background = document.getElementById('qrBackground');
+  const fgHex = document.getElementById('qrFgHex');
+  const bgHex = document.getElementById('qrBgHex');
+  const fgTrigger = document.getElementById('qrFgTrigger');
+  const bgTrigger = document.getElementById('qrBgTrigger');
+  const sizeSlider = document.getElementById('qrSize');
+  const sizeVal = document.getElementById('qrSizeVal');
   const downloadBtn = document.getElementById('qrDownloadBtn');
+  const copyBtn = document.getElementById('qrCopyBtn');
+  const presets = document.querySelectorAll('#qrPresets .color-preset-btn');
+  const styleSegments = document.querySelectorAll('[data-tool="qrStyle"] .tool-segment-btn');
+  
   if (!canvas) return;
 
-  const qr = new QRious({ element: canvas, size: 260, value: text.value, foreground: foreground.value, background: background.value });
-  const update = () => {
+  let qrSize = parseInt(sizeSlider.value);
+  let qrStyle = 'square'; // 'square' | 'rounded'
+
+  // Hidden off-screen canvas that QRious renders into.
+  // We then post-process it onto the visible canvas.
+  const qrRaw = document.createElement('canvas');
+
+  const qr = new QRious({
+    element: qrRaw,
+    size: qrSize,
+    value: text.value.trim() || ' ',
+    foreground: foreground.value,
+    background: background.value
+  });
+
+  // Draw a single rounded rectangle on a 2d context
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.arcTo(x + w, y, x + w, y + r, r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+    ctx.lineTo(x + r, y + h);
+    ctx.arcTo(x, y + h, x, y + h - r, r);
+    ctx.lineTo(x, y + r);
+    ctx.arcTo(x, y, x + r, y, r);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Redraw qrRaw canvas onto the visible canvas, optionally with rounded modules
+  function applyStyle() {
+    const size = qrRaw.width;
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+
+    if (qrStyle === 'square') {
+      // Simple copy
+      ctx.drawImage(qrRaw, 0, 0);
+      return;
+    }
+
+    // --- Rounded style ---
+    // Read raw pixel data to detect dark modules
+    const rawCtx = qrRaw.getContext('2d');
+    const imageData = rawCtx.getImageData(0, 0, size, size);
+    const data = imageData.data;
+
+    // Detect module size: QRious has a quiet zone; find first dark pixel
+    // We scan rows until we see a dark pixel transition pattern
+    const bgColor = background.value || '#FFFFFF';
+    const fgColor = foreground.value || '#000000';
+
+    // Fill background
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, size, size);
+
+    // Detect module grid by sampling
+    // Find the left edge of first module by scanning top row
+    let moduleSize = 0;
+    let quiet = 0;
+    const isLight = (x, y) => {
+      const idx = (y * size + x) * 4;
+      // compare to foreground: if it's closer to fg it's dark
+      const r = data[idx], g = data[idx+1], b = data[idx+2];
+      // simple luminance threshold
+      return (r + g + b) > 382; // > ~127*3
+    };
+
+    // Find quiet zone (leading light pixels in top row)
+    for (let x = 0; x < size; x++) {
+      if (!isLight(x, size >> 1)) { quiet = x; break; }
+    }
+    // Module size: measure first dark run
+    for (let x = quiet; x < size; x++) {
+      if (isLight(x, size >> 1)) { moduleSize = x - quiet; break; }
+    }
+    if (moduleSize < 1) moduleSize = 1;
+
+    const cols = Math.round((size - quiet * 2) / moduleSize);
+    const r = moduleSize * 0.35; // corner radius
+
+    ctx.fillStyle = fgColor;
+    for (let row = 0; row < cols; row++) {
+      for (let col = 0; col < cols; col++) {
+        const px = quiet + col * moduleSize + Math.floor(moduleSize / 2);
+        const py = quiet + row * moduleSize + Math.floor(moduleSize / 2);
+        if (!isLight(px, py)) {
+          const x = quiet + col * moduleSize;
+          const y = quiet + row * moduleSize;
+          roundRect(ctx, x + 1, y + 1, moduleSize - 2, moduleSize - 2, r);
+        }
+      }
+    }
+  }
+
+  const updateQR = () => {
     qr.value = text.value.trim() || ' ';
     qr.foreground = foreground.value;
     qr.background = background.value;
+    qr.size = qrSize;
+    qrRaw.width = qrSize;
+    qrRaw.height = qrSize;
+    // Re-render qrRaw
+    const newQr = new QRious({
+      element: qrRaw,
+      size: qrSize,
+      value: text.value.trim() || ' ',
+      foreground: foreground.value,
+      background: background.value
+    });
+    
+    applyStyle();
+    
+    // Update trigger bg colors
+    fgTrigger.style.backgroundColor = foreground.value;
+    bgTrigger.style.backgroundColor = background.value;
+    
+    // Update text boxes
+    fgHex.value = foreground.value.toUpperCase();
+    bgHex.value = background.value.toUpperCase();
+    
+    const wrap = document.getElementById('qrCanvasWrap');
+    if (wrap) wrap.style.backgroundColor = background.value;
   };
-  [text, foreground, background].forEach(el => el.addEventListener('input', update));
+
+  // Module style segments
+  styleSegments.forEach(btn => {
+    btn.addEventListener('click', () => {
+      styleSegments.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      qrStyle = btn.dataset.value;
+      applyStyle();
+    });
+  });
+
+  // Color Pickers synchronization
+  foreground.addEventListener('input', () => {
+    updateQR();
+    presets.forEach(p => p.classList.remove('active'));
+  });
+  background.addEventListener('input', () => {
+    updateQR();
+    presets.forEach(p => p.classList.remove('active'));
+  });
+
+  // Text inputs synchronization
+  const handleHexInput = (textEl, pickerEl) => {
+    let val = textEl.value;
+    if (!val.startsWith('#') && val.length > 0) val = '#' + val;
+    if (/^#[0-9A-F]{6}$/i.test(val)) {
+      pickerEl.value = val;
+      updateQR();
+      presets.forEach(p => p.classList.remove('active'));
+    }
+  };
+  fgHex.addEventListener('input', () => handleHexInput(fgHex, foreground));
+  bgHex.addEventListener('input', () => handleHexInput(bgHex, background));
+
+  // Presets trigger
+  presets.forEach(btn => {
+    btn.addEventListener('click', () => {
+      presets.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      foreground.value = btn.dataset.fg;
+      background.value = btn.dataset.bg;
+      updateQR();
+    });
+  });
+
+  // Size slider
+  sizeSlider.addEventListener('input', () => {
+    qrSize = parseInt(sizeSlider.value);
+    sizeVal.textContent = qrSize + ' px';
+    updateQR();
+  });
+
+  // Text textarea
+  text.addEventListener('input', updateQR);
+
+  // Download Action
   downloadBtn.addEventListener('click', async () => {
     const blob = await canvasToBlob(canvas, 'image/png');
     downloadBlob(blob, 'qr-code.png');
   });
+
+  // Copy Action (Clipboard Item Blob)
+  copyBtn.addEventListener('click', async () => {
+    try {
+      const blob = await canvasToBlob(canvas, 'image/png');
+      await navigator.clipboard.write([
+        new ClipboardItem({ 'image/png': blob })
+      ]);
+      
+      const origHtml = copyBtn.innerHTML;
+      copyBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        Copied!
+      `;
+      copyBtn.style.background = '#4CAF50';
+      
+      setTimeout(() => {
+        copyBtn.innerHTML = origHtml;
+        copyBtn.style.background = '';
+      }, 1500);
+      
+    } catch (err) {
+      console.error(err);
+      showClipboardToast('Copy failed, please download instead.');
+    }
+  });
+
+  // Trigger initial render
+  updateQR();
 }
 
 const GOOGLE_FONT_PAIRS = [
-  ['Playfair Display', 'Inter'], ['Fraunces', 'Source Sans 3'], ['Space Grotesk', 'DM Sans'],
-  ['Merriweather', 'Open Sans'], ['Bebas Neue', 'Lato'], ['Cormorant Garamond', 'Nunito Sans'],
-  ['Oswald', 'Roboto'], ['Libre Baskerville', 'Work Sans'], ['Archivo Black', 'Archivo'],
-  ['Lora', 'Poppins'], ['Syne', 'Manrope'], ['Prata', 'Mulish']
+  ['Playfair Display', 'Inter', 'Elegant Editorial'],
+  ['Fraunces', 'Source Sans 3', 'Warm & Friendly'],
+  ['Space Grotesk', 'DM Sans', 'Tech & Creative'],
+  ['Merriweather', 'Open Sans', 'News Editorial'],
+  ['Bebas Neue', 'Lato', 'Bold Marketing'],
+  ['Cormorant Garamond', 'Nunito Sans', 'High Luxury'],
+  ['Oswald', 'Roboto', 'Condensed Modern'],
+  ['Libre Baskerville', 'Work Sans', 'Academic & Clean'],
+  ['Archivo Black', 'Archivo', 'Brutalism Graphic'],
+  ['Lora', 'Poppins', 'Stylish App Interface'],
+  ['Syne', 'Manrope', 'Avant-Garde/Tastemaker'],
+  ['Prata', 'Mulish', 'Chic & Minimalist']
 ];
 
 function renderFontPairingTool() {
   return `
     <div class="simple-tool-content" style="text-align: left;">
       ${renderToolIntro('Google Font Pairing Generator', 'Randomize compatible Google Font combinations and preview them on a heading and body sample.')}
+      
       <div class="utility-panel">
-        <div class="font-pair-toolbar">
-          <div><div class="utility-label">Current pair</div><div class="utility-file-name" id="fpPairName"></div></div>
-          <button class="btn-primary" id="fpRandomBtn" style="border-radius: 99px; padding: 10px 22px;">Randomize</button>
+        <div class="fp-toolbar">
+          <div class="fp-toolbar-main">
+            <div class="utility-label" style="margin-bottom:4px;">Current Font Pairing</div>
+            <div style="display:flex; align-items:center; gap: 8px; flex-wrap: wrap;">
+              <div class="utility-file-name" id="fpPairName" style="font-size:16px;">Playfair Display + Inter</div>
+              <span class="premium-slider-badge" id="fpVibeBadge" style="text-transform:none; font-size:11px;">Elegant Editorial</span>
+            </div>
+          </div>
+          
+          <div class="fp-toolbar-controls">
+            <div class="premium-range-group fp-size-control">
+              <div class="premium-slider-header">
+                <span class="utility-label" style="font-size:11px; gap:0;">Heading Size</span>
+                <span style="font-size: 11px; font-weight:700; color:var(--accent);" id="fpHeadingSizeVal">48px</span>
+              </div>
+              <input type="range" id="fpHeadingSize" min="28" max="72" value="48" class="premium-slider">
+            </div>
+            
+            <button class="btn-primary fp-randomize-btn" id="fpRandomBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              Randomize
+            </button>
+          </div>
         </div>
-        <div class="font-pair-preview">
-          <h3 id="fpHeading">Design systems should feel calm, useful, and memorable.</h3>
-          <p id="fpBody">A strong type pairing gives interface content a rhythm: clear hierarchy for scanning, enough character for brand, and comfortable reading for long-form lessons.</p>
+        
+        <!-- Interactive Specimen Preview Canvas -->
+        <div class="font-pairing-preview-container">
+          <div class="font-pairing-canvas light-theme" id="fpPreviewCanvas">
+            <h3 id="fpHeading" contenteditable="true" spellcheck="false" title="Click to edit heading text">Design systems should feel calm, useful, and memorable.</h3>
+            <p id="fpBody" contenteditable="true" spellcheck="false" title="Click to edit body text">A strong type pairing gives interface content a rhythm: clear hierarchy for scanning, enough character for brand, and comfortable reading for long-form lessons.</p>
+          </div>
+          
+          <div class="font-pairing-editor-bar">
+            <span style="font-size:12px; color:var(--text-3); font-weight:600;">💡 Click the text to edit directly</span>
+            <div class="font-theme-toggle-group">
+              <button class="font-theme-toggle-btn active" id="fpThemeLight" title="Light Background">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              </button>
+              <button class="font-theme-toggle-btn" id="fpThemeDark" title="Dark Background">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+              </button>
+            </div>
+          </div>
         </div>
+        
+        <!-- Code Integration Panel -->
+        <div class="fp-code-grid">
+          <div class="code-embed-container">
+            <div class="code-embed-header">
+              <span class="code-embed-title">1. Embed HTML Link</span>
+              <button class="btn-copy-code" id="fpCopyLinkBtn">Copy Link</button>
+            </div>
+            <pre class="code-embed-pre" id="fpCodeLink">&lt;link rel="stylesheet" href="..."&gt;</pre>
+          </div>
+          
+          <div class="code-embed-container">
+            <div class="code-embed-header">
+              <span class="code-embed-title">2. Declare CSS Family</span>
+              <button class="btn-copy-code" id="fpCopyCssBtn">Copy CSS</button>
+            </div>
+            <pre class="code-embed-pre" id="fpCodeCss">font-family: 'Playfair Display', serif;</pre>
+          </div>
+        </div>
+        
       </div>
     </div>
   `;
@@ -5332,26 +5886,98 @@ function initFontPairingListeners() {
   const heading = document.getElementById('fpHeading');
   const body = document.getElementById('fpBody');
   const name = document.getElementById('fpPairName');
+  const vibeBadge = document.getElementById('fpVibeBadge');
   const btn = document.getElementById('fpRandomBtn');
+  const headingSize = document.getElementById('fpHeadingSize');
+  const headingSizeVal = document.getElementById('fpHeadingSizeVal');
+  const canvas = document.getElementById('fpPreviewCanvas');
+  const themeLight = document.getElementById('fpThemeLight');
+  const themeDark = document.getElementById('fpThemeDark');
+  const codeLink = document.getElementById('fpCodeLink');
+  const codeCss = document.getElementById('fpCodeCss');
+  const copyLinkBtn = document.getElementById('fpCopyLinkBtn');
+  const copyCssBtn = document.getElementById('fpCopyCssBtn');
+  
   if (!heading) return;
   let idx = -1;
 
   const applyPair = () => {
     idx = (idx + 1 + Math.floor(Math.random() * (GOOGLE_FONT_PAIRS.length - 1))) % GOOGLE_FONT_PAIRS.length;
-    const [headingFont, bodyFont] = GOOGLE_FONT_PAIRS[idx];
+    const [headingFont, bodyFont, vibe] = GOOGLE_FONT_PAIRS[idx];
+    
+    // Inject stylesheet
     const linkId = 'dynamic-google-font-pair';
     const existing = document.getElementById(linkId);
     if (existing) existing.remove();
+    
     const link = document.createElement('link');
     link.id = linkId;
     link.rel = 'stylesheet';
-    link.href = `https://fonts.googleapis.com/css2?family=${headingFont.replace(/ /g, '+')}:wght@400;600;700&family=${bodyFont.replace(/ /g, '+')}:wght@400;500;700&display=swap`;
+    
+    const headFontUrl = headingFont.replace(/ /g, '+');
+    const bodyFontUrl = bodyFont.replace(/ /g, '+');
+    const url = `https://fonts.googleapis.com/css2?family=${headFontUrl}:wght@400;600;700&family=${bodyFontUrl}:wght@400;500;700&display=swap`;
+    link.href = url;
     document.head.appendChild(link);
+    
+    // Apply styling
     heading.style.fontFamily = `"${headingFont}", serif`;
     body.style.fontFamily = `"${bodyFont}", sans-serif`;
     name.textContent = `${headingFont} + ${bodyFont}`;
+    vibeBadge.textContent = vibe;
+    
+    // Update code outputs
+    codeLink.textContent = `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="${url}">`;
+    codeCss.textContent = `/* Heading styling */\nh1, h2, h3 {\n  font-family: "${headingFont}", serif;\n}\n\n/* Body styling */\nbody, p {\n  font-family: "${bodyFont}", sans-serif;\n}`;
   };
+
   btn.addEventListener('click', applyPair);
+
+  // Heading Size Slider
+  headingSize.addEventListener('input', () => {
+    const size = headingSize.value;
+    headingSizeVal.textContent = size + 'px';
+    heading.style.fontSize = size + 'px';
+  });
+
+  // Theme Toggles
+  themeLight.addEventListener('click', () => {
+    themeLight.classList.add('active');
+    themeDark.classList.remove('active');
+    canvas.classList.remove('dark-theme');
+    canvas.classList.add('light-theme');
+  });
+
+  themeDark.addEventListener('click', () => {
+    themeDark.classList.add('active');
+    themeLight.classList.remove('active');
+    canvas.classList.remove('light-theme');
+    canvas.classList.add('dark-theme');
+  });
+
+  // Copy Buttons
+  const handleCopyAction = (btnEl, text) => {
+    copyToClipboard(text);
+    const origHtml = btnEl.innerHTML;
+    btnEl.innerHTML = 'Copied!';
+    btnEl.style.background = '#4CAF50';
+    btnEl.style.color = '#FFFFFF';
+    setTimeout(() => {
+      btnEl.innerHTML = origHtml;
+      btnEl.style.background = '';
+      btnEl.style.color = '';
+    }, 1500);
+  };
+
+  copyLinkBtn.addEventListener('click', () => {
+    handleCopyAction(copyLinkBtn, codeLink.textContent);
+  });
+  copyCssBtn.addEventListener('click', () => {
+    handleCopyAction(copyCssBtn, codeCss.textContent);
+  });
+
+  // Apply initial font size and font pair
+  heading.style.fontSize = headingSize.value + 'px';
   applyPair();
 }
 
@@ -5407,15 +6033,59 @@ function renderFaviconGeneratorTool() {
     <div class="simple-tool-content" style="text-align: left;">
       ${renderToolIntro('Favicon Package Generator', 'Upload one square logo and generate browser favicons plus an Apple Touch Icon as a ZIP package.')}
       ${renderSimpleDropzone('fg', 'Drop a square logo', 'PNG, JPG, SVG, or WebP')}
+      
       <div id="fgResult" style="display:none;">
         <div class="utility-panel">
-          <div class="utility-preview-row">
-            <img id="fgPreview" class="utility-preview-img small" alt="Logo preview">
-            <div class="utility-stack">
-              <div class="utility-file-name" id="fgFilename"></div>
-              <div class="favicon-size-list">16x16 PNG · 32x32 PNG · 180x180 Apple Touch Icon · manifest snippet</div>
-              <button class="btn-primary" id="fgDownloadBtn" style="border-radius: 12px; padding: 12px 18px;">Download ZIP</button>
+          <div>
+            <!-- Assets info & Copyable codes -->
+            <div class="utility-stack" style="gap: 16px;">
+              <div class="utility-file-name" id="fgFilename">logo.png</div>
+              
+              <div class="utility-label" style="text-transform:uppercase; font-size:11px; letter-spacing:0.05em; color:var(--text-3); margin-top:8px;">Generated Assets</div>
+              <div class="favicon-package-grid">
+                <div class="favicon-package-card">
+                  <div class="favicon-package-preview-wrapper">
+                    <img id="fgPreview16" src="" alt="16x16" style="width:16px; height:16px;">
+                  </div>
+                  <div class="favicon-package-card-title">favicon-16x16.png</div>
+                  <div class="favicon-package-card-size">16 x 16 px</div>
+                </div>
+                
+                <div class="favicon-package-card">
+                  <div class="favicon-package-preview-wrapper">
+                    <img id="fgPreview32" src="" alt="32x32" style="width:32px; height:32px;">
+                  </div>
+                  <div class="favicon-package-card-title">favicon-32x32.png</div>
+                  <div class="favicon-package-card-size">32 x 32 px</div>
+                </div>
+                
+                <div class="favicon-package-card">
+                  <div class="favicon-package-preview-wrapper">
+                    <img id="fgPreview180" src="" alt="180x180" style="width:40px; height:40px; border-radius: 8px;">
+                  </div>
+                  <div class="favicon-package-card-title">apple-touch-icon.png</div>
+                  <div class="favicon-package-card-size">180 x 180 px</div>
+                </div>
+              </div>
+              
+              <div class="code-embed-container">
+                <div class="code-embed-header">
+                  <span class="code-embed-title">HTML Headers Snippet</span>
+                  <button class="btn-copy-code" id="fgCopySnippetBtn">Copy Snippet</button>
+                </div>
+                <pre class="code-embed-pre" id="fgCodeSnippet" style="font-size:11px; max-height:100px; overflow-y:auto;"></pre>
+              </div>
+              <div class="tool-action-row">
+                <button class="btn-primary" id="fgDownloadBtn" style="flex: 1; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Download ZIP
+                </button>
+                <button id="fgResetBtn" style="border-radius: 12px; padding: 12px 18px; background: var(--bg-3); border: 1px solid var(--border); color: var(--text-2); cursor: pointer; transition: all var(--transition);">
+                  New Image
+                </button>
+              </div>
             </div>
+            
           </div>
         </div>
       </div>
@@ -5425,35 +6095,76 @@ function renderFaviconGeneratorTool() {
 
 async function initFaviconGeneratorListeners() {
   const result = document.getElementById('fgResult');
-  const preview = document.getElementById('fgPreview');
   const filename = document.getElementById('fgFilename');
   const downloadBtn = document.getElementById('fgDownloadBtn');
+  const resetBtn = document.getElementById('fgResetBtn');
+  const copySnippetBtn = document.getElementById('fgCopySnippetBtn');
+  
+  const preview16 = document.getElementById('fgPreview16');
+  const preview32 = document.getElementById('fgPreview32');
+  const preview180 = document.getElementById('fgPreview180');
+  const codeSnippet = document.getElementById('fgCodeSnippet');
+  
   let currentImage = null;
   if (!result) return;
+
+  const htmlSnippet = `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\n<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">`;
 
   wireDropzone('fg', async (file) => {
     if (!file || !file.type.startsWith('image/')) return;
     const loaded = await loadImageFromFile(file);
     currentImage = loaded.img;
-    preview.src = loaded.url;
+    
     filename.textContent = file.name;
+    
+    preview16.src = loaded.url;
+    preview32.src = loaded.url;
+    preview180.src = loaded.url;
+    
+    codeSnippet.textContent = htmlSnippet;
+    
+    document.getElementById('fgDropzone').style.display = 'none';
     result.style.display = 'block';
+  });
+
+  copySnippetBtn.addEventListener('click', () => {
+    copyToClipboard(htmlSnippet);
+    
+    const origHtml = copySnippetBtn.innerHTML;
+    copySnippetBtn.innerHTML = 'Copied!';
+    copySnippetBtn.style.background = '#4CAF50';
+    copySnippetBtn.style.color = '#FFFFFF';
+    
+    setTimeout(() => {
+      copySnippetBtn.innerHTML = origHtml;
+      copySnippetBtn.style.background = '';
+      copySnippetBtn.style.color = '';
+    }, 1500);
   });
 
   downloadBtn.addEventListener('click', async () => {
     if (!currentImage) return;
     const zip = new JSZip();
+    
     for (const size of [16, 32, 180]) {
       const canvas = document.createElement('canvas');
       canvas.width = size;
       canvas.height = size;
-      canvas.getContext('2d').drawImage(currentImage, 0, 0, size, size);
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(currentImage, 0, 0, size, size);
       const blob = await canvasToBlob(canvas, 'image/png');
       zip.file(size === 180 ? 'apple-touch-icon.png' : `favicon-${size}x${size}.png`, blob);
     }
-    zip.file('favicon-html.txt', '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\\n<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">\\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">\\n');
+    
+    zip.file('favicon-html.txt', htmlSnippet);
     const blob = await zip.generateAsync({ type: 'blob' });
     downloadBlob(blob, 'favicon-package.zip');
+  });
+
+  resetBtn.addEventListener('click', () => {
+    currentImage = null;
+    result.style.display = 'none';
+    document.getElementById('fgDropzone').style.display = 'flex';
   });
 }
 
@@ -5625,14 +6336,8 @@ function initToolsPageListeners(activeTool) {
     initQrGeneratorListeners();
   } else if (toolId === 'font-pairing') {
     initFontPairingListeners();
-  } else if (toolId === 'unicode-text') {
-    initUnicodeTextListeners();
   } else if (toolId === 'favicon-generator') {
     initFaviconGeneratorListeners();
-  } else if (toolId === 'duotone-filter') {
-    initDuotoneFilterListeners();
-  } else if (toolId === 'lottie-color-editor') {
-    initLottieColorEditorListeners();
   }
 }
 
