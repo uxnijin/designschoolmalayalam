@@ -16,7 +16,7 @@ const SITE = {
   logo: "assets/logo.png",                          // path to logo image
   accentColor: "#FF6F2C",                           // used as CSS --accent
   cloudflareWorkerUrl: "https://design-school-visitors.nijuvenghat550649.workers.dev",  // Cloudflare Worker URL for live visitor stats
-  adminEmail: "nijinmuhammed4@gmail.com",           // ← YOUR Google email. Only this account can post/edit/delete jobs.
+  adminEmail: ["nijuvenghat550649@gmail.com", "uxnijin@gmail.com", "trynijin@gmail.com"],        // ← YOUR Google email. Only this account can post/edit/delete jobs.
 };
 
 
