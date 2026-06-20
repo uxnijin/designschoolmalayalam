@@ -53,9 +53,9 @@ auth.onAuthStateChanged((user) => {
   // Update nav button text/icon immediately
   updateNavAuthButton();
 
-  // Trigger UI update immediately if we are on dashboard, home page, article page, or jobs page
+  // Trigger UI update immediately if we are on dashboard, home page, article page, jobs page, or post-job page
   const state = history.state || parseUrl();
-  if (state.page === 'dashboard' || state.page === 'home' || state.page === 'article' || state.page === 'jobs-admin' || state.page === 'jobs') {
+  if (state.page === 'dashboard' || state.page === 'home' || state.page === 'article' || state.page === 'jobs-admin' || state.page === 'jobs' || state.page === 'post-job') {
     renderPage(state);
   }
 
@@ -64,7 +64,7 @@ auth.onAuthStateChanged((user) => {
     syncLocalDataToCloud().then(() => {
       // Re-render after sync completes to reflect merged progress
       const currentState = history.state || parseUrl();
-      if (currentState.page === 'dashboard' || currentState.page === 'home' || currentState.page === 'article' || currentState.page === 'jobs-admin' || currentState.page === 'jobs') {
+      if (currentState.page === 'dashboard' || currentState.page === 'home' || currentState.page === 'article' || currentState.page === 'jobs-admin' || currentState.page === 'jobs' || currentState.page === 'post-job') {
         renderPage(currentState);
       }
     });
@@ -143,6 +143,7 @@ async function syncLocalDataToCloud() {
     }, { merge: true });
   } catch (e) {
     console.error('Error syncing local data to cloud:', e);
+    showWarningToast('Sync failed: Could not synchronize progress with the cloud.');
   }
 }
 
@@ -170,6 +171,7 @@ async function saveCompletedArticles(list) {
       }, { merge: true });
     } catch (e) {
       console.error('Failed to sync completed articles to firestore:', e);
+      showWarningToast('Sync failed: Progress saved locally but not in cloud.');
     }
   }
 }
@@ -346,6 +348,7 @@ async function saveQuizScore(trackId, scorePercent) {
           }, { merge: true });
         } catch (e) {
           console.error('Failed to sync quiz scores to firestore:', e);
+          showWarningToast('Sync failed: Quiz score saved locally but not in cloud.');
         }
       }
       return true;
@@ -714,6 +717,11 @@ function buildUrl(page, catId, subId, articleId, query) {
   }
   if (page === 'jobs') return '/jobs';
   if (page === 'jobs-admin') return '/jobs-admin';
+  if (page === 'post-job') {
+    let url = '/post-job';
+    if (query) url += `?edit=${encodeURIComponent(query)}`;
+    return url;
+  }
   return '/';
 }
 
@@ -741,7 +749,8 @@ function parseUrl() {
         hashPath.startsWith('/search') || hashPath.startsWith('search') ||
         hashPath.startsWith('/dashboard') || hashPath.startsWith('dashboard') ||
         hashPath.startsWith('/tools') || hashPath.startsWith('tools') ||
-        hashPath.startsWith('/jobs') || hashPath.startsWith('jobs')) {
+        hashPath.startsWith('/jobs') || hashPath.startsWith('jobs') ||
+        hashPath.startsWith('/post-job') || hashPath.startsWith('post-job')) {
         routePath = hashPath.startsWith('/') ? hashPath : '/' + hashPath;
       }
     }
@@ -773,6 +782,11 @@ function parseUrl() {
       const hashQuery = routePath.includes('?') ? new URLSearchParams(routePath.split('?')[1]) : null;
       const activeTool = searchParams.get('t') || hashQuery?.get('t') || null; // null = show overview grid
       return { page: 'tools', catId: null, subId: null, articleId: null, query: activeTool };
+    }
+
+    if (routePath.startsWith('/post-job')) {
+      const editId = searchParams.get('edit') || null;
+      return { page: 'post-job', catId: null, subId: null, articleId: null, query: editId };
     }
 
     if (routePath.startsWith('/jobs-admin')) {
@@ -1036,6 +1050,10 @@ function renderPage(state) {
           content.innerHTML = renderJobsAdminPage();
           initJobsAdminPage();
           break;
+        case 'post-job':
+          content.innerHTML = renderPostJobPage();
+          initPostJobPage();
+          break;
         default: content.innerHTML = renderHome();
       }
       initEmptyStateLottie();
@@ -1076,6 +1094,10 @@ function renderPage(state) {
         content.innerHTML = renderJobsAdminPage();
         initJobsAdminPage();
         break;
+      case 'post-job':
+        content.innerHTML = renderPostJobPage();
+        initPostJobPage();
+        break;
       default: content.innerHTML = renderHome();
     }
     updateNavActive(catId);
@@ -1107,6 +1129,7 @@ function renderSkeletonForPage(state, content) {
     case 'tools': content.innerHTML = renderToolsSkeleton(); break;
     case 'jobs': content.innerHTML = renderJobsSkeleton(); break;
     case 'jobs-admin': content.innerHTML = renderJobsSkeleton(); break;
+    case 'post-job': content.innerHTML = renderJobsSkeleton(); break;
     default: content.innerHTML = renderHomeSkeleton();
   }
 }
@@ -3784,7 +3807,7 @@ function updateHeaderActiveState(page) {
 
   const btnJobsNav = document.getElementById('btnJobsNav');
   if (btnJobsNav) {
-    btnJobsNav.classList.toggle('active', page === 'jobs');
+    btnJobsNav.classList.toggle('active', page === 'jobs' || page === 'post-job');
   }
 
   // Sync mobile bottom navbar
@@ -3795,7 +3818,7 @@ function updateHeaderActiveState(page) {
   if (bnHome) bnHome.classList.toggle('active', page === 'home' || page === 'category' || page === 'subcategory' || page === 'article' || page === 'search');
   if (bnTools) bnTools.classList.toggle('active', page === 'tools');
   if (bnDashboard) bnDashboard.classList.toggle('active', page === 'dashboard');
-  if (bnJobs) bnJobs.classList.toggle('active', page === 'jobs');
+  if (bnJobs) bnJobs.classList.toggle('active', page === 'jobs' || page === 'post-job');
 }
 
 function handleBottomNavDashboard() {
@@ -6544,7 +6567,7 @@ function renderJobsPage() {
             </svg>
           </button>
         </div>
-        <button class="jobs-post-btn-top" onclick="openPostJobModal()">
+        <button class="jobs-post-btn-top" onclick="navigate('post-job')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;">
             <line x1="12" y1="5" x2="12" y2="19"></line>
             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -6576,7 +6599,7 @@ function renderJobsPage() {
             <strong>Hiring a designer?</strong>
             <span>Reach thousands of creative professionals — post a job for free.</span>
           </div>
-          <button class="jobs-post-btn" onclick="openPostJobModal()">
+          <button class="jobs-post-btn" onclick="navigate('post-job')">
             Post a Job
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"/>
@@ -6785,14 +6808,9 @@ function initJobsPage() {
   };
 
   try {
-    _jobsUnsubscribe = attachListener(db.collection('jobs').orderBy('postedAt', 'desc'));
+    _jobsUnsubscribe = attachListener(db.collection('jobs'));
   } catch(e) {
-    console.warn('initJobsPage error, trying fallback:', e);
-    try {
-      _jobsUnsubscribe = attachListener(db.collection('jobs'));
-    } catch(e2) {
-      console.error('initJobsPage complete failure:', e2);
-    }
+    console.error('initJobsPage complete failure:', e);
   }
 }
 
@@ -6992,6 +7010,11 @@ function initJobsAdminPage() {
   const attachAdminListener = (query) => {
     return query.onSnapshot(snapshot => {
       _adminJobsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      _adminJobsData.sort((a, b) => {
+        const ta = a.postedAt ? (a.postedAt.toDate ? a.postedAt.toDate() : new Date(a.postedAt)) : new Date(0);
+        const tb = b.postedAt ? (b.postedAt.toDate ? b.postedAt.toDate() : new Date(b.postedAt)) : new Date(0);
+        return tb - ta;
+      });
       renderAdminJobsList();
     }, err => {
       console.error('Admin jobs load failed:', err);
@@ -7003,14 +7026,9 @@ function initJobsAdminPage() {
   };
 
   try {
-    _adminJobsUnsubscribe = attachAdminListener(db.collection('jobs').orderBy('postedAt', 'desc'));
+    _adminJobsUnsubscribe = attachAdminListener(db.collection('jobs'));
   } catch(e) {
-    console.warn('initJobsAdminPage error, trying fallback:', e);
-    try {
-      _adminJobsUnsubscribe = attachAdminListener(db.collection('jobs'));
-    } catch(e2) {
-      console.error('initJobsAdminPage complete failure:', e2);
-    }
+    console.error('initJobsAdminPage complete failure:', e);
   }
 }
 
@@ -7425,178 +7443,233 @@ function closeJobDetailModal() {
   }
 }
 
-// ── VISITOR JOB POSTING & MODAL ────────────────────────────────
+// ── FULLSCREEN VISITOR JOB POSTING ────────────────────────────
 
-let _visitorEditingJobId = null;
-
-function openPostJobModal(editJobId = null) {
-  _visitorEditingJobId = editJobId;
-
-  const overlay = document.createElement('div');
-  overlay.id = 'postJobModal';
-  overlay.className = 'job-details-modal-overlay';
-  overlay.onclick = (e) => {
-    if (e.target === overlay) closePostJobModal();
-  };
-
+function renderPostJobPage() {
   if (!currentUser) {
-    overlay.innerHTML = `
-      <div class="jobs-admin-auth-card" style="margin: auto; max-width: 420px; position: relative;">
-        <button class="job-modal-close" onclick="closePostJobModal()" aria-label="Close">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
-        <div class="jobs-admin-auth-icon">🔐</div>
-        <h2>Sign In Required</h2>
-        <p>You must sign in with your Google account to post a job listing and manage it later.</p>
-        <button class="btn-submit" onclick="handleGoogleSignIn()">Sign In with Google</button>
+    return `
+      <div class="page-wide post-job-container">
+        <div class="jobs-admin-auth-card">
+          <div class="jobs-admin-auth-icon">🔐</div>
+          <h2>Sign In Required</h2>
+          <p>You must sign in with your Google account to post a job listing and manage it later.</p>
+          <button class="btn-submit" onclick="handleGoogleSignIn()">Sign In with Google</button>
+          <div style="margin-top: 16px; text-align: center;">
+            <a href="/jobs" class="jobs-admin-back-link" onclick="event.preventDefault(); navigate('jobs');">← Back to Jobs Board</a>
+          </div>
+        </div>
       </div>
     `;
-    document.body.appendChild(overlay);
-    document.body.style.overflow = 'hidden';
-    return;
   }
 
-  let job = null;
-  if (editJobId) {
-    job = _jobsData.find(j => j.id === editJobId);
-  }
+  return `
+    <div class="page-wide post-job-container" id="postJobRoot">
+      <div class="post-job-header">
+        <a href="/jobs" class="post-job-back-link" onclick="event.preventDefault(); navigate('jobs');">← Back to Jobs Board</a>
+        <h1 class="post-job-title" id="postJobPageTitle">Post a New Job</h1>
+        <p class="post-job-subtitle">Reach thousands of creative professionals in our community.</p>
+      </div>
 
-  const isCustomCategory = job && !JOB_CATEGORIES.some(c => c.id === job.category);
-
-  overlay.innerHTML = `
-    <div class="job-details-modal-content" style="max-width: 600px;">
-      <button class="job-modal-close" onclick="closePostJobModal()" aria-label="Close">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-
-      <h3 class="visitor-form-title" id="visitorFormTitle">${editJobId ? 'Edit Job Posting' : 'Post a New Job'}</h3>
-      <p class="visitor-form-subtitle">Reach thousands of creative professionals in our community.</p>
-
-      <form id="visitorJobForm" onsubmit="handleVisitorJobFormSubmit(event)" class="jobs-admin-form" style="margin-top: 20px;">
-        <div class="form-group">
-          <label for="visitorJobTitle">Job Title <span class="required">*</span></label>
-          <input type="text" id="visitorJobTitle" required placeholder="e.g. Graphic Designer" value="${job ? job.title || '' : ''}">
-        </div>
-        
-        <div class="form-group">
-          <label for="visitorJobCompany">Company Name <span class="required">*</span></label>
-          <input type="text" id="visitorJobCompany" required placeholder="e.g. Kochi Design Studio" value="${job ? job.company || '' : ''}">
-        </div>
-
-        <div class="form-group">
-          <label for="visitorJobLogo">Company Logo URL <span class="optional">(Optional)</span></label>
-          <input type="url" id="visitorJobLogo" placeholder="e.g. https://domain.com/logo.png" value="${job ? job.logo || '' : ''}">
-        </div>
-
-        <div class="form-group">
-          <label for="visitorJobLocation">Location <span class="required">*</span></label>
-          <input type="text" id="visitorJobLocation" required placeholder="e.g. Kochi (On-site) / Remote" value="${job ? job.location || '' : ''}">
-        </div>
-
-        <div class="form-row-2">
+      <div class="jobs-admin-form-card" style="max-width: 800px; margin: 0 auto 40px auto;">
+        <form id="postJobForm" onsubmit="handlePostJobFormSubmit(event)" class="jobs-admin-form">
           <div class="form-group">
-            <label for="visitorJobType">Job Type <span class="required">*</span></label>
-            <select id="visitorJobType" required>
-              <option value="Full-time" ${job && job.type === 'Full-time' ? 'selected' : ''}>Full-time</option>
-              <option value="Part-time" ${job && job.type === 'Part-time' ? 'selected' : ''}>Part-time</option>
-              <option value="Freelance" ${job && job.type === 'Freelance' ? 'selected' : ''}>Freelance</option>
-              <option value="Internship" ${job && job.type === 'Internship' ? 'selected' : ''}>Internship</option>
-              <option value="Contract" ${job && job.type === 'Contract' ? 'selected' : ''}>Contract</option>
-            </select>
+            <label for="postJobTitle">Job Title <span class="required">*</span></label>
+            <input type="text" id="postJobTitle" required placeholder="e.g. Graphic Designer">
+          </div>
+          
+          <div class="form-group">
+            <label for="postJobCompany">Company Name <span class="required">*</span></label>
+            <input type="text" id="postJobCompany" required placeholder="e.g. Kochi Design Studio">
           </div>
 
           <div class="form-group">
-            <label for="visitorJobCategory">Category <span class="required">*</span></label>
-            <select id="visitorJobCategory" required onchange="handleCategoryChange(this, 'visitorCustomCategoryGroup')">
-              ${JOB_CATEGORIES.filter(c => c.id !== 'all').map(c => `
-                <option value="${c.id}" ${job && job.category === c.id ? 'selected' : ''}>${c.label}</option>
-              `).join('')}
-              <option value="custom" ${isCustomCategory ? 'selected' : ''}>Other / Custom Category...</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group" id="visitorCustomCategoryGroup" style="display: ${isCustomCategory ? 'flex' : 'none'};">
-          <label for="visitorJobCustomCategory">Custom Category Name <span class="required">*</span></label>
-          <input type="text" id="visitorJobCustomCategory" placeholder="e.g. 3D Animator" value="${isCustomCategory ? job.customCategoryLabel || '' : ''}" ${isCustomCategory ? 'required' : ''}>
-        </div>
-
-        <div class="form-group">
-          <label for="visitorJobLink">Apply Link / URL <span class="required">*</span></label>
-          <input type="url" id="visitorJobLink" required placeholder="e.g. LinkedIn Apply URL or WhatsApp link" value="${job ? job.link || '' : ''}">
-        </div>
-
-        <div class="form-row-2">
-          <div class="form-group">
-            <label for="visitorJobSalary">Salary Range <span class="optional">(Optional)</span></label>
-            <input type="text" id="visitorJobSalary" placeholder="e.g. ₹25k - ₹40k / mo" value="${job ? job.salary || '' : ''}">
+            <label for="postJobLogo">Company Logo URL <span class="optional">(Optional)</span></label>
+            <input type="url" id="postJobLogo" placeholder="e.g. https://domain.com/logo.png">
           </div>
 
           <div class="form-group">
-            <label for="visitorJobExperience">Experience Required <span class="optional">(Optional)</span></label>
-            <input type="text" id="visitorJobExperience" placeholder="e.g. 1-2 years" value="${job ? job.experience || '' : ''}">
+            <label for="postJobLocation">Location <span class="required">*</span></label>
+            <input type="text" id="postJobLocation" required placeholder="e.g. Kochi (On-site) / Remote">
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="visitorJobSkills">Required Skills <span class="optional">(Optional - Comma separated)</span></label>
-          <input type="text" id="visitorJobSkills" placeholder="e.g. Photoshop, Premiere Pro, Color Grading" value="${job ? job.skills || '' : ''}">
-        </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="postJobType">Job Type <span class="required">*</span></label>
+              <select id="postJobType" required>
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+                <option value="Freelance">Freelance</option>
+                <option value="Internship">Internship</option>
+                <option value="Contract">Contract</option>
+              </select>
+            </div>
 
-        <div class="form-group">
-          <label for="visitorJobCompanyDesc">About the Company <span class="optional">(Optional)</span></label>
-          <textarea id="visitorJobCompanyDesc" rows="2" placeholder="Brief info about your agency or studio...">${job ? job.companyDesc || '' : ''}</textarea>
-        </div>
+            <div class="form-group">
+              <label for="postJobCategory">Category <span class="required">*</span></label>
+              <select id="postJobCategory" required onchange="handleCategoryChange(this, 'postCustomCategoryGroup')">
+                ${JOB_CATEGORIES.filter(c => c.id !== 'all').map(c => `
+                  <option value="${c.id}">${c.label}</option>
+                `).join('')}
+                <option value="custom">Other / Custom Category...</option>
+              </select>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label for="visitorJobDescription">Job Description <span class="required">*</span></label>
-          <textarea id="visitorJobDescription" required rows="4" placeholder="Detail the roles, responsibilities, work schedule, requirements...">${job ? job.description || '' : ''}</textarea>
-        </div>
+          <div class="form-group" id="postCustomCategoryGroup" style="display: none;">
+            <label for="postJobCustomCategory">Custom Category Name <span class="required">*</span></label>
+            <input type="text" id="postJobCustomCategory" placeholder="e.g. 3D Animator">
+          </div>
 
-        <div class="form-actions">
-          <button type="submit" id="btnSubmitVisitorForm" class="btn-submit">${editJobId ? 'Save Changes' : 'Submit Job Post'}</button>
-          <button type="button" class="btn-cancel" onclick="closePostJobModal()">Cancel</button>
-        </div>
-      </form>
+          <div class="form-group">
+            <label for="postJobLink">Apply Link / URL <span class="required">*</span></label>
+            <input type="url" id="postJobLink" required placeholder="e.g. LinkedIn Apply URL or WhatsApp link">
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label for="postJobSalary">Salary Range <span class="optional">(Optional)</span></label>
+              <input type="text" id="postJobSalary" placeholder="e.g. ₹25k - ₹40k / mo">
+            </div>
+
+            <div class="form-group">
+              <label for="postJobExperience">Experience Required <span class="optional">(Optional)</span></label>
+              <input type="text" id="postJobExperience" placeholder="e.g. 1-2 years">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="postJobSkills">Required Skills <span class="optional">(Optional - Comma separated)</span></label>
+            <input type="text" id="postJobSkills" placeholder="e.g. Photoshop, Premiere Pro, Color Grading">
+          </div>
+
+          <div class="form-group">
+            <label for="postJobCompanyDesc">About the Company <span class="optional">(Optional)</span></label>
+            <textarea id="postJobCompanyDesc" rows="2" placeholder="Brief info about your agency or studio..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="postJobDescription">Job Description <span class="required">*</span></label>
+            <textarea id="postJobDescription" required rows="6" placeholder="Detail the roles, responsibilities, work schedule, requirements..."></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="btnSubmitPostForm" class="btn-submit">Submit Job Post</button>
+            <button type="button" class="btn-cancel" onclick="navigate('jobs')">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
   `;
-
-  document.body.appendChild(overlay);
-  document.body.style.overflow = 'hidden';
 }
 
-function closePostJobModal() {
-  const modal = document.getElementById('postJobModal');
-  if (modal) modal.remove();
-  document.body.style.overflow = '';
+function initPostJobPage() {
+  const state = history.state || parseUrl();
+  const editJobId = state.query;
+  
+  if (!currentUser) return;
+
+  if (editJobId) {
+    const titleEl = document.getElementById('postJobPageTitle');
+    const submitBtn = document.getElementById('btnSubmitPostForm');
+    if (titleEl) titleEl.innerText = "Edit Job Posting";
+    if (submitBtn) submitBtn.innerText = "Save Changes";
+
+    let job = _jobsData.find(j => j.id === editJobId);
+    if (!job && _adminJobsData) {
+      job = _adminJobsData.find(j => j.id === editJobId);
+    }
+
+    if (job) {
+      populatePostJobForm(job);
+    } else {
+      db.collection('jobs').doc(editJobId).get().then(doc => {
+        if (doc.exists) {
+          const fetchedJob = { id: doc.id, ...doc.data() };
+          if (fetchedJob.createdBy !== currentUser.email && currentUser.email !== SITE.adminEmail) {
+            alert("Access Denied: You do not have permission to edit this job posting.");
+            navigate('jobs');
+            return;
+          }
+          populatePostJobForm(fetchedJob);
+        } else {
+          alert("Job posting not found.");
+          navigate('jobs');
+        }
+      }).catch(err => {
+        alert("Error loading job details: " + err.message);
+        navigate('jobs');
+      });
+    }
+  }
 }
 
-function handleVisitorJobFormSubmit(event) {
+function populatePostJobForm(job) {
+  const titleInput = document.getElementById('postJobTitle');
+  const companyInput = document.getElementById('postJobCompany');
+  const logoInput = document.getElementById('postJobLogo');
+  const locationInput = document.getElementById('postJobLocation');
+  const typeInput = document.getElementById('postJobType');
+  const categoryInput = document.getElementById('postJobCategory');
+  const customCatGroup = document.getElementById('postCustomCategoryGroup');
+  const customCatInput = document.getElementById('postJobCustomCategory');
+  const linkInput = document.getElementById('postJobLink');
+  const salaryInput = document.getElementById('postJobSalary');
+  const experienceInput = document.getElementById('postJobExperience');
+  const skillsInput = document.getElementById('postJobSkills');
+  const companyDescInput = document.getElementById('postJobCompanyDesc');
+  const descInput = document.getElementById('postJobDescription');
+
+  if (titleInput) titleInput.value = job.title || '';
+  if (companyInput) companyInput.value = job.company || '';
+  if (logoInput) logoInput.value = job.logo || '';
+  if (locationInput) locationInput.value = job.location || '';
+  if (typeInput) typeInput.value = job.type || 'Full-time';
+
+  const categoryExists = JOB_CATEGORIES.some(c => c.id === job.category);
+  if (categoryExists && job.category !== 'all') {
+    if (categoryInput) categoryInput.value = job.category;
+    if (customCatGroup) customCatGroup.style.display = 'none';
+    if (customCatInput) {
+      customCatInput.value = '';
+      customCatInput.removeAttribute('required');
+    }
+  } else {
+    if (categoryInput) categoryInput.value = 'custom';
+    if (customCatGroup) customCatGroup.style.display = 'flex';
+    if (customCatInput) {
+      customCatInput.value = job.customCategoryLabel || job.category || '';
+      customCatInput.setAttribute('required', 'required');
+    }
+  }
+
+  if (linkInput) linkInput.value = job.link || '';
+  if (salaryInput) salaryInput.value = job.salary || '';
+  if (experienceInput) experienceInput.value = job.experience || '';
+  if (skillsInput) skillsInput.value = job.skills || '';
+  if (companyDescInput) companyDescInput.value = job.companyDesc || '';
+  if (descInput) descInput.value = job.description || '';
+}
+
+function handlePostJobFormSubmit(event) {
   event.preventDefault();
 
-  const title = document.getElementById('visitorJobTitle').value.trim();
-  const company = document.getElementById('visitorJobCompany').value.trim();
-  const logo = document.getElementById('visitorJobLogo').value.trim();
-  const location = document.getElementById('visitorJobLocation').value.trim();
-  const type = document.getElementById('visitorJobType').value;
-  const category = document.getElementById('visitorJobCategory').value;
-  const link = document.getElementById('visitorJobLink').value.trim();
-  const salary = document.getElementById('visitorJobSalary').value.trim();
-  const experience = document.getElementById('visitorJobExperience').value.trim();
-  const skills = document.getElementById('visitorJobSkills').value.trim();
-  const companyDesc = document.getElementById('visitorJobCompanyDesc').value.trim();
-  const description = document.getElementById('visitorJobDescription').value.trim();
+  const title = document.getElementById('postJobTitle').value.trim();
+  const company = document.getElementById('postJobCompany').value.trim();
+  const logo = document.getElementById('postJobLogo').value.trim();
+  const location = document.getElementById('postJobLocation').value.trim();
+  const type = document.getElementById('postJobType').value;
+  const category = document.getElementById('postJobCategory').value;
+  const link = document.getElementById('postJobLink').value.trim();
+  const salary = document.getElementById('postJobSalary').value.trim();
+  const experience = document.getElementById('postJobExperience').value.trim();
+  const skills = document.getElementById('postJobSkills').value.trim();
+  const companyDesc = document.getElementById('postJobCompanyDesc').value.trim();
+  const description = document.getElementById('postJobDescription').value.trim();
 
   let finalCategory = category;
   let customCategoryLabel = '';
   if (category === 'custom') {
-    const customText = document.getElementById('visitorJobCustomCategory').value.trim();
+    const customText = document.getElementById('postJobCustomCategory').value.trim();
     finalCategory = slugify(customText);
     customCategoryLabel = customText;
   }
@@ -7618,15 +7691,18 @@ function handleVisitorJobFormSubmit(event) {
     active: true
   };
 
-  const btnSubmit = document.getElementById('btnSubmitVisitorForm');
+  const btnSubmit = document.getElementById('btnSubmitPostForm');
   btnSubmit.disabled = true;
   const originalText = btnSubmit.innerText;
   btnSubmit.innerText = "Submitting...";
 
-  if (_visitorEditingJobId) {
-    db.collection('jobs').doc(_visitorEditingJobId).update(jobData).then(() => {
+  const state = history.state || parseUrl();
+  const editJobId = state.query;
+
+  if (editJobId) {
+    db.collection('jobs').doc(editJobId).update(jobData).then(() => {
       alert("Job posting updated successfully!");
-      closePostJobModal();
+      navigate('jobs');
     }).catch(err => {
       alert("Failed to update job: " + err.message);
       btnSubmit.disabled = false;
@@ -7639,7 +7715,7 @@ function handleVisitorJobFormSubmit(event) {
 
     db.collection('jobs').add(jobData).then(() => {
       alert("Job posting submitted successfully!");
-      closePostJobModal();
+      navigate('jobs');
     }).catch(err => {
       alert("Failed to submit job: " + err.message);
       btnSubmit.disabled = false;
@@ -7649,7 +7725,7 @@ function handleVisitorJobFormSubmit(event) {
 }
 
 function editVisitorJob(jobId) {
-  openPostJobModal(jobId);
+  navigate('post-job', null, null, null, jobId);
 }
 
 function deleteVisitorJob(jobId) {
@@ -7710,4 +7786,32 @@ function renderUserSubmittedJobs() {
       </div>
     `;
   }).join('');
+}
+
+function showWarningToast(message) {
+  const existing = document.getElementById('warning-toast');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.id = 'warning-toast';
+  toast.className = 'clipboard-toast';
+  toast.style.borderColor = 'rgba(235, 94, 40, 0.4)';
+  toast.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="#eb5e28" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+    <span style="color: #eb5e28;">${message}</span>
+  `;
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add('show');
+  }, 10);
+
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
 }
