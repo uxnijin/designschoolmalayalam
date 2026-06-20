@@ -15,8 +15,10 @@ const SITE = {
   whatsappMessage: "Hi! I'm interested in personal training from Design School.",
   logo: "assets/logo.png",                          // path to logo image
   accentColor: "#FF6F2C",                           // used as CSS --accent
-  cloudflareWorkerUrl: "https://design-school-visitors.nijuvenghat550649.workers.dev",                          // Cloudflare Worker URL for live visitor stats
+  cloudflareWorkerUrl: "https://design-school-visitors.nijuvenghat550649.workers.dev",  // Cloudflare Worker URL for live visitor stats
+  adminEmail: "nijinmuhammed4@gmail.com",           // ← YOUR Google email. Only this account can post/edit/delete jobs.
 };
+
 
 // ── HOME PAGE ────────────────────────────────────────────────
 // Controls text/stats shown in the channel banner on the home page
