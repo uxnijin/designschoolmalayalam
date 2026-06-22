@@ -206,7 +206,12 @@ const ARTICLE_IDS = [
   "from-zero-clients-to-global-brands",
   "cracking-ux-whiteboarding",
   "become-ux-designer-at-google",
-  "ux-designer-google-salary-roadmap"
+  "ux-designer-google-salary-roadmap",
+  "dark-patterns-in-ux",
+  "design-systems",
+  "color-psychology-in-ux",
+  "gestalt-principles",
+  "microinteractions"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
