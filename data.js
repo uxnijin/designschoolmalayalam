@@ -246,7 +246,15 @@ const ARTICLE_IDS = [
   "best-chrome-extensions-designers",
   "best-design-portfolio-builders",
   "best-user-testing-platforms",
-  "best-font-pairing-tools"
+  "best-font-pairing-tools",
+  "golden-ratio-design",
+  "typography-rules-graphic-design",
+  "history-of-typography",
+  "hierarchy-in-graphic-design",
+  "brand-packaging-design",
+  "print-vs-digital-design",
+  "poster-design-composition",
+  "color-harmony-graphic-design"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -838,6 +846,94 @@ const QUIZZES = {
     ],
     answerIndex: 2,
     explanation: "Blue naturally triggers feelings of safety, dependability, logical thought, and calmness, which helps establish consumer trust and professional authority for banks, technology firms, and medical systems."
+  },
+  "golden-ratio-design": {
+    question: "What is the approximate mathematical ratio of the Golden Ratio?",
+    options: [
+      "1 : 1.414 (Silver Ratio)",
+      "1 : 1.618 (Phi)",
+      "1 : 2.718 (Euler's Number)",
+      "1 : 3.141 (Pi)"
+    ],
+    answerIndex: 1,
+    explanation: "The Golden Ratio is approximately 1 : 1.618 (represented by the Greek letter phi). It is widely observed in nature and used in design to create organic, aesthetically balanced layout proportions."
+  },
+  "typography-rules-graphic-design": {
+    question: "Which of the following is considered a key typography rule for body copy readability?",
+    options: [
+      "Set tracking (letter spacing) extremely high for body paragraphs.",
+      "Avoid using more than 2 to 3 font families in a single layout.",
+      "Always justify text blocks to stretch them to page edges.",
+      "Use highly decorative display fonts for multi-page articles."
+    ],
+    answerIndex: 1,
+    explanation: "Limiting font selections to 2 or 3 typefaces (typically one for headers, one for body copy) prevents visual clutter and maintains layout cohesion and professional design standards."
+  },
+  "history-of-typography": {
+    question: "Who is credited with introducing movable type printing to Europe in the 15th century?",
+    options: [
+      "Johannes Gutenberg",
+      "Claude Garamond",
+      "John Baskerville",
+      "Max Miedinger"
+    ],
+    answerIndex: 0,
+    explanation: "Johannes Gutenberg introduced movable metal type printing to Europe around 1440, revolutionizing book production and launching the modern history of typography."
+  },
+  "hierarchy-in-graphic-design": {
+    question: "How does visual hierarchy influence a reader's engagement with a layout?",
+    options: [
+      "It structures text into identical font sizes for equality.",
+      "It guides the reader's eye in a structured order of priority.",
+      "It forces the reader to scroll to the bottom instantly.",
+      "It eliminates the need for negative space in graphic design."
+    ],
+    answerIndex: 1,
+    explanation: "Visual hierarchy organizes design elements in order of importance, using scale, color, contrast, and spacing to guide the viewer's gaze from the most critical headline to secondary information."
+  },
+  "brand-packaging-design": {
+    question: "What does 'shelf impact' refer to in packaging design?",
+    options: [
+      "The physical weight of the box on retail shelves.",
+      "How well a product package stands out and captures attention in a crowded retail environment.",
+      "The durability of cardboard boxes under heavy packaging stack pressure.",
+      "The shipping cost to transport boxes to warehouse shelves."
+    ],
+    answerIndex: 1,
+    explanation: "Shelf impact is how distinct and recognizable a product packaging looks when placed side-by-side with direct competitors on a physical or digital store shelf."
+  },
+  "print-vs-digital-design": {
+    question: "Which color model is standard for commercial color printing setups?",
+    options: [
+      "RGB (Red, Green, Blue)",
+      "CMYK (Cyan, Magenta, Yellow, Key/Black)",
+      "HEX (Hexadecimal notation)",
+      "HSL (Hue, Saturation, Lightness)"
+    ],
+    answerIndex: 1,
+    explanation: "CMYK (Cyan, Magenta, Yellow, Key/Black) is a subtractive color model used in printing inks. Digital monitors use the additive RGB color model."
+  },
+  "poster-design-composition": {
+    question: "What is the primary rule for poster typography layout composition?",
+    options: [
+      "Use as much text as possible to explain all details.",
+      "Ensure key headlines and dates are easily readable from a distance.",
+      "Avoid using headings or visual contrast blocks.",
+      "Make body text larger than visual graphics."
+    ],
+    answerIndex: 1,
+    explanation: "Posters must grab attention and convey core messages quickly. Sizing headlines and key details like event dates large ensures they are legible to passersby from a distance."
+  },
+  "color-harmony-graphic-design": {
+    question: "What color scheme is constructed by choosing colors that sit directly opposite each other on the color wheel?",
+    options: [
+      "Analogous scheme",
+      "Complementary scheme",
+      "Monochromatic scheme",
+      "Triadic scheme"
+    ],
+    answerIndex: 1,
+    explanation: "Complementary colors are paired directly opposite each other on the color wheel (e.g., blue and orange, red and green). They offer high color contrast, making elements pop."
   }
 };
 
