@@ -3291,6 +3291,16 @@ function initGlobalPlayers() {
       syncInlinePlayerProgress();
     });
 
+    globalAudio.addEventListener('loadedmetadata', () => {
+      syncInlinePlayerProgress();
+      updateGlobalPlayers();
+    });
+
+    globalAudio.addEventListener('durationchange', () => {
+      syncInlinePlayerProgress();
+      updateGlobalPlayers();
+    });
+
     globalAudio.addEventListener('play', () => {
       updateGlobalPlayers();
       syncInlinePlayerPlayState(true);
@@ -3401,7 +3411,14 @@ function initGlobalPlayers() {
 }
 
 function toggleGlobalPlay() {
-  if (!globalAudio) return;
+  if (!globalAudio || !activePodcast) return;
+
+  const absoluteUrl = new URL(activePodcast.audioUrl, window.location.href).href;
+  if (globalAudio.src !== absoluteUrl) {
+    globalAudio.src = activePodcast.audioUrl;
+    globalAudio.load();
+  }
+
   if (globalAudio.paused) {
     globalAudio.play().catch(err => console.warn("Global audio play blocked:", err));
   } else {
@@ -3529,7 +3546,7 @@ function syncSoundWaves(isPlaying) {
 }
 
 function syncInlinePlayerProgress() {
-  if (!globalAudio) return;
+  if (!globalAudio || !activePodcast) return;
   const currentTimeLabel = document.getElementById('podcast-current-time');
   const durationLabel = document.getElementById('podcast-duration');
   const progressBar = document.getElementById('podcast-progress-bar');
@@ -3543,13 +3560,25 @@ function syncInlinePlayerProgress() {
       return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
 
-    currentTimeLabel.textContent = formatTime(globalAudio.currentTime);
-    durationLabel.textContent = formatTime(globalAudio.duration);
+    const isCurrentAudio = globalAudio.src && (globalAudio.src === activePodcast.audioUrl || new URL(globalAudio.src, window.location.href).href === new URL(activePodcast.audioUrl, window.location.href).href);
 
-    if (globalAudio.duration) {
-      const pct = (globalAudio.currentTime / globalAudio.duration) * 100;
-      progressBar.style.width = `${pct}%`;
-      progressThumb.style.left = `${pct}%`;
+    if (isCurrentAudio) {
+      currentTimeLabel.textContent = formatTime(globalAudio.currentTime);
+      durationLabel.textContent = formatTime(globalAudio.duration);
+
+      if (globalAudio.duration) {
+        const pct = (globalAudio.currentTime / globalAudio.duration) * 100;
+        progressBar.style.width = `${pct}%`;
+        progressThumb.style.left = `${pct}%`;
+      } else {
+        progressBar.style.width = '0%';
+        progressThumb.style.left = '0%';
+      }
+    } else {
+      currentTimeLabel.textContent = '0:00';
+      durationLabel.textContent = '0:00';
+      progressBar.style.width = '0%';
+      progressThumb.style.left = '0%';
     }
   }
 }
@@ -3582,28 +3611,11 @@ function initAudioPlayer(articleId) {
       globalAudio.pause();
     }
     activePodcast = article;
-    globalAudio.src = article.audioUrl;
-    globalAudio.load();
   }
 
-  const formatTime = (secs) => {
-    if (isNaN(secs) || secs === Infinity) return '0:00';
-    const m = Math.floor(secs / 60);
-    const s = Math.floor(secs % 60);
-    return `${m}:${s < 10 ? '0' : ''}${s}`;
-  };
+  const isCurrentAudio = globalAudio.src && (globalAudio.src === article.audioUrl || new URL(globalAudio.src, window.location.href).href === new URL(article.audioUrl, window.location.href).href);
 
-  const updateDuration = () => {
-    durationLabel.textContent = formatTime(globalAudio.duration);
-  };
-
-  if (globalAudio.readyState >= 1) {
-    updateDuration();
-  } else {
-    globalAudio.addEventListener('loadedmetadata', updateDuration);
-  }
-
-  if (!globalAudio.paused) {
+  if (isCurrentAudio && !globalAudio.paused) {
     playSvg.style.display = 'none';
     pauseSvg.style.display = 'block';
     syncSoundWaves(true);
@@ -3630,6 +3642,11 @@ function initAudioPlayer(articleId) {
   updateVolumeIcon(globalAudio.volume);
 
   const togglePlay = () => {
+    const absoluteUrl = new URL(article.audioUrl, window.location.href).href;
+    if (globalAudio.src !== absoluteUrl) {
+      globalAudio.src = article.audioUrl;
+      globalAudio.load();
+    }
     if (globalAudio.paused) {
       globalAudio.play().then(() => {
         playSvg.style.display = 'none';
