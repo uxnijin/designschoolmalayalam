@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="100%" height="100%">
+  <defs>
+    <linearGradient id="banner-bg" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#1f1107" />
+      <stop offset="55%" stop-color="#2d1808" />
+      <stop offset="100%" stop-color="#0f0f0f" />
+    </linearGradient>
+    <radialGradient id="banner-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF6F2C" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#FF6F2C" stop-opacity="0" />
+    </radialGradient>
+    <clipPath id="card-clip"><rect x="2" y="2" width="636" height="356" rx="24" /></clipPath>
+  </defs>
+
+  <g clip-path="url(#card-clip)">
+    <rect width="640" height="360" fill="url(#banner-bg)" />
+    <circle cx="555" cy="95" r="170" fill="url(#banner-glow)" />
+
+    <!-- Category tag -->
+    <rect x="56" y="42" width="196" height="24" rx="12" fill="none" stroke="#FF6F2C" stroke-opacity="0.5" stroke-width="1" />
+    <text x="154" y="58" fill="#FF6F2C" font-family="'DM Mono', monospace" font-size="10.5" font-weight="500" letter-spacing="1.2px" text-anchor="middle">GRAPHIC DESIGN / BRANDING</text>
+
+    <!-- Title -->
+    <text x="56" y="173" fill="#f1f1f1" font-family="'Google Sans Display', 'Google Sans', sans-serif" font-size="34" font-weight="700" letter-spacing="-0.5px">How to Build a Brand</text>
+    <text x="56" y="219" fill="#f1f1f1" font-family="'Google Sans Display', 'Google Sans', sans-serif" font-size="34" font-weight="700" letter-spacing="-0.5px">Style Guide</text>
+
+    <!-- Footer -->
+    <g transform="translate(56, 312)">
+      <circle cx="6" cy="-5" r="4" fill="#FF6F2C" />
+      <text x="20" y="0" fill="#777777" font-family="'DM Mono', monospace" font-size="11" font-weight="500" letter-spacing="0.5px">DESIGN SCHOOL</text>
+    </g>
+  </g>
+  <rect x="2" y="2" width="636" height="356" rx="24" fill="none" stroke="#2a2a2a" stroke-width="1.5" />
+</svg>

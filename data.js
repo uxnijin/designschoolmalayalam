@@ -85,6 +85,10 @@ const CATEGORIES = [
     description: "The art of visual communication",
     subcategories: [
       { id: "trends", title: "Trends", description: "Latest Design Trends" },
+      { id: "principles", title: "Principles", description: "Core rules of layout, balance, and visual hierarchy" },
+      { id: "branding", title: "Branding", description: "Logo design, style guides, and visual identity systems" },
+      { id: "typography-gd", title: "Typography", description: "Type selection, pairing, history, and layout styling" },
+      { id: "layout", title: "Layout & Composition", description: "Grid systems, composition, page structures" }
     ],
   },
   {
@@ -228,7 +232,15 @@ const ARTICLE_IDS = [
   "figma-component-properties",
   "figma-variables-prototyping",
   "touch-targets-design",
-  "accessible-forms-ux"
+  "accessible-forms-ux",
+  "principles-of-graphic-design",
+  "grid-systems-graphic-design",
+  "logo-design-fundamentals",
+  "history-of-bauhaus",
+  "vector-vs-raster",
+  "brand-style-guides",
+  "swiss-design-style",
+  "color-psychology-branding"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -733,6 +745,93 @@ const QUIZZES = {
     ],
     answerIndex: 0,
     explanation: "Placeholder text disappears when content is entered (hurting cognitive recall), has poor contrast, and is often invisible to screen readers. Persistent visual labels are required."
+  },
+  "principles-of-graphic-design": {
+    question: "Which graphic design principle refers to the distribution of visual weight in a composition?",
+    options: [
+      "Contrast",
+      "Rhythm",
+      "Balance",
+      "Emphasis"
+    ],
+    answerIndex: 2,
+    explanation: "Balance refers to how visual weight is distributed across a design. It can be symmetrical (equal weight on both sides), asymmetrical (contrasting elements balancing each other), or radial (radiating from a center point)."
+  },
+  "grid-systems-graphic-design": {
+    question: "What type of grid is characterized by equal-sized modules arranged in columns and rows?",
+    options: [
+      "Hierarchical Grid",
+      "Column Grid",
+      "Modular Grid",
+      "Manuscript Grid"
+    ],
+    answerIndex: 2,
+    explanation: "Modular grids are made of columns and rows that intersect to form uniform modules. They provide highly structured and flexible layouts for catalogs, newspaper sheets, and complex schedules."
+  },
+  "logo-design-fundamentals": {
+    question: "Why is versatility considered a fundamental rule of logo design?",
+    options: [
+      "It allows the logo to work across various mediums, sizes, and formats.",
+      "It means the logo should use as many colors as possible.",
+      "It ensures the logo is always abstract rather than a wordmark.",
+      "It makes the logo cheaper to design."
+    ],
+    answerIndex: 0,
+    explanation: "A versatile logo should be responsive and functional across all applications: it should work in a single color, scale down to a tiny 16x16px favicon, or scale up to a giant billboard without losing its identity."
+  },
+  "history-of-bauhaus": {
+    question: "What core philosophy of Bauhaus dictates that an object's design should be directly based on its purpose?",
+    options: [
+      "Art for art's sake",
+      "Form follows function",
+      "Ornamentation is crime",
+      "More is more"
+    ],
+    answerIndex: 1,
+    explanation: "'Form follows function' is a foundational Bauhaus tenet, declaring that the aesthetic shape, material selection, and layout structure should prioritize the practical utility and functionality of the design."
+  },
+  "vector-vs-raster": {
+    question: "Which file format is a vector format that is widely used for web graphics because it scales infinitely without losing quality?",
+    options: [
+      "JPEG",
+      "PNG",
+      "SVG",
+      "TIFF"
+    ],
+    answerIndex: 2,
+    explanation: "SVG (Scalable Vector Graphics) is an XML-based vector format natively supported by web browsers. It uses mathematical coordinates, rendering crisp details at any display scale or resolution."
+  },
+  "brand-style-guides": {
+    question: "What is the primary purpose of a brand style guide?",
+    options: [
+      "To ensure visual and editorial consistency across all brand touchpoints.",
+      "To serve as a user manual for design tools.",
+      "To register trademarks and copyright licenses."
+    ],
+    answerIndex: 1,
+    explanation: "A brand style guide acts as a single source of truth, dictating color, font, logo, and tone rules to maintain unified visual and voice standards across internal teams, marketing, and external vendors."
+  },
+  "swiss-design-style": {
+    question: "Which famous sans-serif typeface was created during the height of the Swiss Design movement and remains highly popular today?",
+    options: [
+      "Futura",
+      "Helvetica",
+      "Times New Roman",
+      "Garamond"
+    ],
+    answerIndex: 1,
+    explanation: "Designed by Max Miedinger and Eduard Hoffmann in 1957, Helvetica (originally Neue Haas Grotesk) represents the Swiss Design ideals of neutrality, clarity, and grid-based structure."
+  },
+  "color-psychology-branding": {
+    question: "In brand psychology, why is the color blue frequently chosen by financial institutes and tech corporations?",
+    options: [
+      "It stimulates hunger and appetite.",
+      "It symbolizes urgency and excitement.",
+      "It conveys trust, reliability, security, and stability.",
+      "It is the cheapest pigment to print."
+    ],
+    answerIndex: 2,
+    explanation: "Blue naturally triggers feelings of safety, dependability, logical thought, and calmness, which helps establish consumer trust and professional authority for banks, technology firms, and medical systems."
   }
 };
 
