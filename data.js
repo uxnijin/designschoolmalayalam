@@ -211,7 +211,15 @@ const ARTICLE_IDS = [
   "design-systems",
   "color-psychology-in-ux",
   "gestalt-principles",
-  "microinteractions"
+  "microinteractions",
+  "design-tokens-bridge",
+  "user-journey-mapping",
+  "card-sorting-ia",
+  "visual-hierarchy-ui",
+  "heuristic-evaluation",
+  "figma-auto-layout-tips",
+  "dark-mode-design",
+  "figma-smart-animate"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -540,6 +548,94 @@ const QUIZZES = {
     ],
     answerIndex: 1,
     explanation: "User interviews should use open-ended, non-leading questions (e.g. 'Tell me about how you...' instead of 'Do you like our button?') to gather unbiased, authentic insights."
+  },
+  "design-tokens-bridge": {
+    question: "What are the three common tiers of design tokens?",
+    options: [
+      "Global (Primitive), Alias (Semantic), and Component tokens.",
+      "Primary, Secondary, and Tertiary developer codes.",
+      "Local, Cloud, and Database variables.",
+      "Text, Image, and Layout classes."
+    ],
+    answerIndex: 0,
+    explanation: "Design tokens are structured in three tiers: Global (raw values), Alias/Semantic (purpose-driven), and Component (element-specific) to ensure scalability."
+  },
+  "user-journey-mapping": {
+    question: "What is the primary purpose of mapping user journey phases and emotional states?",
+    options: [
+      "To document database structure constraints.",
+      "To visualize step-by-step user interactions and identify pain points and opportunities.",
+      "To optimize Google search algorithms for pages.",
+      "To design high-fidelity components on day one."
+    ],
+    answerIndex: 1,
+    explanation: "User journey mapping visualizes the user's workflow, emotions, and thoughts over time, making it easy to identify frustrations and discover design opportunities."
+  },
+  "card-sorting-ia": {
+    question: "What is the key difference between Open and Closed Card Sorting?",
+    options: [
+      "Open sorting is done in public, while closed sorting is run in private research labs.",
+      "Open card sorting lets participants create their own category names, while closed sorting uses pre-defined categories.",
+      "Open sorting requires Figma, while closed sorting requires sticky notes.",
+      "There is no difference; they are different names for the same method."
+    ],
+    answerIndex: 1,
+    explanation: "In open card sorting, participants categorize cards and write their own category labels. In closed card sorting, they place cards into pre-defined categories."
+  },
+  "visual-hierarchy-ui": {
+    question: "Which of the following is NOT a pillar of establishing visual hierarchy?",
+    options: [
+      "Using scale and size to emphasize headings.",
+      "Using bright colors and contrast on target call-to-actions.",
+      "Using identical sizes and weights for all copy elements to keep them standard.",
+      "Using whitespace (margins and paddings) to isolate important elements."
+    ],
+    answerIndex: 2,
+    explanation: "Establishing visual hierarchy requires variation in scale, contrast, typography, and spacing. Keeping all copy elements identical eliminates visual structure."
+  },
+  "heuristic-evaluation": {
+    question: "According to Jakob Nielsen's visibility of system status, how should a UI respond when a user submits a form?",
+    options: [
+      "It should refresh the page instantly without confirmation to save load time.",
+      "It should provide appropriate feedback, like a progress loader or success message.",
+      "It should show a complex database error code (e.g. 0x8003f).",
+      "It should lock the screen and freeze the cursor."
+    ],
+    answerIndex: 1,
+    explanation: "Visibility of system status dictates that the UI should always keep users informed about what is happening, confirming inputs with indicators or messages."
+  },
+  "figma-auto-layout-tips": {
+    question: "How do you position a badge floating in the top-right corner of a card without breaking the Auto Layout parent stack?",
+    options: [
+      "Group the badge with the card using basic Group Selection.",
+      "Apply Absolute Position to the badge layer within the Auto Layout frame.",
+      "Set the badge's width to Fill Container.",
+      "Turn off the parent frame's Auto Layout."
+    ],
+    answerIndex: 1,
+    explanation: "The Absolute Position setting in Figma excludes a layer from the parent Auto Layout stack, letting it float freely while remaining nested inside the frame."
+  },
+  "dark-mode-design": {
+    question: "Why should designers avoid using pure pitch black (#000000) backgrounds for dark mode interfaces?",
+    options: [
+      "Because pure black takes longer to render on modern screens.",
+      "Because high contrast between pure black and white text causes halation and eye strain.",
+      "Because brand colors look more saturated on pure black.",
+      "Because WCAG accessibility guidelines forbid pure black background colors."
+    ],
+    answerIndex: 1,
+    explanation: "Pure black backgrounds create an intense contrast with white text, causing a blurry visual vibration (halation) that strains the eyes. Dark grey is softer and supports subtle elevation shadow levels."
+  },
+  "figma-smart-animate": {
+    question: "What must match exactly between two frames for Figma Smart Animate to slide or resize a layer instead of fading it?",
+    options: [
+      "The width and height of the layer.",
+      "The layer name and its nesting hierarchy.",
+      "The color hex values and border radius settings.",
+      "The opacity levels."
+    ],
+    answerIndex: 1,
+    explanation: "Smart Animate identifies the same object across different frames by matching the exact layer name and checking that it sits inside the same structural nesting hierarchy."
   }
 };
 
