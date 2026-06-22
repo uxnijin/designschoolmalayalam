@@ -219,7 +219,15 @@ const ARTICLE_IDS = [
   "heuristic-evaluation",
   "figma-auto-layout-tips",
   "dark-mode-design",
-  "figma-smart-animate"
+  "figma-smart-animate",
+  "sticky-headers-ux",
+  "nav-drawer-vs-bottom-nav",
+  "focus-groups-ux",
+  "sitemaps-planning",
+  "figma-component-properties",
+  "figma-variables-prototyping",
+  "touch-targets-design",
+  "accessible-forms-ux"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -636,6 +644,94 @@ const QUIZZES = {
     ],
     answerIndex: 1,
     explanation: "Smart Animate identifies the same object across different frames by matching the exact layer name and checking that it sits inside the same structural nesting hierarchy."
+  },
+  "sticky-headers-ux": {
+    question: "What is the primary UX benefit of the 'smart sticky' header (scroll-up reveal)?",
+    options: [
+      "It keeps brand presence visible 100% of the time.",
+      "It hides when scrolling down to maximize reading space and reveals on scroll up for quick navigation.",
+      "It disables horizontal scrolling on mobile screens.",
+      "It works without requiring any CSS or Javascript."
+    ],
+    answerIndex: 1,
+    explanation: "The scroll-up reveal pattern hides the header during active reading (scrolling down) but reveals it instantly when the user signals navigation intent (scrolling up)."
+  },
+  "nav-drawer-vs-bottom-nav": {
+    question: "When is a bottom navigation bar preferred over a slide-out navigation drawer?",
+    options: [
+      "When the app has more than 10 complex nested submenus.",
+      "When you have 3 to 5 primary views that users switch between frequently.",
+      "When you want to keep navigation completely hidden to avoid clutter.",
+      "When designing websites for desktop viewports only."
+    ],
+    answerIndex: 1,
+    explanation: "Bottom navigation is best for 3 to 5 top-level views because it keeps them permanently visible and easy to reach with the user's thumb."
+  },
+  "focus-groups-ux": {
+    question: "What is the primary risk of using focus groups to evaluate usability?",
+    options: [
+      "They are too expensive to set up compared to usability testing labs.",
+      "They measure verbalized opinions and are susceptible to groupthink, rather than capturing actual interaction behavior.",
+      "They cannot be run remotely using digital tools.",
+      "They require participants to write code."
+    ],
+    answerIndex: 1,
+    explanation: "Focus groups capture what people *claim* they do and are prone to dominant speaker influence (groupthink). To evaluate interface ease of use, direct usability testing is required."
+  },
+  "sitemaps-planning": {
+    question: "What does Level 1 in a sitemap diagram represent?",
+    options: [
+      "The site's main entry homepage URL.",
+      "Primary navigation categories (e.g., Shop, About, Blog).",
+      "Utility legal text pages linked in the footer.",
+      "Database tables holding content assets."
+    ],
+    answerIndex: 1,
+    explanation: "Level 1 in a sitemap diagram represents the site's top-level navigation categories branching directly off the Homepage (Level 0)."
+  },
+  "figma-component-properties": {
+    question: "How do Figma Component Properties help reduce variant inflation in design systems?",
+    options: [
+      "By converting all components into static images.",
+      "By replacing structural variants with configurable sidebar controls (like boolean toggle or text swap).",
+      "By forcing developers to write CSS directly inside Figma.",
+      "By deleting unused icons automatically."
+    ],
+    answerIndex: 1,
+    explanation: "Component properties allow setting options (like hiding icons or typing labels) directly on layer attributes, avoiding the need to create massive arrays of visual variant combinations."
+  },
+  "figma-variables-prototyping": {
+    question: "Which prototyping feature in Figma allows setting actions that only fire if a variable condition is met?",
+    options: [
+      "Smart Animate transitions.",
+      "Conditional Logic (If/Else statements).",
+      "Absolute Positioning targets.",
+      "Spring Easing Curves."
+    ],
+    answerIndex: 1,
+    explanation: "Conditional Logic (if/else) lets prototype designers specify boundaries, validate input states, and execute distinct flows based on active variable values."
+  },
+  "touch-targets-design": {
+    question: "What is the minimum touch target size recommended by Google Material Design for mobile screens?",
+    options: [
+      "24 &times; 24 dp",
+      "48 &times; 48 dp",
+      "80 &times; 80 dp",
+      "120 &times; 120 dp"
+    ],
+    answerIndex: 1,
+    explanation: "Google Material Design recommends a minimum touch target size of 48x48 dp, which matches the average physical width of a human finger pad (about 9mm) to prevent misclicks."
+  },
+  "accessible-forms-ux": {
+    question: "Why is it an accessibility violation to use placeholder text as the only form label?",
+    options: [
+      "Because screen readers often ignore placeholder text, and it disappears when users start typing, straining memory.",
+      "Because browsers prevent users from typing if placeholders are present.",
+      "Because placeholder text must always be colored red.",
+      "Because placeholders block keyboard focus indicators."
+    ],
+    answerIndex: 0,
+    explanation: "Placeholder text disappears when content is entered (hurting cognitive recall), has poor contrast, and is often invisible to screen readers. Persistent visual labels are required."
   }
 };
 
