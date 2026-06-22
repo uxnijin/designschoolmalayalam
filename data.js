@@ -144,6 +144,7 @@ const ARTICLE_IDS = [
   "2026-graphic-design-trends",
   "best-free-fonts-commercial-use",
   "stretch-text-figma",
+  "figma-shortcuts",
   "iconify-plugin",
   "displace-plugin",
   "icons8-background-remover-plugin",
