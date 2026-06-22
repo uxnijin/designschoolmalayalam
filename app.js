@@ -669,6 +669,13 @@ function stateKey(page, catId, subId, articleId) {
 }
 
 function navigate(page, catId, subId, articleId, query = null, { replace = false } = {}) {
+  if (page === 'jobs' || page === 'jobs-admin' || page === 'post-job' || page === 'dashboard') {
+    page = 'home';
+    catId = null;
+    subId = null;
+    articleId = null;
+    query = null;
+  }
   closeAllDropdowns();
   catId = catId || null;
   subId = subId || null;
@@ -775,7 +782,7 @@ function parseUrl() {
     }
 
     if (routePath.startsWith('/dashboard')) {
-      return { page: 'dashboard', catId: null, subId: null, articleId: null, query: null };
+      return { page: 'home', catId: null, subId: null, articleId: null, query: null };
     }
 
     if (routePath.startsWith('/tools')) {
@@ -784,6 +791,7 @@ function parseUrl() {
       return { page: 'tools', catId: null, subId: null, articleId: null, query: activeTool };
     }
 
+    /*
     if (routePath.startsWith('/post-job')) {
       const editId = searchParams.get('edit') || null;
       return { page: 'post-job', catId: null, subId: null, articleId: null, query: editId };
@@ -795,6 +803,11 @@ function parseUrl() {
 
     if (routePath.startsWith('/jobs')) {
       return { page: 'jobs', catId: null, subId: null, articleId: null, query: null };
+    }
+    */
+
+    if (routePath.startsWith('/post-job') || routePath.startsWith('/jobs-admin') || routePath.startsWith('/jobs')) {
+      return { page: 'home', catId: null, subId: null, articleId: null, query: null };
     }
 
     if (routePath.startsWith('/search')) {
@@ -1517,6 +1530,7 @@ function initNav() {
       </div>
     `;
 
+    /*
     const jobsNavHtml = `
       <div class="nav-item-wrapper" data-cat-id="jobs">
         <button class="nav-link" id="btnJobsNav" data-cat-id="jobs" onclick="navigate('jobs'); return false;">
@@ -1524,6 +1538,8 @@ function initNav() {
         </button>
       </div>
     `;
+    */
+    const jobsNavHtml = '';
 
     const otherCatsHtml = otherCats.map(cat => {
       const articleCount = getArticlesByCategory(cat.id).length;
@@ -2016,7 +2032,7 @@ function renderHome() {
             <a href="${subscribeUrl}" target="_blank" rel="noopener" class="btn-subscribe">
               ${svgYT(15)} Subscribe
             </a>
-            <button class="btn-visit-channel" onclick="navigate('dashboard')">Learning Dashboard</button>
+            <!-- <button class="btn-visit-channel" onclick="navigate('dashboard')">Learning Dashboard</button> -->
           </div>
         </div>
       </div>
@@ -2044,43 +2060,11 @@ function renderHome() {
 
 // ── CATEGORY PROGRESS HELPERS ────────────────────────────────
 function renderCategoryBannerProgress(catId) {
-  const completedList = getCompletedArticles();
-  const catArticles = getArticlesByCategory(catId);
-  const total = catArticles.length;
-  if (total === 0) return '';
-  const completed = catArticles.filter(a => completedList.includes(a.id)).length;
-  const percent = Math.round((completed / total) * 100);
-
-  return `
-    <div class="banner-progress-container">
-      <div class="banner-progress-info">
-        <span>Course Progress: <strong>${completed}/${total} completed</strong> (${percent}%)</span>
-      </div>
-      <div class="banner-progress-track">
-        <div class="banner-progress-fill" style="width: ${percent}%"></div>
-      </div>
-    </div>
-  `;
+  return '';
 }
 
 function renderSubcategoryBannerProgress(subId) {
-  const completedList = getCompletedArticles();
-  const subArticles = getArticlesBySubcat(subId);
-  const total = subArticles.length;
-  if (total === 0) return '';
-  const completed = subArticles.filter(a => completedList.includes(a.id)).length;
-  const percent = Math.round((completed / total) * 100);
-
-  return `
-    <div class="banner-progress-container">
-      <div class="banner-progress-info">
-        <span>Topic Progress: <strong>${completed}/${total} completed</strong> (${percent}%)</span>
-      </div>
-      <div class="banner-progress-track">
-        <div class="banner-progress-fill" style="width: ${percent}%"></div>
-      </div>
-    </div>
-  `;
+  return '';
 }
 
 // ── CATEGORY ─────────────────────────────────────────────────
@@ -2522,20 +2506,7 @@ function handleQuizSelection(articleId, selectedIdx, btn) {
 // ── ARTICLE COMPLETION TOGGLE ──
 
 function renderArticleCompletionToggle(articleId) {
-  const isDone = isArticleCompleted(articleId);
-  return `
-    <div class="completion-card stagger-item" style="--stagger: 5" id="completion-card-${articleId}">
-      <div class="completion-card-inner">
-        <div class="completion-info">
-          <h4 class="completion-title">Finished reading this article?</h4>
-          <p class="completion-desc">Mark it as completed to track your progress and unlock badges!</p>
-        </div>
-        <button class="btn-completion-toggle ${isDone ? 'completed' : ''}" onclick="handleArticleCompletionToggle('${articleId}', this)">
-          <span class="completion-text">${isDone ? 'Completed' : 'Mark as Completed'}</span>
-        </button>
-      </div>
-    </div>
-  `;
+  return '';
 }
 
 function handleArticleCompletionToggle(articleId, btn) {
