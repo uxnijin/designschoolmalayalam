@@ -240,7 +240,13 @@ const ARTICLE_IDS = [
   "vector-vs-raster",
   "brand-style-guides",
   "swiss-design-style",
-  "color-psychology-branding"
+  "color-psychology-branding",
+  "best-illustration-websites",
+  "best-3d-design-tools",
+  "best-chrome-extensions-designers",
+  "best-design-portfolio-builders",
+  "best-user-testing-platforms",
+  "best-font-pairing-tools"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
