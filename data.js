@@ -254,7 +254,15 @@ const ARTICLE_IDS = [
   "brand-packaging-design",
   "print-vs-digital-design",
   "poster-design-composition",
-  "color-harmony-graphic-design"
+  "color-harmony-graphic-design",
+  "figma-design-systems",
+  "mobile-ui-patterns",
+  "ux-laws-in-practice",
+  "information-architecture-guide",
+  "user-research-methods-deep-dive",
+  "accessible-ui-components",
+  "auto-layout-responsive",
+  "conversational-ai-ui"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -934,6 +942,94 @@ const QUIZZES = {
     ],
     answerIndex: 1,
     explanation: "Complementary colors are paired directly opposite each other on the color wheel (e.g., blue and orange, red and green). They offer high color contrast, making elements pop."
+  },
+  "figma-design-systems": {
+    question: "What are Figma Design Tokens primarily used for in a design system?",
+    options: [
+      "Storing design values like colors, typography, and spacing in a reusable, tool-agnostic format.",
+      "Automatically generating code blocks in Python.",
+      "Limiting the number of editors who can modify a file.",
+      "Encrypting layers to prevent duplication."
+    ],
+    answerIndex: 0,
+    explanation: "Design tokens are semantic key-value pairs that represent visual decisions (like color, type, or sizing), allowing design systems to sync design properties seamlessly across multiple codebases and platforms."
+  },
+  "mobile-ui-patterns": {
+    question: "Which of the following describes a key interaction standard difference between Apple iOS Human Interface Guidelines and Google Material Design?",
+    options: [
+      "iOS uses dynamic elevation shadows, while Material Design relies entirely on color shifts.",
+      "iOS traditionally favors a bottom bar for primary tabs, whereas Android Material Design uses a bottom navigation bar or top tabs with swipe-gesture navigation.",
+      "Material Design is strictly for desktop websites, while iOS is only for smartwatches.",
+      "iOS uses dp units for scaling, whereas Material Design uses pt units."
+    ],
+    answerIndex: 1,
+    explanation: "iOS guidelines historically favor a Tab Bar at the bottom of the screen, whereas Google's Material Design traditionally features a dynamic navigation drawer or top tabs, alongside standard swipe gesture configurations."
+  },
+  "ux-laws-in-practice": {
+    question: "Which UX law states that the time to make a decision increases with the number and complexity of choices?",
+    options: [
+      "Fitts's Law",
+      "Hick's Law",
+      "Miller's Law",
+      "Jakob's Law"
+    ],
+    answerIndex: 1,
+    explanation: "Hick's Law states that decision-making time increases logarithmically with the number of options presented. Designers use this law to reduce cognitive load by chunking complex navigation or lists."
+  },
+  "information-architecture-guide": {
+    question: "What is the primary difference between a visual sitemap and a user flow diagram?",
+    options: [
+      "A sitemap is used by developers, whereas a user flow is used only by sales teams.",
+      "A sitemap details the hierarchical navigation tree of a product, while a user flow shows the step-by-step path a user takes to achieve a goal.",
+      "Sitemaps must always contain SVG files, while user flows must be drawn on paper.",
+      "Sitemaps show database structure, while user flows depict the marketing budget."
+    ],
+    answerIndex: 1,
+    explanation: "Sitemaps visualize the structural hierarchy and taxonomy of the site pages. User flows map chronological, interactive step-by-step pathways users travel to complete specific tasks."
+  },
+  "user-research-methods-deep-dive": {
+    question: "Which research method is best suited for understanding the 'Why' behind user habits, frustrations, and behavior?",
+    options: [
+      "A/B Testing click ratios",
+      "Qualitative User Interviews",
+      "Google Analytics visitor path tracking",
+      "Heatmap analysis of touch targets"
+    ],
+    answerIndex: 1,
+    explanation: "Qualitative research, such as user interviews, is ideal for exploring motivations, emotions, and underlying reasons ('Why') for user behavior, whereas quantitative methods focus on statistical trends and metrics ('What')."
+  },
+  "accessible-ui-components": {
+    question: "What is the minimum WCAG 2.2 AA color contrast ratio requirement for normal-sized body text?",
+    options: [
+      "3.0 : 1",
+      "4.5 : 1",
+      "7.0 : 1",
+      "10.0 : 1"
+    ],
+    answerIndex: 1,
+    explanation: "WCAG 2.2 Level AA requires a minimum contrast ratio of 4.5:1 for normal text (under 18pt or 14pt bold) and 3:1 for large text (over 18pt or 14pt bold) to ensure readability for visually impaired users."
+  },
+  "auto-layout-responsive": {
+    question: "In Figma Auto Layout, how does the 'Fill Container' option behave?",
+    options: [
+      "It stretches the child element to fill the available space of its parent container.",
+      "It keeps the child element's size completely fixed.",
+      "It shrinks the parent container to hug the size of the child.",
+      "It makes the background image of the container crop itself."
+    ],
+    answerIndex: 0,
+    explanation: "When set to 'Fill container', the child element dynamically stretches or shrinks to occupy whatever width or height is available within its parent Auto Layout frame."
+  },
+  "conversational-ai-ui": {
+    question: "What is a core UX writing guideline when designing chatbot responses for conversational AI?",
+    options: [
+      "Write extremely long, complex paragraphs to show depth.",
+      "Make answers concise, keep a consistent persona, and provide clear next-step prompt chips.",
+      "Use technical jargon and robotic terminology to sound realistic.",
+      "Never show buttons or quick reply cards to users."
+    ],
+    answerIndex: 1,
+    explanation: "Effective conversational AI UI prioritizes clarity, conciseness, and human-like persona. Quick-reply prompt chips guide user intent, reducing error rates and cognitive load."
   }
 };
 
