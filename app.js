@@ -3903,6 +3903,16 @@ const WORKBENCH_TOOLS = [
     icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 3z"></path>
           </svg>`
+  },
+  {
+    id: "speed-test",
+    title: "Internet Speed Test",
+    description: "Measure download and upload speed",
+    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.38 3.62A10 10 0 1 0 22 12h-2a8 8 0 1 1-1.28-4.38L16.3 9.8a4 4 0 1 0-1.8 1.8l-2.08 2.08"></path>
+            <polyline points="16 3 21 3 21 8"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+          </svg>`
   }
 ];
 
@@ -3980,6 +3990,8 @@ function renderToolsPage(activeTool) {
     toolWorkbenchHtml = renderFontPairingTool();
   } else if (selectedTool.id === 'favicon-generator') {
     toolWorkbenchHtml = renderFaviconGeneratorTool();
+  } else if (selectedTool.id === 'speed-test') {
+    toolWorkbenchHtml = renderSpeedTestTool();
   }
 
   return `
@@ -4134,6 +4146,90 @@ function renderTintsShadesTool() {
           <h3 class="palette-group-title" style="font-size: 14.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; color: var(--text-2);">Shades (Mix with Black)</h3>
           <div class="palette-grid" id="shadesGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 10px;"></div>
         </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSpeedTestTool() {
+  return `
+    <div class="speed-test-tool-content" style="text-align: left;">
+      <div style="margin-bottom: 32px;">
+        <h2 class="tool-title" style="font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px;">Internet Speed Test</h2>
+        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Measure your connection latency, download speed, and upload speed in real time. Powered by global server infrastructure.</p>
+      </div>
+
+      <div class="speed-container" style="display: flex; flex-direction: column; align-items: center; gap: 32px; background: var(--bg-2); border: 1px solid var(--border); padding: 36px; border-radius: 20px; max-width: 540px; margin: 0 auto; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
+        
+        <!-- Speedometer Gauge -->
+        <div class="speedometer-wrapper" style="position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;">
+          <svg class="speedometer-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
+            <defs>
+              <linearGradient id="speed-gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FF6F2C" />
+                <stop offset="100%" stop-color="#8B5CF6" />
+              </linearGradient>
+            </defs>
+            <!-- Background track -->
+            <circle cx="100" cy="100" r="85" fill="none" stroke="var(--border)" stroke-width="12" stroke-dasharray="400" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(135 100 100)" style="opacity: 0.3;"></circle>
+            <!-- Progress track (270 degrees = 3/4 of 2*PI*85 = 400.5) -->
+            <circle id="speedGaugeProgress" cx="100" cy="100" r="85" fill="none" stroke="url(#speed-gauge-gradient)" stroke-width="12" stroke-dasharray="400" stroke-dashoffset="400" stroke-linecap="round" transform="rotate(135 100 100)" style="transition: stroke-dashoffset 0.1s ease;"></circle>
+          </svg>
+          <!-- Text inside gauge -->
+          <div class="speedometer-display" style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+            <div id="speedLiveVal" style="font-family: var(--font-display); font-size: 42px; font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -1px;">0.0</div>
+            <div id="speedLiveUnit" style="font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Mbps</div>
+          </div>
+        </div>
+
+        <!-- Real-time sine wave visualizer -->
+        <div class="speed-wave-wrapper" style="width: 100%; height: 40px; position: relative;">
+          <canvas id="speedWaveCanvas" width="468" height="40" style="width: 100%; height: 100%; opacity: 0.8;"></canvas>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="speed-stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%;">
+          
+          <!-- Ping Card -->
+          <div class="speed-stat-card" id="speedCardPing" style="background: var(--bg-3); border: 1px solid var(--border); padding: 16px 12px; border-radius: 14px; text-align: center; position: relative; transition: all var(--transition);">
+            <div class="speed-stat-status-dot" id="dotPing" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: transparent;"></div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Ping</div>
+            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
+              <span id="speedValPing" style="font-size: 20px; font-weight: 800; color: var(--text);">0</span>
+              <span style="font-size: 11px; color: var(--text-3); font-weight: 600;">ms</span>
+            </div>
+          </div>
+
+          <!-- Download Card -->
+          <div class="speed-stat-card" id="speedCardDownload" style="background: var(--bg-3); border: 1px solid var(--border); padding: 16px 12px; border-radius: 14px; text-align: center; position: relative; transition: all var(--transition);">
+            <div class="speed-stat-status-dot" id="dotDownload" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: transparent;"></div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Download</div>
+            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
+              <span id="speedValDownload" style="font-size: 20px; font-weight: 800; color: var(--text);">0.0</span>
+              <span style="font-size: 11px; color: var(--text-3); font-weight: 600;">Mbps</span>
+            </div>
+          </div>
+
+          <!-- Upload Card -->
+          <div class="speed-stat-card" id="speedCardUpload" style="background: var(--bg-3); border: 1px solid var(--border); padding: 16px 12px; border-radius: 14px; text-align: center; position: relative; transition: all var(--transition);">
+            <div class="speed-stat-status-dot" id="dotUpload" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: transparent;"></div>
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Upload</div>
+            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
+              <span id="speedValUpload" style="font-size: 20px; font-weight: 800; color: var(--text);">0.0</span>
+              <span style="font-size: 11px; color: var(--text-3); font-weight: 600;">Mbps</span>
+            </div>
+          </div>
+          
+        </div>
+
+        <!-- Start/Action Button -->
+        <button class="btn-primary speed-test-btn" id="startSpeedTestBtn" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(255, 111, 44, 0.2); transition: all 0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+            <polygon points="5 3 19 12 5 21 5 3" fill="currentColor"></polygon>
+          </svg>
+          <span>Start Test</span>
+        </button>
+
       </div>
     </div>
   `;
@@ -6387,6 +6483,322 @@ function initLottieColorEditorListeners() {
   });
 }
 
+function initSpeedTestListeners() {
+  const startBtn = document.getElementById('startSpeedTestBtn');
+  const speedGaugeProgress = document.getElementById('speedGaugeProgress');
+  const speedLiveVal = document.getElementById('speedLiveVal');
+  const speedLiveUnit = document.getElementById('speedLiveUnit');
+  const speedValPing = document.getElementById('speedValPing');
+  const speedValDownload = document.getElementById('speedValDownload');
+  const speedValUpload = document.getElementById('speedValUpload');
+  
+  const cardPing = document.getElementById('speedCardPing');
+  const cardDownload = document.getElementById('speedCardDownload');
+  const cardUpload = document.getElementById('speedCardUpload');
+  
+  const dotPing = document.getElementById('dotPing');
+  const dotDownload = document.getElementById('dotDownload');
+  const dotUpload = document.getElementById('dotUpload');
+  
+  const canvas = document.getElementById('speedWaveCanvas');
+  
+  if (!startBtn) return;
+  
+  let isRunning = false;
+  let waveOffset = 0;
+  let currentSpeed = 0;
+  let testPhase = 'idle'; // 'idle', 'ping', 'download', 'upload', 'complete'
+  let animationId = null;
+
+  // Wave Visualizer logic
+  function animateWave() {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Wave parameters based on phase and currentSpeed
+    let amplitude = 4;
+    let frequency = 0.02;
+    let speed = 0.05;
+    let strokeColor = 'rgba(255, 111, 44, 0.4)'; // Orange accent default
+    
+    if (testPhase === 'ping') {
+      amplitude = 6;
+      frequency = 0.04;
+      speed = 0.12;
+      strokeColor = 'rgba(255, 111, 44, 0.6)';
+    } else if (testPhase === 'download') {
+      amplitude = Math.min(15, 6 + currentSpeed / 8);
+      frequency = Math.min(0.08, 0.03 + currentSpeed / 500);
+      speed = Math.min(0.25, 0.1 + currentSpeed / 200);
+      strokeColor = 'rgba(255, 111, 44, 0.85)';
+    } else if (testPhase === 'upload') {
+      amplitude = Math.min(15, 6 + currentSpeed / 8);
+      frequency = Math.min(0.08, 0.03 + currentSpeed / 500);
+      speed = Math.min(0.25, 0.1 + currentSpeed / 200);
+      strokeColor = 'rgba(139, 92, 246, 0.85)'; // Purple accent for upload
+    } else if (testPhase === 'complete') {
+      amplitude = 3;
+      frequency = 0.015;
+      speed = 0.03;
+      strokeColor = 'rgba(16, 185, 129, 0.5)'; // Green accent for complete
+    }
+    
+    ctx.beginPath();
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    
+    for (let x = 0; x < canvas.width; x++) {
+      const y = canvas.height / 2 + Math.sin(x * frequency + waveOffset) * amplitude;
+      if (x === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.stroke();
+    
+    // Draw a secondary subtle background wave
+    ctx.beginPath();
+    ctx.strokeStyle = strokeColor.replace('0.85', '0.2').replace('0.6', '0.15').replace('0.5', '0.1').replace('0.4', '0.08');
+    ctx.lineWidth = 1.5;
+    for (let x = 0; x < canvas.width; x++) {
+      const y = canvas.height / 2 + Math.cos(x * (frequency * 0.8) - waveOffset * 0.9) * (amplitude * 0.7);
+      if (x === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+    ctx.stroke();
+    
+    waveOffset += speed;
+    animationId = requestAnimationFrame(animateWave);
+  }
+  
+  // Start constant wave animation
+  animateWave();
+  
+  function updateGauge(speedVal) {
+    currentSpeed = speedVal;
+    speedLiveVal.textContent = speedVal.toFixed(1);
+    
+    let maxVal = 100;
+    if (speedVal > 100) maxVal = 500;
+    if (speedVal > 500) maxVal = 1000;
+    
+    const offset = 400 - (400 * Math.min(speedVal, maxVal)) / maxVal;
+    if (speedGaugeProgress) {
+      speedGaugeProgress.style.strokeDashoffset = offset;
+    }
+  }
+  
+  function resetGauge() {
+    currentSpeed = 0;
+    speedLiveVal.textContent = "0.0";
+    if (speedGaugeProgress) {
+      speedGaugeProgress.style.strokeDashoffset = "400";
+    }
+  }
+  
+  function setPulseState(activeCard, dotEl) {
+    [cardPing, cardDownload, cardUpload].forEach(c => {
+      if (c) {
+        c.style.borderColor = 'var(--border)';
+        c.style.boxShadow = 'none';
+      }
+    });
+    [dotPing, dotDownload, dotUpload].forEach(d => {
+      if (d) {
+        d.style.background = 'transparent';
+        d.classList.remove('pulse-dot-active');
+      }
+    });
+    
+    if (activeCard && dotEl) {
+      activeCard.style.borderColor = activeCard === cardUpload ? '#8B5CF6' : 'var(--accent)';
+      activeCard.style.boxShadow = `0 4px 15px ${activeCard === cardUpload ? 'rgba(139, 92, 246, 0.15)' : 'rgba(255, 111, 44, 0.15)'}`;
+      dotEl.style.background = activeCard === cardUpload ? '#8B5CF6' : 'var(--accent)';
+      dotEl.classList.add('pulse-dot-active');
+    }
+  }
+
+  async function startTest() {
+    if (isRunning) return;
+    isRunning = true;
+    startBtn.disabled = true;
+    startBtn.style.opacity = '0.7';
+    startBtn.querySelector('span').textContent = 'Testing...';
+    
+    resetGauge();
+    speedValPing.textContent = '0';
+    speedValDownload.textContent = '0.0';
+    speedValUpload.textContent = '0.0';
+    
+    try {
+      // 1. Latency (Ping) Phase
+      testPhase = 'ping';
+      speedLiveUnit.textContent = 'Ping';
+      setPulseState(cardPing, dotPing);
+      
+      let pingInterval = setInterval(() => {
+        speedLiveVal.textContent = Math.floor(20 + Math.random() * 30);
+      }, 80);
+      
+      const pingScore = await runPingTest();
+      clearInterval(pingInterval);
+      
+      speedValPing.textContent = pingScore;
+      speedLiveVal.textContent = pingScore;
+      speedLiveUnit.textContent = 'ms';
+      
+      await new Promise(r => setTimeout(r, 600));
+      
+      // 2. Download Phase
+      testPhase = 'download';
+      speedLiveUnit.textContent = 'Mbps';
+      setPulseState(cardDownload, dotDownload);
+      
+      const downloadScore = await runDownloadTest((liveSpeed) => {
+        updateGauge(liveSpeed);
+      });
+      speedValDownload.textContent = downloadScore.toFixed(1);
+      updateGauge(downloadScore);
+      
+      await new Promise(r => setTimeout(r, 600));
+      
+      // 3. Upload Phase
+      testPhase = 'upload';
+      setPulseState(cardUpload, dotUpload);
+      resetGauge();
+      
+      const uploadScore = await runUploadTest((liveSpeed) => {
+        updateGauge(liveSpeed);
+      });
+      speedValUpload.textContent = uploadScore.toFixed(1);
+      updateGauge(uploadScore);
+      
+      testPhase = 'complete';
+      setPulseState(null, null);
+      
+      updateGauge(downloadScore);
+      speedLiveVal.textContent = downloadScore.toFixed(1);
+      speedLiveUnit.textContent = 'Mbps';
+      
+    } catch (err) {
+      console.error(err);
+      testPhase = 'idle';
+      setPulseState(null, null);
+      resetGauge();
+      showClipboardToast('Speed test error. Please check connection.');
+    } finally {
+      isRunning = false;
+      startBtn.disabled = false;
+      startBtn.style.opacity = '1';
+      startBtn.querySelector('span').textContent = 'Run Test Again';
+    }
+  }
+  
+  startBtn.addEventListener('click', startTest);
+  
+  async function runPingTest() {
+    const urls = [
+      'https://speed.cloudflare.com/cdn-cgi/trace',
+      'https://speed.cloudflare.com/cdn-cgi/trace',
+      'https://speed.cloudflare.com/cdn-cgi/trace',
+      'https://speed.cloudflare.com/cdn-cgi/trace',
+      'https://speed.cloudflare.com/cdn-cgi/trace'
+    ];
+    let times = [];
+    try {
+      await fetch(urls[0] + '?t=' + Math.random(), { cache: 'no-store' });
+    } catch(e) {}
+    
+    for (let i = 1; i < urls.length; i++) {
+      const start = performance.now();
+      try {
+        await fetch(urls[i] + '?t=' + Math.random(), { cache: 'no-store' });
+        const end = performance.now();
+        times.push(end - start);
+      } catch (e) {
+        times.push(80);
+      }
+    }
+    const sum = times.reduce((a, b) => a + b, 0);
+    return Math.round(sum / times.length);
+  }
+  
+  async function runDownloadTest(onProgress) {
+    const url = 'https://speed.cloudflare.com/__down?bytes=5000000&t=' + Math.random();
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) throw new Error('Download failed');
+    const reader = response.body.getReader();
+    let loaded = 0;
+    const startTime = performance.now();
+    let speeds = [];
+    
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      loaded += value.length;
+      const elapsed = (performance.now() - startTime) / 1000;
+      if (elapsed > 0) {
+        const speedBps = loaded / elapsed;
+        const speedMbps = (speedBps * 8) / 1000000;
+        speeds.push(speedMbps);
+        onProgress(speedMbps);
+      }
+    }
+    const activeSpeeds = speeds.slice(Math.floor(speeds.length * 0.2));
+    const sum = activeSpeeds.length > 0 ? activeSpeeds.reduce((a, b) => a + b, 0) : 1;
+    return sum / (activeSpeeds.length || 1);
+  }
+  
+  function runUploadTest(onProgress) {
+    return new Promise((resolve, reject) => {
+      const payloadSize = 2 * 1024 * 1024; // 2MB
+      const data = new Uint8Array(payloadSize);
+      for (let i = 0; i < 1000; i++) {
+        data[i] = Math.floor(Math.random() * 256);
+      }
+      
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://speed.cloudflare.com/__up?t=' + Math.random(), true);
+      const startTime = performance.now();
+      let speeds = [];
+      
+      xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+          const elapsed = (performance.now() - startTime) / 1000;
+          if (elapsed > 0) {
+            const speedBps = e.loaded / elapsed;
+            const speedMbps = (speedBps * 8) / 1000000;
+            speeds.push(speedMbps);
+            onProgress(speedMbps);
+          }
+        }
+      };
+      
+      xhr.onload = function() {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const activeSpeeds = speeds.slice(Math.floor(speeds.length * 0.2));
+          const sum = activeSpeeds.length > 0 ? activeSpeeds.reduce((a, b) => a + b, 0) : 1;
+          resolve(sum / (activeSpeeds.length || 1));
+        } else {
+          reject(new Error('Upload status failed'));
+        }
+      };
+      
+      xhr.onerror = function() {
+        reject(new Error('Upload failed'));
+      };
+      
+      xhr.send(data);
+    });
+  }
+}
+
 function initToolsPageListeners(activeTool) {
   const toolId = activeTool || 'tints-shades';
   if (toolId === 'tints-shades') {
@@ -6407,6 +6819,8 @@ function initToolsPageListeners(activeTool) {
     initFontPairingListeners();
   } else if (toolId === 'favicon-generator') {
     initFaviconGeneratorListeners();
+  } else if (toolId === 'speed-test') {
+    initSpeedTestListeners();
   }
 }
 
