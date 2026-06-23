@@ -6794,7 +6794,8 @@ function initSpeedTestListeners() {
         reject(new Error('Upload failed'));
       };
       
-      xhr.send(data);
+      const blob = new Blob([data], { type: 'text/plain' });
+      xhr.send(blob);
     });
   }
 }
