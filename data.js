@@ -268,7 +268,15 @@ const ARTICLE_IDS = [
   "ai-plugins-for-figma",
   "ai-in-graphic-design-principles",
   "future-of-conversational-ai-podcasts",
-  "generative-ai-design-utilities"
+  "generative-ai-design-utilities",
+  "whitespace-in-ui-design",
+  "designing-for-the-thumb-zone",
+  "wireframing-for-beginners",
+  "ab-testing-in-ux",
+  "mastering-figma-pen-tool",
+  "nested-components-figma",
+  "kerning-tracking-leading",
+  "law-of-closure"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -1102,6 +1110,94 @@ const QUIZZES = {
     ],
     answerIndex: 1,
     explanation: "AI vectorization tools automate the tedious task of tracing sketch contours or raster pixels, appearing in vector format within seconds."
+  },
+  "whitespace-in-ui-design": {
+    question: "What is the primary function of micro-whitespace in UI design?",
+    options: [
+      "To separate major layout sections, like the header from the content.",
+      "To improve readability within content blocks, such as spacing between lines and letters.",
+      "To make images load faster on slower internet connections.",
+      "To define standard grid layout columns and margins."
+    ],
+    answerIndex: 1,
+    explanation: "Micro-whitespace is the small space between letters, lines of text, or list elements, directly impacting content readability and legibility."
+  },
+  "designing-for-the-thumb-zone": {
+    question: "Which part of the mobile screen is referred to as the 'natural' thumb zone?",
+    options: [
+      "The top-right corner of the screen.",
+      "The bottom and middle area of the screen, which is easily reachable without stretching.",
+      "The top-left corner of the screen.",
+      "The outer edges of the screen only."
+    ],
+    answerIndex: 1,
+    explanation: "The 'natural' thumb zone is the bottom-to-middle sweep of the screen, which the thumb can easily navigate without shifting the hand grip or stretching."
+  },
+  "wireframing-for-beginners": {
+    question: "What is the main objective of creating low-fidelity wireframes?",
+    options: [
+      "To test final visual assets, colors, and font pairings.",
+      "To establish layout, information structure, and basic hierarchy quickly.",
+      "To write the CSS rules for web page layouts.",
+      "To showcase pixel-perfect final brand identities."
+    ],
+    answerIndex: 1,
+    explanation: "Low-fidelity wireframes focus on structural layout, page elements, and information architecture, intentionally avoiding colors, fonts, or images to avoid distractions."
+  },
+  "ab-testing-in-ux": {
+    question: "Why is it important to change only one variable at a time in a standard A/B test?",
+    options: [
+      "To ensure the website remains accessible to screen readers.",
+      "To isolate the cause of any changes in user behavior and metrics.",
+      "To make sure the A/B testing software is cheap to run.",
+      "To prevent search engines from indexing the test pages."
+    ],
+    answerIndex: 1,
+    explanation: "By changing only one variable (e.g., button color OR copy), you can confidently attribute differences in conversion or click rates to that specific change."
+  },
+  "mastering-figma-pen-tool": {
+    question: "What is a key difference between traditional vector paths and Figma's Vector Networks?",
+    options: [
+      "Figma vector paths can only be drawn in black and white.",
+      "Figma allows multiple paths to branch off from a single node instead of a strict loop or line.",
+      "Vector Networks cannot be exported as SVG files.",
+      "Vector Networks are automatically animated when hovered."
+    ],
+    answerIndex: 1,
+    explanation: "Traditional vector tools use single paths (loops or lines). Figma's Vector Networks allow lines to branch from any node in multiple directions, simplifying complex icon design."
+  },
+  "nested-components-figma": {
+    question: "What is the main benefit of nesting components in Figma?",
+    options: [
+      "It locks the component to prevent any developer edits.",
+      "It allows you to build complex UI components out of simpler, modular blocks for easier maintenance.",
+      "It reduces the file size of the Figma document by half.",
+      "It converts text layers into vector outlines automatically."
+    ],
+    answerIndex: 1,
+    explanation: "Nesting components (like putting an icon component inside a button component) lets you build complex, scalable UI blocks. Updates to sub-components automatically cascade throughout the system."
+  },
+  "kerning-tracking-leading": {
+    question: "What does the term 'leading' (pronounced ledding) refer to in typography?",
+    options: [
+      "The vertical space between adjacent lines of text.",
+      "The horizontal space between all characters in a paragraph.",
+      "The specific spacing adjustment between a pair of individual letters.",
+      "The choice of the primary heading font family."
+    ],
+    answerIndex: 0,
+    explanation: "Leading refers to the vertical distance between baselines of text lines. Proper leading ensures lines of text do not overlap or feel too far apart."
+  },
+  "law-of-closure": {
+    question: "According to the Gestalt Law of Closure, how does the human eye perceive incomplete shapes?",
+    options: [
+      "It ignores them entirely as visual errors.",
+      "It automatically fills in the gaps to perceive a complete, whole object.",
+      "It requires a text label to understand the shapes.",
+      "It perceives them as multiple separate, unrelated lines."
+    ],
+    answerIndex: 1,
+    explanation: "The Law of Closure states that the human brain fills in missing visual information to perceive incomplete or open shapes as complete, closed figures (e.g., the IBM logo)."
   }
 };
 
