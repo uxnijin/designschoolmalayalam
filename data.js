@@ -262,7 +262,13 @@ const ARTICLE_IDS = [
   "user-research-methods-deep-dive",
   "accessible-ui-components",
   "auto-layout-responsive",
-  "conversational-ai-ui"
+  "conversational-ai-ui",
+  "ai-powered-ui-design",
+  "ux-writing-ai-chatbots",
+  "ai-plugins-for-figma",
+  "ai-in-graphic-design-principles",
+  "future-of-conversational-ai-podcasts",
+  "generative-ai-design-utilities"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -1030,6 +1036,72 @@ const QUIZZES = {
     ],
     answerIndex: 1,
     explanation: "Effective conversational AI UI prioritizes clarity, conciseness, and human-like persona. Quick-reply prompt chips guide user intent, reducing error rates and cognitive load."
+  },
+  "ai-powered-ui-design": {
+    question: "Why is streaming text generation (rendering text as it is generated) preferred over showing a single loading spinner in AI UI layouts?",
+    options: [
+      "Because it reduces perceived latency by giving the user content to read immediately.",
+      "Because streaming makes the server consume less energy.",
+      "Because browsers cannot render standard loading spinners on mobile devices.",
+      "Because it allows users to edit the AI response while it is being written."
+    ],
+    answerIndex: 0,
+    explanation: "Streaming text provides continuous visual feedback, mimicking reading and significantly reducing perceived wait time compared to a static loading spinner."
+  },
+  "ux-writing-ai-chatbots": {
+    question: "When writing system fallback or error states for a conversational AI assistant, what is the best UX writing practice?",
+    options: [
+      "Generate a generic error code so the user doesn't feel overwhelmed.",
+      "Clearly explain what went wrong in plain language and suggest a direct action the user can take (e.g., 'Try rephrasing' or 'Edit prompt').",
+      "Blame the user's internet speed or input parameters to maintain AI credibility.",
+      "Automatically clear the entire chat history so the user can start over."
+    ],
+    answerIndex: 1,
+    explanation: "Conversational UI errors should be helpful and active, instructing the user on how they can edit or adjust their query to bypass the issue."
+  },
+  "ai-plugins-for-figma": {
+    question: "How do generative AI translation plugins improve component design verification in Figma libraries?",
+    options: [
+      "By converting all shapes into code snippets automatically.",
+      "By allowing designers to quickly test how components behave with varying text lengths of different languages.",
+      "By lock-protecting design layers from translation revisions.",
+      "By replacing layout vectors with translated static screenshots."
+    ],
+    answerIndex: 1,
+    explanation: "AI translation plugins allow testing component responsiveness (e.g., button overflow or wrap behavior) across different languages before finalizing code."
+  },
+  "ai-in-graphic-design-principles": {
+    question: "What is a major risk when using generative AI tools for primary brand logo design?",
+    options: [
+      "AI logos cannot be scaled or converted into vectors.",
+      "AI logos often use too many colors for standard displays.",
+      "A lack of copyright originality, visual genericism, and failure to represent custom brand narratives.",
+      "AI logos require too much server bandwidth to load."
+    ],
+    answerIndex: 2,
+    explanation: "Generative AI excels at brainstorming, but logo design requires legal protectability, extreme simplicity, and deep brand visual metaphors that generic AI prompt outputs lack."
+  },
+  "future-of-conversational-ai-podcasts": {
+    question: "Which design concept is critical when designing Voice User Interfaces (VUI) for screenless AI assistants?",
+    options: [
+      "Using high color contrast buttons.",
+      "Relying on physical keyboard input focus indicators.",
+      "Minimizing auditory cognitive load by keeping spoken options concise and structuring key info at the end of lists.",
+      "Using pixel-perfect responsive wrapping grids."
+    ],
+    answerIndex: 2,
+    explanation: "Auditory memory is ephemeral. Voice design must keep lists short and put critical options at the end (recency effect) to prevent user frustration."
+  },
+  "generative-ai-design-utilities": {
+    question: "What is the primary benefit of using AI-powered vectorization utilities over manual vector tracing?",
+    options: [
+      "AI vectors always have fewer anchor points than manual tracing.",
+      "AI utilities can instantly convert raster graphics into clean vector shapes, saving hours of path drawing.",
+      "AI vectors do not require rendering in SVG formats.",
+      "Manual vector tracing has been deprecated by web browsers."
+    ],
+    answerIndex: 1,
+    explanation: "AI vectorization tools automate the tedious task of tracing sketch contours or raster pixels, appearing in vector format within seconds."
   }
 };
 
