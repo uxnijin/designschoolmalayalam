@@ -276,7 +276,15 @@ const ARTICLE_IDS = [
   "mastering-figma-pen-tool",
   "nested-components-figma",
   "kerning-tracking-leading",
-  "law-of-closure"
+  "law-of-closure",
+  "usability-testing-guide",
+  "user-personas-ux",
+  "atomic-design-principles",
+  "anatomy-of-typography",
+  "bottom-sheets-ux",
+  "figma-layout-grids",
+  "ui-animation-principles",
+  "how-to-write-ux-case-study"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -1198,6 +1206,94 @@ const QUIZZES = {
     ],
     answerIndex: 1,
     explanation: "The Law of Closure states that the human brain fills in missing visual information to perceive incomplete or open shapes as complete, closed figures (e.g., the IBM logo)."
+  },
+  "usability-testing-guide": {
+    question: "What is the primary goal of conducting a usability test?",
+    options: [
+      "To gather feedback on how easily representative users can complete tasks using the design.",
+      "To evaluate the visual aesthetic preference of graphic design stakeholders.",
+      "To debug frontend React component performance issues.",
+      "To automatically optimize the website's search engine optimization ranking."
+    ],
+    answerIndex: 0,
+    explanation: "Usability testing aims to identify friction points and validate user-friendliness by observing real users trying to complete specific tasks with the product."
+  },
+  "user-personas-ux": {
+    question: "What is a user persona in UX design?",
+    options: [
+      "A semi-fictional archetype representing a key segment of your target audience based on real research data.",
+      "An list of employees working on the development of the design system.",
+      "A cartoon character created to illustrate marketing advertisements.",
+      "A security profile defining database read/write permissions."
+    ],
+    answerIndex: 0,
+    explanation: "Personas are representations of real target user segments constructed from data gathered during user research, helping teams understand their needs, behaviors, and goals."
+  },
+  "atomic-design-principles": {
+    question: "In Brad Frost's Atomic Design methodology, what is an example of an 'Atom'?",
+    options: [
+      "A single HTML tag or basic UI element like a label, input field, or button.",
+      "A combination of elements like a search form.",
+      "A full page layout template containing mock content.",
+      "A complex navigation bar containing logo, menu links, and search controls."
+    ],
+    answerIndex: 0,
+    explanation: "Atoms are the basic building blocks of matter. In UI, they are the smallest, indivisible elements, such as a label, an input field, or a button."
+  },
+  "anatomy-of-typography": {
+    question: "What does the term 'x-height' refer to in typography anatomy?",
+    options: [
+      "The height of lowercase letters, specifically matching the letter 'x', excluding ascenders and descenders.",
+      "The width of capital letters in a font family.",
+      "The vertical space between adjacent headings.",
+      "The total height of capital letter 'X' from the descender line."
+    ],
+    answerIndex: 0,
+    explanation: "The x-height is the height of the main body of lowercase letters in a typeface, typically exemplified by the letter 'x'. It plays a significant role in readability."
+  },
+  "bottom-sheets-ux": {
+    question: "When is a bottom sheet preferred in mobile UI design?",
+    options: [
+      "To present supplemental content, filters, or task actions without leaving the current screen context.",
+      "To display multi-page text documentation or privacy policies.",
+      "To replace the main global app navigation menu.",
+      "To show promotional banner ads at the top of the viewport."
+    ],
+    answerIndex: 0,
+    explanation: "Bottom sheets are highly interactive overlays designed to surface contextual options, filters, or sub-tasks without forcing the user to navigate away from their primary screen."
+  },
+  "figma-layout-grids": {
+    question: "In Figma, how do you set a column layout grid to scale fluidly when resizing the parent frame?",
+    options: [
+      "Set the Grid Type to 'Stretch' and let columns adjust width automatically.",
+      "Set the Grid Type to 'Center' and keep column widths fixed.",
+      "Lock the grid layer from the sidebar list.",
+      "Set the parent frame constraints to 'Top-Left'."
+    ],
+    answerIndex: 0,
+    explanation: "Setting the grid type to 'Stretch' forces the columns to scale dynamically in width as the outer container frame is resized."
+  },
+  "ui-animation-principles": {
+    question: "Why should UI animations generally use easing curves (like ease-out) instead of linear movement?",
+    options: [
+      "Because linear movement feels robotic and unnatural, whereas easing mimics physical motion with acceleration and deceleration.",
+      "Because linear animations consume significantly more CPU performance.",
+      "Because easing curves automatically translate pages into multiple languages.",
+      "Because search engines rank websites with linear transitions lower."
+    ],
+    answerIndex: 0,
+    explanation: "Easing curves match our expectations from the physical world. Linear motion starts and stops abruptly, which feels unnatural, while eased motion accelerates/decelerates smoothly."
+  },
+  "how-to-write-ux-case-study": {
+    question: "What is the most critical element recruiters look for in a UX design case study?",
+    options: [
+      "The structured design process and rationale explaining *why* decisions were made, rather than just polished final screens.",
+      "The total count of fonts and custom plugins used in Figma.",
+      "The number of visual animations embedded in the header.",
+      "A detailed code snippet of the database schema configuration."
+    ],
+    answerIndex: 0,
+    explanation: "Recruiters value your problem-solving process and rationale: the user research, tests, failures, and iterations that led to the final UI, not just static mockup screenshots."
   }
 };
 
