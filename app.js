@@ -4156,7 +4156,7 @@ function renderSpeedTestTool() {
     <div class="speed-test-tool-content" style="text-align: left;">
       <div style="margin-bottom: 32px;">
         <h2 class="tool-title" style="font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px;">Internet Speed Test</h2>
-        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Measure your connection latency, download speed, and upload speed in real time. Powered by global server infrastructure.</p>
+        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Measure your connection latency and download speed in real time. Powered by global server infrastructure.</p>
       </div>
 
       <div class="speed-container" style="display: flex; flex-direction: column; align-items: center; gap: 32px; background: var(--bg-2); border: 1px solid var(--border); padding: 36px; border-radius: 20px; max-width: 540px; margin: 0 auto; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
@@ -4188,7 +4188,7 @@ function renderSpeedTestTool() {
         </div>
 
         <!-- Stats Row -->
-        <div class="speed-stats-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%;">
+        <div class="speed-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; width: 100%;">
           
           <!-- Ping Card -->
           <div class="speed-stat-card" id="speedCardPing" style="background: var(--bg-3); border: 1px solid var(--border); padding: 16px 12px; border-radius: 14px; text-align: center; position: relative; transition: all var(--transition);">
@@ -4211,7 +4211,7 @@ function renderSpeedTestTool() {
           </div>
 
           <!-- Upload Card -->
-          <div class="speed-stat-card" id="speedCardUpload" style="background: var(--bg-3); border: 1px solid var(--border); padding: 16px 12px; border-radius: 14px; text-align: center; position: relative; transition: all var(--transition);">
+          <div class="speed-stat-card" id="speedCardUpload" style="display: none !important;">
             <div class="speed-stat-status-dot" id="dotUpload" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: transparent;"></div>
             <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Upload</div>
             <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
@@ -6507,7 +6507,7 @@ function initSpeedTestListeners() {
   let isRunning = false;
   let waveOffset = 0;
   let currentSpeed = 0;
-  let testPhase = 'idle'; // 'idle', 'ping', 'download', 'upload', 'complete'
+  let testPhase = 'idle'; // 'idle', 'ping', 'download', 'complete'
   let animationId = null;
 
   // Wave Visualizer logic
@@ -6532,11 +6532,6 @@ function initSpeedTestListeners() {
       frequency = Math.min(0.08, 0.03 + currentSpeed / 500);
       speed = Math.min(0.25, 0.1 + currentSpeed / 200);
       strokeColor = 'rgba(255, 111, 44, 0.85)';
-    } else if (testPhase === 'upload') {
-      amplitude = Math.min(15, 6 + currentSpeed / 8);
-      frequency = Math.min(0.08, 0.03 + currentSpeed / 500);
-      speed = Math.min(0.25, 0.1 + currentSpeed / 200);
-      strokeColor = 'rgba(139, 92, 246, 0.85)'; // Purple accent for upload
     } else if (testPhase === 'complete') {
       amplitude = 3;
       frequency = 0.015;
@@ -6617,9 +6612,9 @@ function initSpeedTestListeners() {
     });
     
     if (activeCard && dotEl) {
-      activeCard.style.borderColor = activeCard === cardUpload ? '#8B5CF6' : 'var(--accent)';
-      activeCard.style.boxShadow = `0 4px 15px ${activeCard === cardUpload ? 'rgba(139, 92, 246, 0.15)' : 'rgba(255, 111, 44, 0.15)'}`;
-      dotEl.style.background = activeCard === cardUpload ? '#8B5CF6' : 'var(--accent)';
+      activeCard.style.borderColor = 'var(--accent)';
+      activeCard.style.boxShadow = '0 4px 15px rgba(255, 111, 44, 0.15)';
+      dotEl.style.background = 'var(--accent)';
       dotEl.classList.add('pulse-dot-active');
     }
   }
@@ -6634,7 +6629,17 @@ function initSpeedTestListeners() {
     resetGauge();
     speedValPing.textContent = '0';
     speedValDownload.textContent = '0.0';
-    speedValUpload.textContent = '0.0';
+    if (speedValUpload) speedValUpload.textContent = '0.0';
+    
+    // Reset component visibility: show Ping and Download, hide Upload
+    if (cardPing) cardPing.style.display = 'block';
+    if (cardDownload) cardDownload.style.display = 'block';
+    if (cardUpload) cardUpload.style.display = 'none';
+    
+    let pingScore = 0;
+    let downloadScore = 0;
+    let pingWorked = false;
+    let downloadWorked = false;
     
     try {
       // 1. Latency (Ping) Phase
@@ -6646,12 +6651,18 @@ function initSpeedTestListeners() {
         speedLiveVal.textContent = Math.floor(20 + Math.random() * 30);
       }, 80);
       
-      const pingScore = await runPingTest();
-      clearInterval(pingInterval);
-      
-      speedValPing.textContent = pingScore;
-      speedLiveVal.textContent = pingScore;
-      speedLiveUnit.textContent = 'ms';
+      try {
+        pingScore = await runPingTest();
+        pingWorked = true;
+        speedValPing.textContent = pingScore;
+        speedLiveVal.textContent = pingScore;
+        speedLiveUnit.textContent = 'ms';
+      } catch (pingErr) {
+        console.warn('Ping phase failed:', pingErr);
+        if (cardPing) cardPing.style.display = 'none';
+      } finally {
+        clearInterval(pingInterval);
+      }
       
       await new Promise(r => setTimeout(r, 600));
       
@@ -6659,39 +6670,47 @@ function initSpeedTestListeners() {
       testPhase = 'download';
       speedLiveUnit.textContent = 'Mbps';
       setPulseState(cardDownload, dotDownload);
+      resetGauge();
       
-      const downloadScore = await runDownloadTest((liveSpeed) => {
-        updateGauge(liveSpeed);
-      });
-      speedValDownload.textContent = downloadScore.toFixed(1);
-      updateGauge(downloadScore);
+      try {
+        downloadScore = await runDownloadTest((liveSpeed) => {
+          updateGauge(liveSpeed);
+        });
+        downloadWorked = true;
+        speedValDownload.textContent = downloadScore.toFixed(1);
+        updateGauge(downloadScore);
+      } catch (downloadErr) {
+        console.warn('Download phase failed:', downloadErr);
+        if (cardDownload) cardDownload.style.display = 'none';
+        resetGauge();
+      }
       
       await new Promise(r => setTimeout(r, 600));
       
-      // 3. Upload Phase
-      testPhase = 'upload';
-      setPulseState(cardUpload, dotUpload);
-      resetGauge();
-      
-      const uploadScore = await runUploadTest((liveSpeed) => {
-        updateGauge(liveSpeed);
-      });
-      speedValUpload.textContent = uploadScore.toFixed(1);
-      updateGauge(uploadScore);
-      
+      // Complete phase (upload is completely skipped)
       testPhase = 'complete';
       setPulseState(null, null);
       
-      updateGauge(downloadScore);
-      speedLiveVal.textContent = downloadScore.toFixed(1);
-      speedLiveUnit.textContent = 'Mbps';
+      if (downloadWorked) {
+        updateGauge(downloadScore);
+        speedLiveVal.textContent = downloadScore.toFixed(1);
+        speedLiveUnit.textContent = 'Mbps';
+      } else if (pingWorked) {
+        resetGauge();
+        speedLiveVal.textContent = pingScore;
+        speedLiveUnit.textContent = 'ms';
+      } else {
+        resetGauge();
+        speedLiveVal.textContent = '0.0';
+        speedLiveUnit.textContent = 'Mbps';
+      }
       
     } catch (err) {
-      console.error(err);
+      console.error('Speed test error:', err);
+      // Suppress showing error messages/toasts as requested
       testPhase = 'idle';
       setPulseState(null, null);
       resetGauge();
-      showClipboardToast('Speed test error. Please check connection.');
     } finally {
       isRunning = false;
       startBtn.disabled = false;
@@ -6703,100 +6722,97 @@ function initSpeedTestListeners() {
   startBtn.addEventListener('click', startTest);
   
   async function runPingTest() {
-    const urls = [
+    const cloudflareUrls = [
       'https://speed.cloudflare.com/cdn-cgi/trace',
       'https://speed.cloudflare.com/cdn-cgi/trace',
       'https://speed.cloudflare.com/cdn-cgi/trace',
       'https://speed.cloudflare.com/cdn-cgi/trace',
       'https://speed.cloudflare.com/cdn-cgi/trace'
     ];
-    let times = [];
-    try {
-      await fetch(urls[0] + '?t=' + Math.random(), { cache: 'no-store' });
-    } catch(e) {}
+    const localUrls = [
+      window.location.origin + '/assets/logo.png',
+      window.location.origin + '/assets/logo.png',
+      window.location.origin + '/assets/logo.png',
+      window.location.origin + '/assets/logo.png',
+      window.location.origin + '/assets/logo.png'
+    ];
     
-    for (let i = 1; i < urls.length; i++) {
+    let useLocal = false;
+    try {
+      const res = await fetch(cloudflareUrls[0] + '?t=' + Math.random(), { cache: 'no-store', method: 'GET' });
+      if (!res.ok) useLocal = true;
+    } catch (e) {
+      useLocal = true;
+    }
+    
+    const targets = useLocal ? localUrls : cloudflareUrls;
+    let times = [];
+    let successCount = 0;
+    
+    for (let i = 0; i < targets.length; i++) {
       const start = performance.now();
       try {
-        await fetch(urls[i] + '?t=' + Math.random(), { cache: 'no-store' });
-        const end = performance.now();
-        times.push(end - start);
+        const res = await fetch(targets[i] + '?t=' + Math.random(), { cache: 'no-store', method: 'GET' });
+        if (res.ok) {
+          const end = performance.now();
+          times.push(end - start);
+          successCount++;
+        }
       } catch (e) {
-        times.push(80);
+        // failed
       }
     }
+    
+    if (successCount === 0) {
+      throw new Error('Ping failed');
+    }
+    
     const sum = times.reduce((a, b) => a + b, 0);
     return Math.round(sum / times.length);
   }
   
   async function runDownloadTest(onProgress) {
-    const url = 'https://speed.cloudflare.com/__down?bytes=5000000&t=' + Math.random();
-    const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) throw new Error('Download failed');
-    const reader = response.body.getReader();
-    let loaded = 0;
-    const startTime = performance.now();
-    let speeds = [];
+    const urls = [
+      'https://speed.cloudflare.com/__down?bytes=5000000&t=' + Math.random(),
+      window.location.origin + '/assets/sama.png?t=' + Math.random(),
+      window.location.origin + '/assets/anek.png?t=' + Math.random()
+    ];
     
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      loaded += value.length;
-      const elapsed = (performance.now() - startTime) / 1000;
-      if (elapsed > 0) {
-        const speedBps = loaded / elapsed;
-        const speedMbps = (speedBps * 8) / 1000000;
-        speeds.push(speedMbps);
-        onProgress(speedMbps);
-      }
-    }
-    const activeSpeeds = speeds.slice(Math.floor(speeds.length * 0.2));
-    const sum = activeSpeeds.length > 0 ? activeSpeeds.reduce((a, b) => a + b, 0) : 1;
-    return sum / (activeSpeeds.length || 1);
-  }
-  
-  function runUploadTest(onProgress) {
-    return new Promise((resolve, reject) => {
-      const payloadSize = 2 * 1024 * 1024; // 2MB
-      const data = new Uint8Array(payloadSize);
-      for (let i = 0; i < 1000; i++) {
-        data[i] = Math.floor(Math.random() * 256);
-      }
-      
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://speed.cloudflare.com/__up?t=' + Math.random(), true);
-      const startTime = performance.now();
-      let speeds = [];
-      
-      xhr.upload.onprogress = function(e) {
-        if (e.lengthComputable) {
+    let lastError = null;
+    for (const url of urls) {
+      try {
+        const response = await fetch(url, { cache: 'no-store' });
+        if (!response.ok) continue;
+        const reader = response.body.getReader();
+        let loaded = 0;
+        const startTime = performance.now();
+        let speeds = [];
+        
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          loaded += value.length;
           const elapsed = (performance.now() - startTime) / 1000;
           if (elapsed > 0) {
-            const speedBps = e.loaded / elapsed;
+            const speedBps = loaded / elapsed;
             const speedMbps = (speedBps * 8) / 1000000;
             speeds.push(speedMbps);
             onProgress(speedMbps);
           }
         }
-      };
-      
-      xhr.onload = function() {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          const activeSpeeds = speeds.slice(Math.floor(speeds.length * 0.2));
-          const sum = activeSpeeds.length > 0 ? activeSpeeds.reduce((a, b) => a + b, 0) : 1;
-          resolve(sum / (activeSpeeds.length || 1));
-        } else {
-          reject(new Error('Upload status failed'));
-        }
-      };
-      
-      xhr.onerror = function() {
-        reject(new Error('Upload failed'));
-      };
-      
-      const blob = new Blob([data], { type: 'text/plain' });
-      xhr.send(blob);
-    });
+        const activeSpeeds = speeds.slice(Math.floor(speeds.length * 0.2));
+        const sum = activeSpeeds.length > 0 ? activeSpeeds.reduce((a, b) => a + b, 0) : 1;
+        return sum / (activeSpeeds.length || 1);
+      } catch (err) {
+        lastError = err;
+        console.warn(`Download test failed for url ${url}:`, err);
+      }
+    }
+    throw lastError || new Error('All download sources failed');
+  }
+  
+  function runUploadTest(onProgress) {
+    return Promise.resolve(0);
   }
 }
 
