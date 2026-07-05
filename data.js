@@ -284,7 +284,15 @@ const ARTICLE_IDS = [
   "bottom-sheets-ux",
   "figma-layout-grids",
   "ui-animation-principles",
-  "how-to-write-ux-case-study"
+  "how-to-write-ux-case-study",
+  "how-to-use-auto-layout-wrap-in-figma",
+  "apca-color-contrast-accessibility",
+  "ui-card-design-principles",
+  "figma-component-properties-guide",
+  "ux-design-handoff-checklist",
+  "mobile-navigation-tap-vs-swipe",
+  "designing-ui-empty-states",
+  "how-to-conduct-website-ux-audit"
 ];
 
 // ── PERSONAL TRAINING CARD ───────────────────────────────────
@@ -1294,6 +1302,94 @@ const QUIZZES = {
     ],
     answerIndex: 0,
     explanation: "Recruiters value your problem-solving process and rationale: the user research, tests, failures, and iterations that led to the final UI, not just static mockup screenshots."
+  },
+  "how-to-use-auto-layout-wrap-in-figma": {
+    question: "When using Auto Layout Wrap in Figma, how do you prevent child elements from shrinking too much before wrapping?",
+    options: [
+      "By setting a Minimum Width on the child elements.",
+      "By converting the child elements into vector paths.",
+      "By locking the aspect ratio of the parent frame.",
+      "By increasing the spacing gap to a negative value."
+    ],
+    answerIndex: 0,
+    explanation: "Setting a Minimum Width (Min W) on child components ensures they wrap to the next line rather than shrinking below that threshold."
+  },
+  "apca-color-contrast-accessibility": {
+    question: "How does the Advanced Perceptual Contrast Algorithm (APCA) differ from WCAG 2.0 contrast standards?",
+    options: [
+      "It is based on the human eye's perception of contrast, accounting for font size, weight, and light/dark modes.",
+      "It only allows pure black and pure white colors.",
+      "It requires all buttons to have a minimum 10px thick border.",
+      "It calculates contrast based on page loading times."
+    ],
+    answerIndex: 0,
+    explanation: "APCA uses vision science to calculate readability. Unlike WCAG 2.0, it factors in font size, font weight, and whether the screen is in light or dark mode."
+  },
+  "ui-card-design-principles": {
+    question: "What is a recommended practice for designing modern, premium-looking card shadows in UI design?",
+    options: [
+      "Use a very low shadow opacity (4% to 8%) with a large, soft blur radius.",
+      "Use a solid black shadow with 0px blur for high contrast.",
+      "Make the shadow twice as wide as the card itself.",
+      "Avoid shadows entirely and use bright neon borders instead."
+    ],
+    answerIndex: 0,
+    explanation: "Modern, high-quality card components use soft, diffused shadows (4% to 8% opacity with a large blur radius like 16px) to mimic natural ambient lighting."
+  },
+  "figma-component-properties-guide": {
+    question: "Which Figma Component Property should you use to toggle the visibility of an optional icon layer?",
+    options: [
+      "Boolean Property",
+      "Instance Swap Property",
+      "Text Property",
+      "Variant Property"
+    ],
+    answerIndex: 0,
+    explanation: "Boolean properties attach a true/false toggle to a layer's visibility, letting designers show or hide elements (like icons) without creating extra variants."
+  },
+  "ux-design-handoff-checklist": {
+    question: "Why should designers specify active, hover, and disabled states during developer handoff?",
+    options: [
+      "To prevent developers from guessing interactive behaviors and ensure visual consistency in code.",
+      "Because it is required to upload files to Figma's servers.",
+      "To reduce the file size of the exported SVG assets.",
+      "To automatically generate CSS code within Figma."
+    ],
+    answerIndex: 0,
+    explanation: "Providing explicit interactive states avoids guesswork and guarantees that hover, active, and disabled UI states match the design system specs in production."
+  },
+  "mobile-navigation-tap-vs-swipe": {
+    question: "What is the primary usability drawback of gesture-based (swipe) navigation in mobile apps?",
+    options: [
+      "High interaction cost and low discoverability since gestures are invisible by default.",
+      "They consume double the battery power compared to tap buttons.",
+      "They only work on screen dimensions larger than 6 inches.",
+      "They block the user from reading text lines."
+    ],
+    answerIndex: 0,
+    explanation: "Because swipe gestures are invisible, they have low discoverability. Users must either be onboarded or rely on visual clues (like page dots) to know they exist."
+  },
+  "designing-ui-empty-states": {
+    question: "What is a key requirement of a great UI empty state?",
+    options: [
+      "Providing a direct call-to-action (CTA) button showing the user what to do next.",
+      "Displaying a technical error code from the server.",
+      "Leaving the screen completely white to save page loading time.",
+      "Using at least three different font families for variation."
+    ],
+    answerIndex: 0,
+    explanation: "A good empty state should never lead to a dead-end. It should reassure the user and offer a direct call-to-action (CTA) button (like 'Create Project') to start the flow."
+  },
+  "how-to-conduct-website-ux-audit": {
+    question: "What are design heuristics in the context of a UX audit?",
+    options: [
+      "Broad, established rules of thumb for interface usability.",
+      "The coding frameworks used to build the website's front-end.",
+      "A set of design rules restricted to mobile devices only.",
+      "The color values chosen for the client's logo style guide."
+    ],
+    answerIndex: 0,
+    explanation: "Heuristics (like Nielsen's 10 Usability Heuristics) are broad, proven rules of thumb used to systematically evaluate and improve interface usability."
   }
 };
 
