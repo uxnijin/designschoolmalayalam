@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FileFlow — UX Case Study by Nijin</title>
+  <meta name="description" content="A premium file transfer UX case study focused on eliminating recipient uncertainty and empowering creative professionals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ── DESIGN TOKENS ── */
+    :root {
+      --accent:        #FF6F2C;
+      --accent-hover:  #e85e1e;
+      --accent-tint:   rgba(255, 111, 44, 0.07);
+      --accent-border: rgba(255, 111, 44, 0.22);
+      --bg:            #08080a;
+      --bg-surface:    #111113;
+      --bg-surface-2:  #18181b;
+      --bg-hover:      #202024;
+      --border:        rgba(255, 255, 255, 0.07);
+      --border-strong: rgba(255, 255, 255, 0.12);
+      --text:          #f1f1f3;
+      --text-muted:    #9a9aa8;
+      --text-subtle:   #64647a;
+      --font-head: 'Outfit', system-ui, sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --r-xl:  28px; --r-lg:  20px; --r-md: 14px;
+      --r-sm:  8px;  --r-xs:  6px;
+      --ease:  cubic-bezier(0.4, 0, 0.2, 1);
+      --dur:   0.22s;
+      --shadow-sm: 0 2px 10px rgba(0,0,0,0.45);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--bg-surface-2); border: 2px solid var(--bg); border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-subtle); }
+    h1, h2, h3, h4, h5 { font-family: var(--font-head); font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; color: #fff; }
+    p { color: var(--text-muted); font-size: 1rem; }
+    strong { color: var(--text); font-weight: 600; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse-dot { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,111,44,.6); } 50% { box-shadow: 0 0 0 6px rgba(255,111,44,0); } }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+    /* HERO */
+    .hero { position: relative; padding: 110px 24px 72px; text-align: center; overflow: hidden; border-bottom: 1px solid var(--border); }
+    .hero-glow { position: absolute; top: -120px; left: 50%; transform: translateX(-50%); width: 640px; height: 280px; background: var(--accent); filter: blur(130px); opacity: .10; pointer-events: none; z-index: 0; }
+    .hero-grid-bg { position: absolute; inset: 0; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 56px 56px; -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 80%); mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 80%); z-index: 0; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-tint); border: 1px solid var(--accent-border); color: var(--accent); padding: 5px 16px; border-radius: 100px; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 28px; }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2s ease-in-out infinite; }
+    .hero-title { font-size: clamp(2.6rem, 6.5vw, 4.8rem); font-weight: 800; line-height: 1.08; letter-spacing: -.03em; background: linear-gradient(160deg, #fff 20%, #9a9aaa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 18px; }
+    .hero-subtitle { font-size: clamp(1rem, 2.2vw, 1.2rem); color: var(--text-muted); max-width: 680px; margin: 0 auto 36px; line-height: 1.7; }
+    .hero-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+    .meta-strip { display: flex; justify-content: center; max-width: 720px; margin: 0 auto; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+    .meta-item { flex: 1; padding: 18px 20px; text-align: center; border-right: 1px solid var(--border); }
+    .meta-item:last-child { border-right: none; }
+    .meta-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--text-subtle); margin-bottom: 4px; }
+    .meta-value { font-size: .95rem; font-weight: 600; color: var(--text); font-family: var(--font-head); }
+
+    /* NAV */
+    .tab-nav-wrapper { position: sticky; top: 0; z-index: 100; background: rgba(8,8,10,.88); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom: 1px solid var(--border); }
+    .tab-nav { display: flex; justify-content: center; gap: 4px; max-width: 900px; margin: 0 auto; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
+    .tab-nav::-webkit-scrollbar { display: none; }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); font-family: var(--font-head); font-weight: 500; font-size: .9rem; padding: 9px 18px; border-radius: 100px; cursor: pointer; white-space: nowrap; transition: color var(--dur) var(--ease), background var(--dur) var(--ease); }
+    .tab-btn:hover { color: #fff; background: var(--bg-surface-2); }
+    .tab-btn.active { color: var(--accent); background: var(--accent-tint); font-weight: 600; }
+
+    /* PANELS */
+    .tab-container { padding: 52px 24px 80px; }
+    .tab-panel { display: none; animation: fadeUp .35s var(--ease) forwards; }
+    .tab-panel.active { display: block; }
+    .content-stack { display: flex; flex-direction: column; gap: 28px; }
+
+    /* SECTION CARD */
+    .section-card { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--r-xl); padding: 36px 40px; position: relative; overflow: hidden; }
+    .section-card.accent-bg { background: radial-gradient(circle at top right, rgba(255,111,44,.07) 0%, var(--bg-surface) 55%); }
+    .section-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--accent); margin-bottom: 10px; }
+    .section-title { font-size: 1.55rem; font-weight: 700; color: #fff; margin-bottom: 14px; }
+    .section-title.lg { font-size: 1.9rem; }
+    .section-body { font-size: 1rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* PROBLEM LIST */
+    .problem-list { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
+    .problem-item { display: flex; align-items: flex-start; gap: 14px; background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-md); padding: 16px 20px; }
+    .problem-num { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-tint); border: 1px solid var(--accent-border); color: var(--accent); font-family: var(--font-mono); font-size: .78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .problem-text strong { color: #fff; display: block; margin-bottom: 2px; font-size: .95rem; }
+    .problem-text p { font-size: .9rem; margin: 0; }
+
+    /* PERSONAS */
+    .personas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 24px; }
+    .persona-card { background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px; cursor: pointer; transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); }
+    .persona-card:hover { border-color: var(--accent-border); transform: translateY(-3px); box-shadow: var(--shadow-sm); }
+    .persona-card.expanded { grid-column: 1 / -1; border-color: var(--accent); background: var(--bg-hover); }
+    .persona-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .persona-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--accent-tint); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-weight: 700; color: var(--accent); font-size: 1rem; flex-shrink: 0; }
+    .persona-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 1px; }
+    .persona-role { font-size: .8rem; color: var(--text-subtle); }
+    .persona-summary { font-size: .88rem; color: var(--text-muted); line-height: 1.5; }
+    .persona-expand-hint { margin-top: 12px; font-size: .75rem; color: var(--text-subtle); display: flex; align-items: center; gap: 4px; }
+    .persona-details { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); animation: fadeUp .25s var(--ease); }
+    .persona-card.expanded .persona-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .persona-detail-block .label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--accent); margin-bottom: 5px; }
+    .persona-detail-block .value { font-size: .9rem; color: var(--text-muted); line-height: 1.55; }
+
+    /* JTBD */
+    .jtbd-nav { display: flex; gap: 6px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+    .jtbd-btn { background: transparent; border: none; color: var(--text-subtle); font-family: var(--font-head); font-size: .88rem; font-weight: 600; padding: 7px 14px; cursor: pointer; border-radius: var(--r-sm); transition: color var(--dur) var(--ease), background var(--dur) var(--ease); }
+    .jtbd-btn:hover { color: #fff; background: var(--bg-hover); }
+    .jtbd-btn.active { color: #fff; background: var(--bg-surface-2); border: 1px solid var(--border); }
+    .jtbd-panel { display: none; }
+    .jtbd-panel.active { display: flex; flex-direction: column; gap: 10px; animation: fadeUp .25s var(--ease); }
+    .jtbd-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-md); }
+    .jtbd-num { flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-tint); color: var(--accent); font-size: .78rem; font-weight: 700; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); }
+    .jtbd-item p { font-size: .92rem; margin: 0; }
+
+    /* BLOCKQUOTE */
+    .insight-quote { font-family: var(--font-head); font-size: 1.3rem; font-weight: 600; color: #fff; line-height: 1.5; border-left: 3px solid var(--accent); padding-left: 20px; margin-bottom: 16px; }
+
+    /* IMAGE PLACEHOLDER */
+    .img-placeholder { width: 100%; border: 1.5px dashed rgba(255,111,44,.22); border-radius: var(--r-lg); background: radial-gradient(circle at center, rgba(255,111,44,.03) 0%, rgba(0,0,0,.15) 100%); padding: 52px 24px; text-align: center; margin: 22px 0; transition: border-color var(--dur) var(--ease), background var(--dur) var(--ease); cursor: pointer; }
+    .img-placeholder:hover { border-color: var(--accent); background: radial-gradient(circle at center, rgba(255,111,44,.06) 0%, rgba(0,0,0,.3) 100%); }
+    .img-placeholder .mono-tag { display: inline-block; font-family: var(--font-mono); font-size: .7rem; color: var(--accent); background: var(--accent-tint); border: 1px solid var(--accent-border); padding: 3px 8px; border-radius: var(--r-xs); margin-bottom: 10px; }
+    .img-placeholder .ph-title { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .img-placeholder .ph-desc { font-size: .85rem; color: var(--text-subtle); max-width: 440px; margin: 0 auto 16px; }
+    .img-placeholder .ph-cta { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 600; color: var(--accent); border: 1px solid var(--accent-border); padding: 7px 14px; border-radius: var(--r-sm); background: rgba(8,8,10,.5); transition: background var(--dur) var(--ease), color var(--dur) var(--ease); }
+    .img-placeholder:hover .ph-cta { background: var(--accent); color: #fff; }
+
+    /* CHIPS */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .chip { background: var(--bg-surface-2); border: 1px solid var(--border); color: var(--text-muted); padding: 4px 12px; border-radius: 100px; font-size: .78rem; }
+    .chip.accent { border-color: var(--accent-border); color: var(--accent); background: var(--accent-tint); }
+
+    /* FLOW CARDS */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+    .flow-card { background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px 24px; }
+    .flow-card-title { font-family: var(--font-head); font-size: 1rem; font-weight: 700; color: var(--accent); margin-bottom: 14px; }
+    .flow-step { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+    .flow-step:last-child { margin-bottom: 0; }
+    .flow-step-num { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--bg-hover); border: 1px solid var(--border-strong); font-size: .7rem; font-weight: 700; color: var(--text-subtle); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); }
+    .flow-step p { font-size: .88rem; margin: 0; }
+
+    /* STATUS WIDGET */
+    .status-widget { background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-top: 24px; }
+    .status-tabs { display: flex; flex-wrap: wrap; gap: 6px; background: var(--bg-surface); border-bottom: 1px solid var(--border); padding: 10px 14px; }
+    .status-btn { background: transparent; border: none; color: var(--text-muted); padding: 5px 12px; font-size: .82rem; font-weight: 600; border-radius: var(--r-sm); cursor: pointer; transition: all var(--dur) var(--ease); font-family: var(--font-head); }
+    .status-btn:hover { color: #fff; background: var(--bg-hover); }
+    .status-btn.active { color: #fff; background: var(--accent); }
+    .status-display { padding: 24px; min-height: 120px; display: flex; flex-direction: column; justify-content: center; animation: fadeUp .2s var(--ease); }
+    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 5px; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; width: fit-content; }
+    .s-draft      { background: rgba(161,161,170,.13); color:#a1a1aa; border:1px solid rgba(161,161,170,.25); }
+    .s-uploading  { background: rgba(59,130,246,.13);  color:#3b82f6; border:1px solid rgba(59,130,246,.25); }
+    .s-processing { background: rgba(139,92,246,.13);  color:#8b5cf6; border:1px solid rgba(139,92,246,.25); }
+    .s-virus      { background: rgba(234,179,8,.13);   color:#eab308; border:1px solid rgba(234,179,8,.25); }
+    .s-ready      { background: rgba(34,197,94,.13);   color:#22c55e; border:1px solid rgba(34,197,94,.25); }
+    .s-viewed     { background: rgba(236,72,153,.13);  color:#ec4899; border:1px solid rgba(236,72,153,.25); }
+    .s-downloaded { background: rgba(16,185,129,.13);  color:#10b981; border:1px solid rgba(16,185,129,.25); }
+    .s-expired    { background: rgba(100,116,139,.13); color:#64748b; border:1px solid rgba(100,116,139,.25); }
+    .s-failed     { background: rgba(239,68,68,.13);   color:#ef4444; border:1px solid rgba(239,68,68,.25); }
+    .status-title { font-size: 1.05rem; color: #fff; margin-bottom: 4px; }
+    .status-desc  { font-size: .9rem; color: var(--text-muted); }
+
+    /* QA ACCORDION */
+    .qa-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+    .qa-item { background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; transition: border-color var(--dur) var(--ease); }
+    .qa-item.expanded { border-color: rgba(255,111,44,.28); }
+    .qa-trigger { width: 100%; background: transparent; border: none; color: #fff; font-family: var(--font-head); font-size: 1rem; font-weight: 600; text-align: left; padding: 18px 22px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; transition: background var(--dur) var(--ease); }
+    .qa-trigger:hover { background: rgba(255,255,255,.02); }
+    .qa-icon { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--bg-hover); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: 1.1rem; transition: background var(--dur) var(--ease), transform var(--dur) var(--ease); }
+    .qa-item.expanded .qa-icon { background: var(--accent-tint); transform: rotate(45deg); }
+    .qa-content { display: none; padding: 0 22px 18px; color: var(--text-muted); font-size: .93rem; line-height: 1.7; border-top: 1px solid var(--border); padding-top: 14px; animation: fadeUp .25s var(--ease); }
+    .qa-item.expanded .qa-content { display: block; }
+
+    /* METRICS */
+    .metrics-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 20px; }
+    .metric-card { background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 22px 20px; }
+    .metric-value { font-family: var(--font-head); font-size: 2rem; font-weight: 800; letter-spacing: -.04em; margin-bottom: 4px; }
+    .metric-name { font-size: .88rem; font-weight: 600; color: #fff; margin-bottom: 3px; }
+    .metric-desc { font-size: .8rem; color: var(--text-subtle); }
+
+    /* EDGE CASES */
+    .edge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+    .edge-card { background: var(--bg-surface-2); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 20px 22px; }
+    .edge-card-title { font-family: var(--font-head); font-size: .9rem; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
+    .edge-point { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+    .edge-point:last-child { margin-bottom: 0; }
+    .edge-bullet { flex-shrink: 0; width: 18px; height: 18px; margin-top: 1px; border-radius: 4px; background: var(--accent-tint); border: 1px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-size: .6rem; color: var(--accent); font-weight: 700; }
+    .edge-point p { font-size: .88rem; margin: 0; }
+
+    /* FOOTER */
+    .footer { border-top: 1px solid var(--border); padding: 56px 24px; text-align: center; background: #060608; }
+    .footer h3 { font-size: 1.5rem; margin-bottom: 10px; }
+    .footer > .container > p { font-size: .95rem; margin-bottom: 24px; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .copy { font-size: .82rem; color: var(--text-subtle); margin-top: 36px; }
+
+    /* BUTTONS */
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: #fff; border: none; padding: 12px 26px; border-radius: 100px; font-family: var(--font-head); font-weight: 600; font-size: .95rem; cursor: pointer; text-decoration: none; transition: background var(--dur) var(--ease), transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease); box-shadow: 0 4px 16px rgba(255,111,44,.28); }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 22px rgba(255,111,44,.36); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text-muted); border: 1px solid var(--border-strong); padding: 12px 26px; border-radius: 100px; font-family: var(--font-head); font-weight: 500; font-size: .95rem; cursor: pointer; text-decoration: none; transition: all var(--dur) var(--ease); }
+    .btn-secondary:hover { color: #fff; border-color: var(--text-subtle); background: var(--bg-surface-2); }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero { padding: 80px 16px 52px; }
+      .tab-container { padding: 36px 16px 60px; }
+      .section-card { padding: 24px 20px; }
+      .meta-strip { flex-wrap: wrap; }
+      .meta-item { min-width: 50%; border-bottom: 1px solid var(--border); }
+      .two-col, .metrics-row, .edge-grid { grid-template-columns: 1fr; }
+      .section-title.lg { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-grid-bg"></div>
+    <div class="container">
+      <div class="badge"><span class="badge-dot"></span>UI/UX Design Interview Submission</div>
+      <h1 class="hero-title">FileFlow<br>Case Study</h1>
+      <p class="hero-subtitle">Designing a premium, brand-first file transfer platform built to eliminate recipient uncertainty and empower creative professionals.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn-primary" onclick="switchTab(event,'designs-tab'); return false;">View UI Mockups &rarr;</a>
+        <a href="https://www.figma.com" target="_blank" class="btn-secondary" id="figmaLink">Open in Figma &#8599;</a>
+      </div>
+      <div class="meta-strip">
+        <div class="meta-item"><div class="meta-label">Project Type</div><div class="meta-value">Design Challenge</div></div>
+        <div class="meta-item"><div class="meta-label">Timeline</div><div class="meta-value">4 Days</div></div>
+        <div class="meta-item"><div class="meta-label">Role</div><div class="meta-value">Lead Product Designer</div></div>
+        <div class="meta-item"><div class="meta-label">Presented By</div><div class="meta-value">Nijin</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAV -->
+  <div class="tab-nav-wrapper">
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" role="tab" onclick="switchTab(event,'strategy-tab')">01 &middot; Strategy &amp; Research</button>
+      <button class="tab-btn" role="tab" onclick="switchTab(event,'flows-tab')">02 &middot; Core Flows</button>
+      <button class="tab-btn" role="tab" onclick="switchTab(event,'designs-tab')" id="designs-tab-btn">03 &middot; UI Designs</button>
+      <button class="tab-btn" role="tab" onclick="switchTab(event,'decisions-tab')">04 &middot; Product Thinking</button>
+    </nav>
+  </div>
+
+  <!-- MAIN -->
+  <main class="container tab-container">
+
+    <!-- TAB 1: STRATEGY -->
+    <div id="strategy-tab" class="tab-panel active" role="tabpanel">
+      <div class="content-stack">
+
+        <section class="section-card">
+          <div class="section-label">01 &middot; Executive Summary</div>
+          <h2 class="section-title lg">The Problem Space</h2>
+          <p class="section-body">Traditional file transfer services move data efficiently, but during my discovery phase I found three critical friction areas left unaddressed:</p>
+          <div class="problem-list">
+            <div class="problem-item">
+              <div class="problem-num">1</div>
+              <div class="problem-text">
+                <strong>No Transfer Visibility</strong>
+                <p>Senders face complete silence after sending &mdash; no way to know if files were processed, opened, or downloaded.</p>
+              </div>
+            </div>
+            <div class="problem-item">
+              <div class="problem-num">2</div>
+              <div class="problem-text">
+                <strong>Generic Recipient Experiences</strong>
+                <p>Download pages look transactional and identical, missing a huge branding opportunity for agencies and creative consultants.</p>
+              </div>
+            </div>
+            <div class="problem-item">
+              <div class="problem-num">3</div>
+              <div class="problem-text">
+                <strong>Low Recipient Trust</strong>
+                <p>Plain, sparse download links raise security alarms and create emotional hesitation before downloading.</p>
+              </div>
+            </div>
+          </div>
+          <p class="section-body" style="margin-top:20px;"><strong>FileFlow</strong> is structured to solve these exact gaps &mdash; positioning branding not as a hidden setting, but as a core value proposition.</p>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">02 &middot; User Personas</div>
+          <h2 class="section-title">Targeting the Right Users</h2>
+          <p class="section-body">I analyzed four personas to guide design decisions and build empathy. <span style="font-size:.88rem;color:var(--text-subtle);display:block;margin-top:4px;">Click a card to expand full details.</span></p>
+          <div class="personas-grid">
+
+            <div class="persona-card" onclick="togglePersona(this)">
+              <div class="persona-header">
+                <div class="persona-avatar">SF</div>
+                <div><div class="persona-name">Sara &mdash; Creative Freelancer</div><div class="persona-role">Designer &amp; Animator</div></div>
+              </div>
+              <p class="persona-summary">Needs professional presentation when sharing large design exports and presentations with clients.</p>
+              <div class="persona-expand-hint"><span class="arrow-icon">&#8595;</span> <span class="hint-text">Click to expand</span></div>
+              <div class="persona-details">
+                <div class="persona-detail-block"><div class="label">Frequent Uploads</div><div class="value">High-fidelity UI mockups, render assets, video presentations, and interactive pitches.</div></div>
+                <div class="persona-detail-block"><div class="label">Key Need</div><div class="value">A custom-branded experience for clients, signaling the upload is part of her bespoke service.</div></div>
+                <div class="persona-detail-block"><div class="label">Core Pain Point</div><div class="value">Generic, plain transfer pages feel completely disconnected from her professional visual work.</div></div>
+              </div>
+            </div>
+
+            <div class="persona-card" onclick="togglePersona(this)">
+              <div class="persona-header">
+                <div class="persona-avatar">AT</div>
+                <div><div class="persona-name">PixelCo &mdash; Agency Team</div><div class="persona-role">Mid-size Design Studio</div></div>
+              </div>
+              <p class="persona-summary">Needs robust tracking, collaborative transfer workflows, and high delivery assurance.</p>
+              <div class="persona-expand-hint"><span class="arrow-icon">&#8595;</span> <span class="hint-text">Click to expand</span></div>
+              <div class="persona-details">
+                <div class="persona-detail-block"><div class="label">Frequent Uploads</div><div class="value">Campaign bundles, design systems, video footage drafts, raw design formats.</div></div>
+                <div class="persona-detail-block"><div class="label">Key Need</div><div class="value">Real-time indicators showing who has accessed files, so client managers know when feedback cycles start.</div></div>
+                <div class="persona-detail-block"><div class="label">Core Pain Point</div><div class="value">Inability to verify if a client has actually seen the file leads to awkward follow-up conversations.</div></div>
+              </div>
+            </div>
+
+            <div class="persona-card" onclick="togglePersona(this)">
+              <div class="persona-header">
+                <div class="persona-avatar">EU</div>
+                <div><div class="persona-name">Marcus &mdash; Enterprise User</div><div class="persona-role">Client Account Manager</div></div>
+              </div>
+              <p class="persona-summary">Needs tight security constraints, access controls, and policy compliance.</p>
+              <div class="persona-expand-hint"><span class="arrow-icon">&#8595;</span> <span class="hint-text">Click to expand</span></div>
+              <div class="persona-details">
+                <div class="persona-detail-block"><div class="label">Frequent Uploads</div><div class="value">Financial reports, legal documents, contracts, user research databases.</div></div>
+                <div class="persona-detail-block"><div class="label">Key Need</div><div class="value">Password protection, strict expiry dates, restricted access configurations, and tracking logs.</div></div>
+                <div class="persona-detail-block"><div class="label">Core Pain Point</div><div class="value">Anxiety around corporate compliance and the threat of confidential files leaking out of control.</div></div>
+              </div>
+            </div>
+
+            <div class="persona-card" onclick="togglePersona(this)">
+              <div class="persona-header">
+                <div class="persona-avatar">RC</div>
+                <div><div class="persona-name">The Recipient</div><div class="persona-role">Client, Partner, or Reviewer</div></div>
+              </div>
+              <p class="persona-summary">Needs absolute clarity, immediate download access, and security trust indicators.</p>
+              <div class="persona-expand-hint"><span class="arrow-icon">&#8595;</span> <span class="hint-text">Click to expand</span></div>
+              <div class="persona-details">
+                <div class="persona-detail-block"><div class="label">Core Need</div><div class="value">Immediate download access without sign-up steps, and clear assurance that the file is safe to open.</div></div>
+                <div class="persona-detail-block"><div class="label">Core Pain Point</div><div class="value">Unverified, spam-heavy download links and files lacking preview options increase security anxiety.</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top:36px;">
+            <h3 style="font-size:1.15rem;margin-bottom:16px;">Jobs-To-Be-Done (JTBD)</h3>
+            <div class="jtbd-nav">
+              <button class="jtbd-btn active" onclick="switchJtbd(event,'sender-jtbd')">Sender&rsquo;s View</button>
+              <button class="jtbd-btn" onclick="switchJtbd(event,'recipient-jtbd')">Recipient&rsquo;s View</button>
+            </div>
+            <div id="sender-jtbd" class="jtbd-panel active">
+              <div class="jtbd-item"><div class="jtbd-num">1</div><p><strong>Functional:</strong> Upload files securely, set parameters (expiry, permissions), generate delivery links, and monitor download history.</p></div>
+              <div class="jtbd-item"><div class="jtbd-num">2</div><p><strong>Emotional:</strong> Gain confidence that files arrived safely and will be presented professionally, avoiding failed delivery worries.</p></div>
+              <div class="jtbd-item"><div class="jtbd-num">3</div><p><strong>Social:</strong> Look polished and professional to clients, reinforcing brand identity on every asset transfer.</p></div>
+            </div>
+            <div id="recipient-jtbd" class="jtbd-panel">
+              <div class="jtbd-item"><div class="jtbd-num">1</div><p><strong>Functional:</strong> Verify download source, check file contents safely, and transfer items to local storage without friction.</p></div>
+              <div class="jtbd-item"><div class="jtbd-num">2</div><p><strong>Emotional:</strong> Feel assured that files are clean of malware, sent from an authenticated source, and have not expired.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card accent-bg">
+          <div class="section-label">03 &middot; Core UX Insight</div>
+          <div class="insight-quote">"The challenge isn't just about moving bytes &mdash; it's about eliminating uncertainty and building trust on both ends of the transfer pipeline."</div>
+          <p class="section-body">When a designer shares files, their work is on the line. A generic download page erodes client trust. No tracking info breeds sender anxiety. By integrating <strong>Branding Customization</strong> into the upload path and developing a <strong>Rich Status Lifecycle</strong>, FileFlow removes guesswork for everyone.</p>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: CORE FLOWS -->
+    <div id="flows-tab" class="tab-panel" role="tabpanel">
+      <div class="content-stack">
+        <section class="section-card">
+          <div class="section-label">01 &middot; IA &amp; User Journey</div>
+          <h2 class="section-title lg">End-to-End Flow Mapping</h2>
+          <p class="section-body">I split the product into a Sender Flow and a Recipient Flow. Every entry point and configuration choice leads to a clear and functional state.</p>
+          <div class="img-placeholder">
+            <div class="mono-tag">FIGJAM EXPORT</div>
+            <div class="ph-title">Information Architecture &amp; End-to-End Flow Map</div>
+            <p class="ph-desc">Place your exported FigJam user journey diagram here &mdash; showing routes from file upload through recipient secure landing.</p>
+            <div class="ph-cta">&#x2295; Insert FigJam Diagram</div>
+          </div>
+          <div class="two-col">
+            <div class="flow-card">
+              <div class="flow-card-title">&rarr; Sender Pipeline</div>
+              <div class="flow-step"><div class="flow-step-num">1</div><p><strong>Add Files</strong> &mdash; Dropzone handles files and folders dynamically.</p></div>
+              <div class="flow-step"><div class="flow-step-num">2</div><p><strong>Delivery Method</strong> &mdash; Choose Public URL or direct email delivery.</p></div>
+              <div class="flow-step"><div class="flow-step-num">3</div><p><strong>Customization</strong> &mdash; Configure parameters and set branding background options.</p></div>
+              <div class="flow-step"><div class="flow-step-num">4</div><p><strong>Monitor</strong> &mdash; Track processing status and manage from the dashboard.</p></div>
+            </div>
+            <div class="flow-card">
+              <div class="flow-card-title">&rarr; Recipient Pipeline</div>
+              <div class="flow-step"><div class="flow-step-num">1</div><p><strong>Link Opens</strong> &mdash; Triggers instant scan animations and branded landing.</p></div>
+              <div class="flow-step"><div class="flow-step-num">2</div><p><strong>Security Verdict</strong> &mdash; Status indicator shows the virus-free validation badge.</p></div>
+              <div class="flow-step"><div class="flow-step-num">3</div><p><strong>Preview &amp; Download</strong> &mdash; Scan individual file details and download with one click.</p></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- TAB 3: UI DESIGNS -->
+    <div id="designs-tab" class="tab-panel" role="tabpanel">
+      <div class="content-stack">
+
+        <section class="section-card">
+          <div class="section-label">01 &middot; Visual Direction</div>
+          <h2 class="section-title lg">High-Fidelity Mockups</h2>
+          <p class="section-body">I chose a <strong>Hybrid Visual Style</strong> &mdash; a clean, minimal dashboard structure (modeled after Linear and Stripe) combined with high-end, expressive landing interactions using gradients, 3D elements, and modern typography.</p>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">Screen 1</div>
+          <h2 class="section-title">New Transfer &amp; Home Interface</h2>
+          <p class="section-body">The starting interface centers around the upload card. A <strong>Hybrid Upload Pattern</strong> replaces complex UI elements &mdash; a unified dropzone that handles files or folders with a simple dropdown CTA, reducing screen noise.</p>
+          <div class="img-placeholder">
+            <div class="mono-tag">FIGMA MOCKUP</div>
+            <div class="ph-title">New Transfer Screen &mdash; Home Page</div>
+            <p class="ph-desc">Place your high-fidelity UI export of the empty and filled Transfer card screen here.</p>
+            <div class="ph-cta">&#x2295; Insert Home / Upload UI Mockup</div>
+          </div>
+          <div class="chip-row">
+            <span class="chip accent">Hybrid Dropzone</span>
+            <span class="chip">Progressive Drawer Toggle</span>
+            <span class="chip">Interactive File List</span>
+            <span class="chip">Branding Shortcut</span>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">Screen 2</div>
+          <h2 class="section-title">Advanced Parameters &amp; Progressive Disclosure</h2>
+          <p class="section-body">To prevent cognitive overload, advanced parameters &mdash; custom expiry, passwords, download limits, and notifications &mdash; slide out in an <strong>overlay drawer on the right</strong>, keeping the main screen clean for casual users.</p>
+          <div class="img-placeholder">
+            <div class="mono-tag">FIGMA MOCKUP</div>
+            <div class="ph-title">Advanced Settings Drawer Overlay</div>
+            <p class="ph-desc">Place your Figma screen demonstrating the advanced options drawer slide-out here.</p>
+            <div class="ph-cta">&#x2295; Insert Drawer Mockup</div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">Screen 3</div>
+          <h2 class="section-title">The Split-Screen Branding Editor</h2>
+          <p class="section-body">Instead of burying customization in settings, FileFlow introduces a <strong>split Branding Editor</strong>. The left panel houses background, typography, and brand variables. The right side renders a live preview of the recipient landing view.</p>
+          <div class="img-placeholder">
+            <div class="mono-tag">FIGMA MOCKUP</div>
+            <div class="ph-title">Split-Panel Branding Editor UI</div>
+            <p class="ph-desc">Place your Figma screen of the Branding Editor interface here.</p>
+            <div class="ph-cta">&#x2295; Insert Branding Editor Mockup</div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">Screen 4</div>
+          <h2 class="section-title">Management Dashboard &amp; Rich Statuses</h2>
+          <p class="section-body">The dashboard displays active transfers, history, and engagement metrics. A unified <strong>Shared With</strong> column accommodates both email lists and public links, avoiding awkward empty cells.</p>
+          <div class="img-placeholder">
+            <div class="mono-tag">FIGMA MOCKUP</div>
+            <div class="ph-title">Transfers Dashboard Interface</div>
+            <p class="ph-desc">Place your Figma screen of the dashboard showing transfer tables and analytics cards here.</p>
+            <div class="ph-cta">&#x2295; Insert Dashboard Mockup</div>
+          </div>
+          <div style="margin-top:8px;">
+            <h3 style="font-size:1.1rem;margin-bottom:6px;">Interactive Status Lifecycle</h3>
+            <p style="font-size:.88rem;color:var(--text-subtle);margin-bottom:0;">Nine granular transfer states. Click to explore each one:</p>
+            <div class="status-widget">
+              <div class="status-tabs">
+                <button class="status-btn active" onclick="showStatus(this,'draft')">Draft</button>
+                <button class="status-btn" onclick="showStatus(this,'uploading')">Uploading</button>
+                <button class="status-btn" onclick="showStatus(this,'processing')">Processing</button>
+                <button class="status-btn" onclick="showStatus(this,'virus')">Virus Scan</button>
+                <button class="status-btn" onclick="showStatus(this,'ready')">Ready</button>
+                <button class="status-btn" onclick="showStatus(this,'viewed')">Viewed</button>
+                <button class="status-btn" onclick="showStatus(this,'downloaded')">Downloaded</button>
+                <button class="status-btn" onclick="showStatus(this,'expired')">Expired</button>
+                <button class="status-btn" onclick="showStatus(this,'failed')">Failed</button>
+              </div>
+              <div class="status-display">
+                <span id="status-badge" class="status-badge s-draft">Draft</span>
+                <h5 id="status-title" class="status-title">Transfer Draft</h5>
+                <p id="status-desc" class="status-desc">The transfer has been initiated. Files are selected and staged locally, waiting for the user to configure settings and trigger the upload.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">Screen 5</div>
+          <h2 class="section-title">Recipient Download Page</h2>
+          <p class="section-body">The recipient interface focuses on <strong>security and delivery speed</strong>. Key trust indicators &mdash; virus verification, expiration metrics, and verified sender badges &mdash; are prioritized so clients download work with peace of mind.</p>
+          <div class="img-placeholder">
+            <div class="mono-tag">FIGMA MOCKUP</div>
+            <div class="ph-title">Recipient Secure Download Experience</div>
+            <p class="ph-desc">Place your Figma mockup showing a branded download screen from the client's perspective here.</p>
+            <div class="ph-cta">&#x2295; Insert Recipient UI Mockup</div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: PRODUCT THINKING -->
+    <div id="decisions-tab" class="tab-panel" role="tabpanel">
+      <div class="content-stack">
+
+        <section class="section-card">
+          <div class="section-label">01 &middot; Key Decisions</div>
+          <h2 class="section-title lg">Product Thinking &amp; Trade-Offs</h2>
+          <p class="section-body">A major part of this challenge was considering trade-offs within a tight 4-day window. Here are my key UX decisions:</p>
+          <div class="qa-stack">
+            <div class="qa-item expanded" onclick="toggleQa(this)">
+              <button class="qa-trigger">Why not simply replicate WeTransfer's interaction?<span class="qa-icon">+</span></button>
+              <div class="qa-content">WeTransfer focuses on utility and speed. While efficient, it doesn't give professional creators control over branding or tracking. FileFlow addresses these needs directly, transforming file transfers into a premium delivery service that helps designers build lasting client trust.</div>
+            </div>
+            <div class="qa-item" onclick="toggleQa(this)">
+              <button class="qa-trigger">Why integrate branding directly into the creation flow?<span class="qa-icon">+</span></button>
+              <div class="qa-content">Branding directly influences client trust. By showing senders a preview of how files will look to recipients during upload setup, we encourage them to polish the client experience &mdash; which drives adoption of our premium customization options.</div>
+            </div>
+            <div class="qa-item" onclick="toggleQa(this)">
+              <button class="qa-trigger">Why use a slide-out drawer for advanced options?<span class="qa-icon">+</span></button>
+              <div class="qa-content">This keeps the primary screen clean for the 80% of users who just want a fast upload, while giving power users quick access to security, password, and notification parameters exactly when needed &mdash; without cluttering the default view.</div>
+            </div>
+            <div class="qa-item" onclick="toggleQa(this)">
+              <button class="qa-trigger">Why opt for a hybrid visual direction?<span class="qa-icon">+</span></button>
+              <div class="qa-content">A minimal structure is perfect for the dashboard where users need clean, readable tabular data. However, download pages and customization sections call for expressive, high-end visuals &mdash; custom glass layers, smooth mesh gradients &mdash; to make the experience feel premium and engaging for clients.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">02 &middot; Robust UX Considerations</div>
+          <h2 class="section-title">Edge Cases &amp; Accessibility</h2>
+          <div class="edge-grid">
+            <div class="edge-card">
+              <div class="edge-card-title">Edge Cases Addressed</div>
+              <div class="edge-point"><div class="edge-bullet">&#10003;</div><p><strong>Upload Interruption</strong> &mdash; UI saves local buffers, allowing users to resume immediately upon reconnecting.</p></div>
+              <div class="edge-point"><div class="edge-bullet">&#10003;</div><p><strong>Expired / Deleted Links</strong> &mdash; Clean fallback layouts explain why assets are missing and offer options to request resends.</p></div>
+              <div class="edge-point"><div class="edge-bullet">&#10003;</div><p><strong>Virus-Flagged Files</strong> &mdash; Clear warning states on the recipient page with next-step guidance.</p></div>
+            </div>
+            <div class="edge-card">
+              <div class="edge-card-title">Accessibility (WCAG)</div>
+              <div class="edge-point"><div class="edge-bullet">&#10003;</div><p><strong>Visible Focus States</strong> &mdash; Clear indicators across interactive links, buttons, and upload fields.</p></div>
+              <div class="edge-point"><div class="edge-bullet">&#10003;</div><p><strong>Color Contrast</strong> &mdash; Strict checks on all interactive elements to meet WCAG AA standards.</p></div>
+              <div class="edge-point"><div class="edge-bullet">&#10003;</div><p><strong>Reduced Motion</strong> &mdash; Animations respect prefers-reduced-motion system settings.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card">
+          <div class="section-label">03 &middot; Success Metrics</div>
+          <h2 class="section-title">Measuring Impact Post-Launch</h2>
+          <p class="section-body">Three key metrics I prioritized to evaluate FileFlow&rsquo;s performance:</p>
+          <div class="metrics-row">
+            <div class="metric-card" style="border-top:3px solid #22c55e;">
+              <div class="metric-value" style="color:#22c55e;">98.5%</div>
+              <div class="metric-name">Upload Completion Rate</div>
+              <div class="metric-desc">Monitors network resiliency and core upload stability.</div>
+            </div>
+            <div class="metric-card" style="border-top:3px solid var(--accent);">
+              <div class="metric-value" style="color:var(--accent);">42%</div>
+              <div class="metric-name">Branding Feature Adoption</div>
+              <div class="metric-desc">Tracks creators who customize their recipient views.</div>
+            </div>
+            <div class="metric-card" style="border-top:3px solid #3b82f6;">
+              <div class="metric-value" style="color:#3b82f6;">99.1%</div>
+              <div class="metric-name">Download Success Rate</div>
+              <div class="metric-desc">Ensures recipients download assets quickly and easily.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section-card accent-bg">
+          <div class="section-label">04 &middot; Final Reflection</div>
+          <h2 class="section-title">What This Challenge Revealed</h2>
+          <p class="section-body">This 4-day challenge highlighted that file transfer is more than a storage utility &mdash; it is a key <strong>communication touchpoint</strong> between creative professionals and their clients. By centering the product around <strong>transparency, branding, and trust</strong>, FileFlow transforms a simple transaction into a memorable brand experience.</p>
+        </section>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <h3>FileFlow &mdash; Design Presentation</h3>
+      <p>Staged mockup placeholders can be updated in the source code as assets are exported from Figma.</p>
+      <div class="hero-actions" style="margin-bottom:0;">
+        <a href="#" class="btn-primary" onclick="window.scrollTo({top:0,behavior:'smooth'}); switchTab(event,'strategy-tab'); return false;">Back to Top &uarr;</a>
+        <a href="https://www.figma.com" target="_blank" class="btn-secondary">Open in Figma &#8599;</a>
+      </div>
+      <div class="copy">&copy; 2026 Design School &middot; Made by Nijin</div>
+    </div>
+  </footer>
+
+  <script>
+    function switchTab(e, tabId) {
+      if (e) e.preventDefault();
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      const matchBtn = Array.from(document.querySelectorAll('.tab-btn')).find(btn => {
+        const oc = btn.getAttribute('onclick') || '';
+        return oc.includes(tabId);
+      });
+      if (matchBtn) matchBtn.classList.add('active');
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      const nav = document.querySelector('.tab-nav-wrapper');
+      if (nav) nav.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function togglePersona(card) {
+      const wasExpanded = card.classList.contains('expanded');
+      document.querySelectorAll('.persona-card').forEach(c => {
+        c.classList.remove('expanded');
+        const ht = c.querySelector('.hint-text'); if (ht) ht.textContent = 'Click to expand';
+        const ar = c.querySelector('.arrow-icon'); if (ar) ar.textContent = '\u2193';
+      });
+      if (!wasExpanded) {
+        card.classList.add('expanded');
+        const ht = card.querySelector('.hint-text'); if (ht) ht.textContent = 'Click to collapse';
+        const ar = card.querySelector('.arrow-icon'); if (ar) ar.textContent = '\u2191';
+      }
+    }
+
+    function switchJtbd(e, panelId) {
+      document.querySelectorAll('.jtbd-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      document.querySelectorAll('.jtbd-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById(panelId);
+      if (panel) panel.classList.add('active');
+    }
+
+    function toggleQa(item) { item.classList.toggle('expanded'); }
+
+    const STATUS_DATA = {
+      draft:      { badge:'Draft',      cls:'s-draft',      title:'Transfer Draft',                 desc:'The transfer is initiated. Files are selected and staged locally, waiting for the user to configure settings and trigger the upload.' },
+      uploading:  { badge:'Uploading',  cls:'s-uploading',  title:'Data Streaming in Progress',     desc:'Files are being broken into encrypted chunks and streamed to cloud storage nodes. Senders see speed rate and percentage trackers in real time.' },
+      processing: { badge:'Processing', cls:'s-processing', title:'Server-Side Consolidating',      desc:'The upload stream completes. Server nodes compile the data blocks, index files, and confirm directory integrity.' },
+      virus:      { badge:'Virus Scan', cls:'s-virus',      title:'Deep Integrity & Threat Scan',   desc:'FileFlow runs automated threat detection sweeps before unlocking the download page, protecting recipients from potential malware risks.' },
+      ready:      { badge:'Ready',      cls:'s-ready',      title:'Active & Shareable',              desc:'Virus sweep concludes. Files are securely online. The public download URL is active and the landing page is live for recipients.' },
+      viewed:     { badge:'Viewed',     cls:'s-viewed',     title:'Link Accessed by Recipient',     desc:'The recipient has opened the link and viewed the files. The sender receives an email notice and a real-time dashboard update.' },
+      downloaded: { badge:'Downloaded', cls:'s-downloaded', title:'Assets Successfully Transferred', desc:'The recipient clicked download and successfully transferred the assets. Dashboard confirms delivery and updates engagement metrics.' },
+      expired:    { badge:'Expired',    cls:'s-expired',    title:'Retention Window Concluded',     desc:'The transfer expiry threshold (default 7 days) is reached. Stored files are purged from nodes for security and storage efficiency.' },
+      failed:     { badge:'Failed',     cls:'s-failed',     title:'Transfer Interrupted',           desc:'Upload interrupted due to network issues or file errors. FileFlow prompts the user to reconnect and resume from the last checkpoint.' }
+    };
+
+    function showStatus(btn, key) {
+      document.querySelectorAll('.status-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const d = STATUS_DATA[key];
+      const badge = document.getElementById('status-badge');
+      const title = document.getElementById('status-title');
+      const desc  = document.getElementById('status-desc');
+      badge.className = 'status-badge ' + d.cls;
+      badge.textContent = d.badge;
+      title.textContent = d.title;
+      desc.textContent  = d.desc;
+    }
+  </script>
+
+  <!-- ── FLOATING ADD TASK BUTTON ── -->
+  <button class="fab" id="fabAddTask" onclick="handleAddTask()" aria-label="Add new task" title="Add New Task">
+    <span class="fab-icon">+</span>
+    <span class="fab-label">Add New Task</span>
+    <span class="fab-ring"></span>
+  </button>
+
+  <style>
+    .fab {
+      position: fixed;
+      bottom: 32px;
+      left: 28px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 14px 22px 14px 16px;
+      border-radius: 100px;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(255, 111, 44, 0.38), 0 2px 8px rgba(0,0,0,0.5);
+      transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, background 0.2s ease;
+      overflow: hidden;
+      position: fixed;
+    }
+
+    .fab:hover {
+      background: var(--accent-hover);
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 10px 32px rgba(255, 111, 44, 0.48), 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .fab:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .fab-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 50%;
+      font-size: 1.35rem;
+      font-weight: 400;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: background 0.2s ease;
+    }
+
+    .fab:hover .fab-icon {
+      background: rgba(255,255,255,0.28);
+    }
+
+    .fab-label {
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+    }
+
+    /* subtle ambient pulse ring */
+    .fab-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 100px;
+      box-shadow: 0 0 0 0 rgba(255, 111, 44, 0.55);
+      animation: fab-pulse 2.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      pointer-events: none;
+    }
+
+    @keyframes fab-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(255, 111, 44, 0.5); }
+      60%  { box-shadow: 0 0 0 12px rgba(255, 111, 44, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 111, 44, 0); }
+    }
+
+    @media (max-width: 480px) {
+      .fab { bottom: 20px; left: 16px; padding: 12px 18px 12px 14px; font-size: 0.88rem; }
+    }
+  </style>
+
+  <script>
+    function handleAddTask() {
+      /* Wire this up to your task creation modal/logic */
+      alert('Add New Task — connect this to your task modal!');
+    }
+  </script>
+
+</body>
+</html>
