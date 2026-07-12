@@ -806,9 +806,7 @@ function parseUrl() {
     }
     */
 
-    if (routePath.startsWith('/post-job') || routePath.startsWith('/jobs-admin') || routePath.startsWith('/jobs')) {
-      return { page: 'home', catId: null, subId: null, articleId: null, query: null };
-    }
+
 
     if (routePath.startsWith('/search')) {
       return { page: 'search', catId: null, subId: null, articleId: null, query };
@@ -1055,6 +1053,7 @@ function renderPage(state) {
           content.innerHTML = renderToolsPage(query);
           initToolsPageListeners(query);
           break;
+
         case 'jobs':
           content.innerHTML = renderJobsPage();
           initJobsPage();
@@ -1099,6 +1098,7 @@ function renderPage(state) {
         content.innerHTML = renderToolsPage(query);
         initToolsPageListeners(query);
         break;
+
       case 'jobs':
         content.innerHTML = renderJobsPage();
         initJobsPage();
@@ -1170,18 +1170,14 @@ function renderHomeSkeleton() {
   return `
     <div class="channel-banner">
       <div class="channel-inner">
-        <div class="shimmer" style="width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0;"></div>
+        <div class="shimmer" style="width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0; margin-bottom: 20px;"></div>
         <div class="channel-info" style="width: 100%;">
-          <div class="shimmer" style="width: 200px; height: 26px; border-radius: 6px; margin-bottom: 8px;"></div>
-          <div class="shimmer" style="width: 80%; height: 16px; border-radius: 4px; margin-bottom: 16px;"></div>
-          <div class="channel-meta" style="margin-bottom: 20px;">
+          <div class="shimmer" style="width: 200px; height: 26px; border-radius: 6px; margin: 0 auto 8px;"></div>
+          <div class="shimmer" style="width: 80%; height: 16px; border-radius: 4px; margin: 0 auto 16px;"></div>
+          <div class="channel-meta" style="margin-bottom: 0; justify-content: center;">
             <div class="shimmer" style="width: 80px; height: 14px; border-radius: 4px;"></div>
             <div class="shimmer" style="width: 80px; height: 14px; border-radius: 4px;"></div>
             <div class="shimmer" style="width: 80px; height: 14px; border-radius: 4px;"></div>
-          </div>
-          <div class="channel-actions">
-            <div class="shimmer" style="width: 120px; height: 38px; border-radius: 22px;"></div>
-            <div class="shimmer" style="width: 120px; height: 38px; border-radius: 22px;"></div>
           </div>
         </div>
       </div>
@@ -1529,6 +1525,8 @@ function initNav() {
         </button>
       </div>
     `;
+
+
 
     /*
     const jobsNavHtml = `
@@ -2028,12 +2026,6 @@ function renderHome() {
           <div class="channel-name">${SITE.name}</div>
           <div class="channel-sub">${SITE.description}</div>
           <div class="channel-meta">${statsHtml}</div>
-          <div class="channel-actions">
-            <a href="${subscribeUrl}" target="_blank" rel="noopener" class="btn-subscribe">
-              ${svgYT(15)} Subscribe
-            </a>
-            <!-- <button class="btn-visit-channel" onclick="navigate('dashboard')">Learning Dashboard</button> -->
-          </div>
         </div>
       </div>
     </div>
@@ -3895,24 +3887,6 @@ const WORKBENCH_TOOLS = [
             <path d="M9 20h6"></path>
             <path d="M12 4v16"></path>
           </svg>`
-  },
-  {
-    id: "favicon-generator",
-    title: "Favicon Package Generator",
-    description: "Export icons as a ZIP",
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 3z"></path>
-          </svg>`
-  },
-  {
-    id: "speed-test",
-    title: "Internet Speed Test",
-    description: "Measure download and upload speed",
-    icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.38 3.62A10 10 0 1 0 22 12h-2a8 8 0 1 1-1.28-4.38L16.3 9.8a4 4 0 1 0-1.8 1.8l-2.08 2.08"></path>
-            <polyline points="16 3 21 3 21 8"></polyline>
-            <line x1="21" y1="3" x2="14" y2="10"></line>
-          </svg>`
   }
 ];
 
@@ -3930,6 +3904,24 @@ function renderToolsOverview() {
           <polyline points="12 5 19 12 12 19"/>
         </svg>
       </div>
+    </a>
+  `).join('');
+
+  const pluginCards = FIGMA_PLUGINS.map((p, idx) => `
+    <a href="${p.url}" target="_blank" rel="noopener" class="category-card stagger-item figma-plugin-card" style="--stagger: ${1.4 + idx}; text-decoration: none; color: inherit; display: block;">
+      <div class="figma-plugin-badge">
+        <svg viewBox="0 0 38 57" fill="none" stroke="none" style="width: 10px; height: 15px; display: block;">
+          <path d="M19 28.5C19 23.2533 14.7467 19 9.5 19C4.2533 19 0 23.2533 0 28.5C0 33.7467 4.2533 38 9.5 38H19V28.5Z" fill="#0ACF83" />
+          <path d="M19 9.5C19 4.2533 14.7467 0 9.5 0C4.2533 0 0 4.2533 0 9.5C0 14.7467 4.2533 19 9.5 19H19V9.5Z" fill="#F24E1E" />
+          <path d="M38 9.5C38 4.2533 33.7467 0 28.5 0C23.2533 0 19 4.2533 19 9.5V19H28.5C33.7467 19 38 14.7467 38 9.5Z" fill="#FF7262" />
+          <path d="M38 28.5C38 23.2533 33.7467 19 28.5 19C23.2533 19 19 23.2533 19 28.5V38H28.5C33.7467 38 38 33.7467 38 28.5Z" fill="#A259FF" />
+          <path d="M19 47.5C19 42.2533 14.7467 38 9.5 38C4.2533 38 0 42.2533 0 47.5C0 52.7467 4.2533 57 9.5 57C14.7467 57 19 52.7467 19 47.5Z" fill="#1ABCFE" />
+        </svg>
+      </div>
+      <div class="figma-plugin-icon">${p.icon || ''}</div>
+      <div class="category-title">${p.name}</div>
+      <div class="category-desc">${p.desc}</div>
+      <div class="category-count">View on Figma Community</div>
     </a>
   `).join('');
 
@@ -3958,6 +3950,32 @@ function renderToolsOverview() {
 
       <div class="tools-overview-grid">
         ${toolCards}
+      </div>
+
+      <div class="tool-suggestion-box">
+        <div class="suggestion-box-inner">
+          <input type="text" id="tool-suggestion-input" class="suggestion-input" placeholder="Suggest a new interactive tool..." onkeydown="if(event.key === 'Enter') submitSuggestion('tool', 'tool-suggestion-input', 'tool-suggestion-btn', 'tool-suggestion-status')" />
+          <button id="tool-suggestion-btn" class="btn-suggestion" onclick="submitSuggestion('tool', 'tool-suggestion-input', 'tool-suggestion-btn', 'tool-suggestion-status')">Submit</button>
+        </div>
+        <div id="tool-suggestion-status" class="suggestion-status-msg"></div>
+      </div>
+
+      <div class="tools-overview-header" style="margin-top: 3.5rem;">
+        <div class="tools-overview-badge">Workflow Accelerators</div>
+        <h2 class="tools-overview-title-main" style="font-size: 2.25rem;">Figma Plugins</h2>
+        <p class="tools-overview-subtitle">Premium utilities built to supercharge your design process directly inside Figma.</p>
+      </div>
+
+      <div class="category-grid" style="margin-top: 1rem;">
+        ${pluginCards}
+      </div>
+
+      <div class="tool-suggestion-box" style="margin-top: 2rem;">
+        <div class="suggestion-box-inner">
+          <input type="text" id="plugin-suggestion-input" class="suggestion-input" placeholder="Suggest a new Figma plugin..." onkeydown="if(event.key === 'Enter') submitSuggestion('plugin', 'plugin-suggestion-input', 'plugin-suggestion-btn', 'plugin-suggestion-status')" />
+          <button id="plugin-suggestion-btn" class="btn-suggestion" onclick="submitSuggestion('plugin', 'plugin-suggestion-input', 'plugin-suggestion-btn', 'plugin-suggestion-status')">Submit</button>
+        </div>
+        <div id="plugin-suggestion-status" class="suggestion-status-msg"></div>
       </div>
     </div>
   `;
@@ -3988,10 +4006,6 @@ function renderToolsPage(activeTool) {
     toolWorkbenchHtml = renderQrGeneratorTool();
   } else if (selectedTool.id === 'font-pairing') {
     toolWorkbenchHtml = renderFontPairingTool();
-  } else if (selectedTool.id === 'favicon-generator') {
-    toolWorkbenchHtml = renderFaviconGeneratorTool();
-  } else if (selectedTool.id === 'speed-test') {
-    toolWorkbenchHtml = renderSpeedTestTool();
   }
 
   return `
@@ -4151,89 +4165,7 @@ function renderTintsShadesTool() {
   `;
 }
 
-function renderSpeedTestTool() {
-  return `
-    <div class="speed-test-tool-content" style="text-align: left;">
-      <div style="margin-bottom: 32px;">
-        <h2 class="tool-title" style="font-size: 26px; font-weight: 800; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px;">Internet Speed Test</h2>
-        <p class="tool-subtitle" style="font-size: 14.5px; color: var(--text-2); line-height: 1.5; max-width: 580px;">Measure your connection latency and download speed in real time. Powered by global server infrastructure.</p>
-      </div>
 
-      <div class="speed-container" style="display: flex; flex-direction: column; align-items: center; gap: 32px; background: var(--bg-2); border: 1px solid var(--border); padding: 36px; border-radius: 20px; max-width: 540px; margin: 0 auto; box-shadow: 0 8px 30px rgba(0,0,0,0.12);">
-        
-        <!-- Speedometer Gauge -->
-        <div class="speedometer-wrapper" style="position: relative; width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;">
-          <svg class="speedometer-svg" viewBox="0 0 200 200" style="width: 100%; height: 100%;">
-            <defs>
-              <linearGradient id="speed-gauge-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#FF6F2C" />
-                <stop offset="100%" stop-color="#8B5CF6" />
-              </linearGradient>
-            </defs>
-            <!-- Background track -->
-            <circle cx="100" cy="100" r="85" fill="none" stroke="var(--border)" stroke-width="12" stroke-dasharray="400" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(135 100 100)" style="opacity: 0.3;"></circle>
-            <!-- Progress track (270 degrees = 3/4 of 2*PI*85 = 400.5) -->
-            <circle id="speedGaugeProgress" cx="100" cy="100" r="85" fill="none" stroke="url(#speed-gauge-gradient)" stroke-width="12" stroke-dasharray="400" stroke-dashoffset="400" stroke-linecap="round" transform="rotate(135 100 100)" style="transition: stroke-dashoffset 0.1s ease;"></circle>
-          </svg>
-          <!-- Text inside gauge -->
-          <div class="speedometer-display" style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-            <div id="speedLiveVal" style="font-family: var(--font-display); font-size: 42px; font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -1px;">0.0</div>
-            <div id="speedLiveUnit" style="font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px;">Mbps</div>
-          </div>
-        </div>
-
-        <!-- Real-time sine wave visualizer -->
-        <div class="speed-wave-wrapper" style="width: 100%; height: 40px; position: relative;">
-          <canvas id="speedWaveCanvas" width="468" height="40" style="width: 100%; height: 100%; opacity: 0.8;"></canvas>
-        </div>
-
-        <!-- Stats Row -->
-        <div class="speed-stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; width: 100%;">
-          
-          <!-- Ping Card -->
-          <div class="speed-stat-card" id="speedCardPing" style="background: var(--bg-3); border: 1px solid var(--border); padding: 16px 12px; border-radius: 14px; text-align: center; position: relative; transition: all var(--transition);">
-            <div class="speed-stat-status-dot" id="dotPing" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: transparent;"></div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Ping</div>
-            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
-              <span id="speedValPing" style="font-size: 20px; font-weight: 800; color: var(--text);">0</span>
-              <span style="font-size: 11px; color: var(--text-3); font-weight: 600;">ms</span>
-            </div>
-          </div>
-
-          <!-- Download Card -->
-          <div class="speed-stat-card" id="speedCardDownload" style="background: var(--bg-3); border: 1px solid var(--border); padding: 16px 12px; border-radius: 14px; text-align: center; position: relative; transition: all var(--transition);">
-            <div class="speed-stat-status-dot" id="dotDownload" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: transparent;"></div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Download</div>
-            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
-              <span id="speedValDownload" style="font-size: 20px; font-weight: 800; color: var(--text);">0.0</span>
-              <span style="font-size: 11px; color: var(--text-3); font-weight: 600;">Mbps</span>
-            </div>
-          </div>
-
-          <!-- Upload Card -->
-          <div class="speed-stat-card" id="speedCardUpload" style="display: none !important;">
-            <div class="speed-stat-status-dot" id="dotUpload" style="position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: transparent;"></div>
-            <div style="font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Upload</div>
-            <div style="display: flex; align-items: baseline; justify-content: center; gap: 2px;">
-              <span id="speedValUpload" style="font-size: 20px; font-weight: 800; color: var(--text);">0.0</span>
-              <span style="font-size: 11px; color: var(--text-3); font-weight: 600;">Mbps</span>
-            </div>
-          </div>
-          
-        </div>
-
-        <!-- Start/Action Button -->
-        <button class="btn-primary speed-test-btn" id="startSpeedTestBtn" style="width: 100%; padding: 14px; font-size: 15px; font-weight: 700; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(255, 111, 44, 0.2); transition: all 0.2s;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
-            <polygon points="5 3 19 12 5 21 5 3" fill="currentColor"></polygon>
-          </svg>
-          <span>Start Test</span>
-        </button>
-
-      </div>
-    </div>
-  `;
-}
 
 function renderToolsSkeleton() {
   return `
@@ -5343,7 +5275,7 @@ async function initImageFormatConverterListeners() {
   const qualityGroup = document.getElementById('ifcQualityGroup');
   const convertBtn = document.getElementById('ifcConvertBtn');
   const resetBtn = document.getElementById('ifcResetBtn');
-  
+
   let currentFile = null;
   let currentImage = null;
   let currentUrl = null;
@@ -5374,7 +5306,7 @@ async function initImageFormatConverterListeners() {
       formatButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedFormat = btn.dataset.value;
-      
+
       if (selectedFormat === 'image/png') {
         qualityGroup.style.opacity = '0.5';
         qualityGroup.style.pointerEvents = 'none';
@@ -5395,10 +5327,10 @@ async function initImageFormatConverterListeners() {
     currentImage = loaded.img;
     currentUrl = loaded.url;
     preview.src = currentUrl;
-    
+
     const sizeStr = formatBytes(file.size);
     filename.textContent = `${file.name} · ${currentImage.naturalWidth}x${currentImage.naturalHeight} (${sizeStr})`;
-    
+
     document.getElementById('ifcDropzone').style.display = 'none';
     workspace.style.display = 'block';
   });
@@ -5409,17 +5341,17 @@ async function initImageFormatConverterListeners() {
     canvas.width = currentImage.naturalWidth;
     canvas.height = currentImage.naturalHeight;
     const ctx = canvas.getContext('2d');
-    
+
     if (selectedFormat === 'image/jpeg') {
       ctx.fillStyle = '#FFFFFF';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
-    
+
     ctx.drawImage(currentImage, 0, 0);
     const qVal = selectedFormat === 'image/png' ? 1.0 : parseFloat(quality.value);
     const blob = await canvasToBlob(canvas, selectedFormat, qVal);
     const ext = selectedFormat === 'image/jpeg' ? 'jpg' : selectedFormat.split('/')[1];
-    
+
     // Add micro-animation/toast checkmark on convertBtn
     const origHtml = convertBtn.innerHTML;
     convertBtn.innerHTML = `
@@ -5427,7 +5359,7 @@ async function initImageFormatConverterListeners() {
       Downloaded!
     `;
     convertBtn.style.background = '#4CAF50';
-    
+
     setTimeout(() => {
       convertBtn.innerHTML = origHtml;
       convertBtn.style.background = '';
@@ -5499,12 +5431,12 @@ async function initPaletteExtractorListeners() {
   const preview = document.getElementById('pePreview');
   const colorsEl = document.getElementById('peColors');
   const filename = document.getElementById('peFilename');
-  
+
   const copyAllBtn = document.getElementById('peCopyAllBtn');
   const downloadCssBtn = document.getElementById('peDownloadCssBtn');
   const downloadJsonBtn = document.getElementById('peDownloadJsonBtn');
   const resetBtn = document.getElementById('peResetBtn');
-  
+
   let extractedColors = [];
 
   if (!result) return;
@@ -5513,24 +5445,24 @@ async function initPaletteExtractorListeners() {
     if (!file || !file.type.startsWith('image/')) return;
     const loaded = await loadImageFromFile(file);
     preview.src = loaded.url;
-    
+
     const sizeStr = formatBytes(file.size);
     filename.textContent = file.name + ' · ' + loaded.img.naturalWidth + 'x' + loaded.img.naturalHeight + ' (' + sizeStr + ')';
-    
+
     const colorThief = new ColorThief();
     const palette = colorThief.getPalette(loaded.img, 5);
-    
+
     extractedColors = palette.map(rgb => rgbToHex(rgb[0], rgb[1], rgb[2]));
-    
+
     colorsEl.innerHTML = palette.map((rgb, idx) => {
       const hex = extractedColors[idx];
-      
+
       const ratioWhite = calculateContrastRatio(hex, '#FFFFFF');
       const ratioBlack = calculateContrastRatio(hex, '#111111');
-      
+
       let wcagText = 'Low Contrast';
       let wcagClass = 'fail';
-      
+
       if (ratioWhite >= 4.5) {
         wcagText = 'AA White text';
         wcagClass = 'pass';
@@ -5538,7 +5470,7 @@ async function initPaletteExtractorListeners() {
         wcagText = 'AA Dark text';
         wcagClass = 'pass';
       }
-      
+
       return `
         <div class="palette-swatch-card" data-hex="${hex}">
           <div class="palette-swatch-color" style="background:${hex}">
@@ -5557,20 +5489,20 @@ async function initPaletteExtractorListeners() {
         </div>
       `;
     }).join('');
-    
+
     const cards = colorsEl.querySelectorAll('.palette-swatch-card');
     cards.forEach(card => {
       card.addEventListener('click', (e) => {
         const hex = card.dataset.hex;
         copyToClipboard(hex);
-        
+
         const copyBtn = card.querySelector('.palette-swatch-copy-btn');
         const origSvg = copyBtn.innerHTML;
         copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
         copyBtn.style.background = '#4CAF50';
         copyBtn.style.opacity = '1';
         copyBtn.style.transform = 'scale(1)';
-        
+
         setTimeout(() => {
           copyBtn.innerHTML = origSvg;
           copyBtn.style.background = '';
@@ -5579,7 +5511,7 @@ async function initPaletteExtractorListeners() {
         }, 1200);
       });
     });
-    
+
     document.getElementById('peDropzone').style.display = 'none';
     result.style.display = 'block';
   });
@@ -5588,14 +5520,14 @@ async function initPaletteExtractorListeners() {
     if (extractedColors.length === 0) return;
     const textStr = extractedColors.join(', ');
     copyToClipboard(textStr);
-    
+
     const origHtml = copyAllBtn.innerHTML;
     copyAllBtn.innerHTML = `
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
       HEX Codes Copied!
     `;
     copyAllBtn.style.background = '#4CAF50';
-    
+
     setTimeout(() => {
       copyAllBtn.innerHTML = origHtml;
       copyAllBtn.style.background = '';
@@ -5736,7 +5668,7 @@ function initQrGeneratorListeners() {
   const copyBtn = document.getElementById('qrCopyBtn');
   const presets = document.querySelectorAll('#qrPresets .color-preset-btn');
   const styleSegments = document.querySelectorAll('[data-tool="qrStyle"] .tool-segment-btn');
-  
+
   if (!canvas) return;
 
   let qrSize = parseInt(sizeSlider.value);
@@ -5805,7 +5737,7 @@ function initQrGeneratorListeners() {
     const isLight = (x, y) => {
       const idx = (y * size + x) * 4;
       // compare to foreground: if it's closer to fg it's dark
-      const r = data[idx], g = data[idx+1], b = data[idx+2];
+      const r = data[idx], g = data[idx + 1], b = data[idx + 2];
       // simple luminance threshold
       return (r + g + b) > 382; // > ~127*3
     };
@@ -5852,17 +5784,17 @@ function initQrGeneratorListeners() {
       foreground: foreground.value,
       background: background.value
     });
-    
+
     applyStyle();
-    
+
     // Update trigger bg colors
     fgTrigger.style.backgroundColor = foreground.value;
     bgTrigger.style.backgroundColor = background.value;
-    
+
     // Update text boxes
     fgHex.value = foreground.value.toUpperCase();
     bgHex.value = background.value.toUpperCase();
-    
+
     const wrap = document.getElementById('qrCanvasWrap');
     if (wrap) wrap.style.backgroundColor = background.value;
   };
@@ -5934,19 +5866,19 @@ function initQrGeneratorListeners() {
       await navigator.clipboard.write([
         new ClipboardItem({ 'image/png': blob })
       ]);
-      
+
       const origHtml = copyBtn.innerHTML;
       copyBtn.innerHTML = `
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
         Copied!
       `;
       copyBtn.style.background = '#4CAF50';
-      
+
       setTimeout(() => {
         copyBtn.innerHTML = origHtml;
         copyBtn.style.background = '';
       }, 1500);
-      
+
     } catch (err) {
       console.error(err);
       showClipboardToast('Copy failed, please download instead.');
@@ -6062,35 +5994,35 @@ function initFontPairingListeners() {
   const codeCss = document.getElementById('fpCodeCss');
   const copyLinkBtn = document.getElementById('fpCopyLinkBtn');
   const copyCssBtn = document.getElementById('fpCopyCssBtn');
-  
+
   if (!heading) return;
   let idx = -1;
 
   const applyPair = () => {
     idx = (idx + 1 + Math.floor(Math.random() * (GOOGLE_FONT_PAIRS.length - 1))) % GOOGLE_FONT_PAIRS.length;
     const [headingFont, bodyFont, vibe] = GOOGLE_FONT_PAIRS[idx];
-    
+
     // Inject stylesheet
     const linkId = 'dynamic-google-font-pair';
     const existing = document.getElementById(linkId);
     if (existing) existing.remove();
-    
+
     const link = document.createElement('link');
     link.id = linkId;
     link.rel = 'stylesheet';
-    
+
     const headFontUrl = headingFont.replace(/ /g, '+');
     const bodyFontUrl = bodyFont.replace(/ /g, '+');
     const url = `https://fonts.googleapis.com/css2?family=${headFontUrl}:wght@400;600;700&family=${bodyFontUrl}:wght@400;500;700&display=swap`;
     link.href = url;
     document.head.appendChild(link);
-    
+
     // Apply styling
     heading.style.fontFamily = `"${headingFont}", serif`;
     body.style.fontFamily = `"${bodyFont}", sans-serif`;
     name.textContent = `${headingFont} + ${bodyFont}`;
     vibeBadge.textContent = vibe;
-    
+
     // Update code outputs
     codeLink.textContent = `<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link rel="stylesheet" href="${url}">`;
     codeCss.textContent = `/* Heading styling */\nh1, h2, h3 {\n  font-family: "${headingFont}", serif;\n}\n\n/* Body styling */\nbody, p {\n  font-family: "${bodyFont}", sans-serif;\n}`;
@@ -6193,145 +6125,7 @@ function initUnicodeTextListeners() {
   update();
 }
 
-function renderFaviconGeneratorTool() {
-  return `
-    <div class="simple-tool-content" style="text-align: left;">
-      ${renderToolIntro('Favicon Package Generator', 'Upload one square logo and generate browser favicons plus an Apple Touch Icon as a ZIP package.')}
-      ${renderSimpleDropzone('fg', 'Drop a square logo', 'PNG, JPG, SVG, or WebP')}
-      
-      <div id="fgResult" style="display:none;">
-        <div class="utility-panel">
-          <div>
-            <!-- Assets info & Copyable codes -->
-            <div class="utility-stack" style="gap: 16px;">
-              <div class="utility-file-name" id="fgFilename">logo.png</div>
-              
-              <div class="utility-label" style="text-transform:uppercase; font-size:11px; letter-spacing:0.05em; color:var(--text-3); margin-top:8px;">Generated Assets</div>
-              <div class="favicon-package-grid">
-                <div class="favicon-package-card">
-                  <div class="favicon-package-preview-wrapper">
-                    <img id="fgPreview16" src="" alt="16x16" style="width:16px; height:16px;">
-                  </div>
-                  <div class="favicon-package-card-title">favicon-16x16.png</div>
-                  <div class="favicon-package-card-size">16 x 16 px</div>
-                </div>
-                
-                <div class="favicon-package-card">
-                  <div class="favicon-package-preview-wrapper">
-                    <img id="fgPreview32" src="" alt="32x32" style="width:32px; height:32px;">
-                  </div>
-                  <div class="favicon-package-card-title">favicon-32x32.png</div>
-                  <div class="favicon-package-card-size">32 x 32 px</div>
-                </div>
-                
-                <div class="favicon-package-card">
-                  <div class="favicon-package-preview-wrapper">
-                    <img id="fgPreview180" src="" alt="180x180" style="width:40px; height:40px; border-radius: 8px;">
-                  </div>
-                  <div class="favicon-package-card-title">apple-touch-icon.png</div>
-                  <div class="favicon-package-card-size">180 x 180 px</div>
-                </div>
-              </div>
-              
-              <div class="code-embed-container">
-                <div class="code-embed-header">
-                  <span class="code-embed-title">HTML Headers Snippet</span>
-                  <button class="btn-copy-code" id="fgCopySnippetBtn">Copy Snippet</button>
-                </div>
-                <pre class="code-embed-pre" id="fgCodeSnippet" style="font-size:11px; max-height:100px; overflow-y:auto;"></pre>
-              </div>
-              <div class="tool-action-row">
-                <button class="btn-primary" id="fgDownloadBtn" style="flex: 1; border-radius: 12px; padding: 12px 18px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  Download ZIP
-                </button>
-                <button id="fgResetBtn" style="border-radius: 12px; padding: 12px 18px; background: var(--bg-3); border: 1px solid var(--border); color: var(--text-2); cursor: pointer; transition: all var(--transition);">
-                  New Image
-                </button>
-              </div>
-            </div>
-            
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
 
-async function initFaviconGeneratorListeners() {
-  const result = document.getElementById('fgResult');
-  const filename = document.getElementById('fgFilename');
-  const downloadBtn = document.getElementById('fgDownloadBtn');
-  const resetBtn = document.getElementById('fgResetBtn');
-  const copySnippetBtn = document.getElementById('fgCopySnippetBtn');
-  
-  const preview16 = document.getElementById('fgPreview16');
-  const preview32 = document.getElementById('fgPreview32');
-  const preview180 = document.getElementById('fgPreview180');
-  const codeSnippet = document.getElementById('fgCodeSnippet');
-  
-  let currentImage = null;
-  if (!result) return;
-
-  const htmlSnippet = `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\n<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">\n<link rel="apple-touch-icon" href="/apple-touch-icon.png">`;
-
-  wireDropzone('fg', async (file) => {
-    if (!file || !file.type.startsWith('image/')) return;
-    const loaded = await loadImageFromFile(file);
-    currentImage = loaded.img;
-    
-    filename.textContent = file.name;
-    
-    preview16.src = loaded.url;
-    preview32.src = loaded.url;
-    preview180.src = loaded.url;
-    
-    codeSnippet.textContent = htmlSnippet;
-    
-    document.getElementById('fgDropzone').style.display = 'none';
-    result.style.display = 'block';
-  });
-
-  copySnippetBtn.addEventListener('click', () => {
-    copyToClipboard(htmlSnippet);
-    
-    const origHtml = copySnippetBtn.innerHTML;
-    copySnippetBtn.innerHTML = 'Copied!';
-    copySnippetBtn.style.background = '#4CAF50';
-    copySnippetBtn.style.color = '#FFFFFF';
-    
-    setTimeout(() => {
-      copySnippetBtn.innerHTML = origHtml;
-      copySnippetBtn.style.background = '';
-      copySnippetBtn.style.color = '';
-    }, 1500);
-  });
-
-  downloadBtn.addEventListener('click', async () => {
-    if (!currentImage) return;
-    const zip = new JSZip();
-    
-    for (const size of [16, 32, 180]) {
-      const canvas = document.createElement('canvas');
-      canvas.width = size;
-      canvas.height = size;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(currentImage, 0, 0, size, size);
-      const blob = await canvasToBlob(canvas, 'image/png');
-      zip.file(size === 180 ? 'apple-touch-icon.png' : `favicon-${size}x${size}.png`, blob);
-    }
-    
-    zip.file('favicon-html.txt', htmlSnippet);
-    const blob = await zip.generateAsync({ type: 'blob' });
-    downloadBlob(blob, 'favicon-package.zip');
-  });
-
-  resetBtn.addEventListener('click', () => {
-    currentImage = null;
-    result.style.display = 'none';
-    document.getElementById('fgDropzone').style.display = 'flex';
-  });
-}
 
 function renderDuotoneFilterTool() {
   return `
@@ -6483,338 +6277,7 @@ function initLottieColorEditorListeners() {
   });
 }
 
-function initSpeedTestListeners() {
-  const startBtn = document.getElementById('startSpeedTestBtn');
-  const speedGaugeProgress = document.getElementById('speedGaugeProgress');
-  const speedLiveVal = document.getElementById('speedLiveVal');
-  const speedLiveUnit = document.getElementById('speedLiveUnit');
-  const speedValPing = document.getElementById('speedValPing');
-  const speedValDownload = document.getElementById('speedValDownload');
-  const speedValUpload = document.getElementById('speedValUpload');
-  
-  const cardPing = document.getElementById('speedCardPing');
-  const cardDownload = document.getElementById('speedCardDownload');
-  const cardUpload = document.getElementById('speedCardUpload');
-  
-  const dotPing = document.getElementById('dotPing');
-  const dotDownload = document.getElementById('dotDownload');
-  const dotUpload = document.getElementById('dotUpload');
-  
-  const canvas = document.getElementById('speedWaveCanvas');
-  
-  if (!startBtn) return;
-  
-  let isRunning = false;
-  let waveOffset = 0;
-  let currentSpeed = 0;
-  let testPhase = 'idle'; // 'idle', 'ping', 'download', 'complete'
-  let animationId = null;
 
-  // Wave Visualizer logic
-  function animateWave() {
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Wave parameters based on phase and currentSpeed
-    let amplitude = 4;
-    let frequency = 0.02;
-    let speed = 0.05;
-    let strokeColor = 'rgba(255, 111, 44, 0.4)'; // Orange accent default
-    
-    if (testPhase === 'ping') {
-      amplitude = 6;
-      frequency = 0.04;
-      speed = 0.12;
-      strokeColor = 'rgba(255, 111, 44, 0.6)';
-    } else if (testPhase === 'download') {
-      amplitude = Math.min(15, 6 + currentSpeed / 8);
-      frequency = Math.min(0.08, 0.03 + currentSpeed / 500);
-      speed = Math.min(0.25, 0.1 + currentSpeed / 200);
-      strokeColor = 'rgba(255, 111, 44, 0.85)';
-    } else if (testPhase === 'complete') {
-      amplitude = 3;
-      frequency = 0.015;
-      speed = 0.03;
-      strokeColor = 'rgba(16, 185, 129, 0.5)'; // Green accent for complete
-    }
-    
-    ctx.beginPath();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 2.5;
-    ctx.lineCap = 'round';
-    
-    for (let x = 0; x < canvas.width; x++) {
-      const y = canvas.height / 2 + Math.sin(x * frequency + waveOffset) * amplitude;
-      if (x === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    }
-    ctx.stroke();
-    
-    // Draw a secondary subtle background wave
-    ctx.beginPath();
-    ctx.strokeStyle = strokeColor.replace('0.85', '0.2').replace('0.6', '0.15').replace('0.5', '0.1').replace('0.4', '0.08');
-    ctx.lineWidth = 1.5;
-    for (let x = 0; x < canvas.width; x++) {
-      const y = canvas.height / 2 + Math.cos(x * (frequency * 0.8) - waveOffset * 0.9) * (amplitude * 0.7);
-      if (x === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
-    }
-    ctx.stroke();
-    
-    waveOffset += speed;
-    animationId = requestAnimationFrame(animateWave);
-  }
-  
-  // Start constant wave animation
-  animateWave();
-  
-  function updateGauge(speedVal) {
-    currentSpeed = speedVal;
-    speedLiveVal.textContent = speedVal.toFixed(1);
-    
-    let maxVal = 100;
-    if (speedVal > 100) maxVal = 500;
-    if (speedVal > 500) maxVal = 1000;
-    
-    const offset = 400 - (400 * Math.min(speedVal, maxVal)) / maxVal;
-    if (speedGaugeProgress) {
-      speedGaugeProgress.style.strokeDashoffset = offset;
-    }
-  }
-  
-  function resetGauge() {
-    currentSpeed = 0;
-    speedLiveVal.textContent = "0.0";
-    if (speedGaugeProgress) {
-      speedGaugeProgress.style.strokeDashoffset = "400";
-    }
-  }
-  
-  function setPulseState(activeCard, dotEl) {
-    [cardPing, cardDownload, cardUpload].forEach(c => {
-      if (c) {
-        c.style.borderColor = 'var(--border)';
-        c.style.boxShadow = 'none';
-      }
-    });
-    [dotPing, dotDownload, dotUpload].forEach(d => {
-      if (d) {
-        d.style.background = 'transparent';
-        d.classList.remove('pulse-dot-active');
-      }
-    });
-    
-    if (activeCard && dotEl) {
-      activeCard.style.borderColor = 'var(--accent)';
-      activeCard.style.boxShadow = '0 4px 15px rgba(255, 111, 44, 0.15)';
-      dotEl.style.background = 'var(--accent)';
-      dotEl.classList.add('pulse-dot-active');
-    }
-  }
-
-  async function startTest() {
-    if (isRunning) return;
-    isRunning = true;
-    startBtn.disabled = true;
-    startBtn.style.opacity = '0.7';
-    startBtn.querySelector('span').textContent = 'Testing...';
-    
-    resetGauge();
-    speedValPing.textContent = '0';
-    speedValDownload.textContent = '0.0';
-    if (speedValUpload) speedValUpload.textContent = '0.0';
-    
-    // Reset component visibility: show Ping and Download, hide Upload
-    if (cardPing) cardPing.style.display = 'block';
-    if (cardDownload) cardDownload.style.display = 'block';
-    if (cardUpload) cardUpload.style.display = 'none';
-    
-    let pingScore = 0;
-    let downloadScore = 0;
-    let pingWorked = false;
-    let downloadWorked = false;
-    
-    try {
-      // 1. Latency (Ping) Phase
-      testPhase = 'ping';
-      speedLiveUnit.textContent = 'Ping';
-      setPulseState(cardPing, dotPing);
-      
-      let pingInterval = setInterval(() => {
-        speedLiveVal.textContent = Math.floor(20 + Math.random() * 30);
-      }, 80);
-      
-      try {
-        pingScore = await runPingTest();
-        pingWorked = true;
-        speedValPing.textContent = pingScore;
-        speedLiveVal.textContent = pingScore;
-        speedLiveUnit.textContent = 'ms';
-      } catch (pingErr) {
-        console.warn('Ping phase failed:', pingErr);
-        if (cardPing) cardPing.style.display = 'none';
-      } finally {
-        clearInterval(pingInterval);
-      }
-      
-      await new Promise(r => setTimeout(r, 600));
-      
-      // 2. Download Phase
-      testPhase = 'download';
-      speedLiveUnit.textContent = 'Mbps';
-      setPulseState(cardDownload, dotDownload);
-      resetGauge();
-      
-      try {
-        downloadScore = await runDownloadTest((liveSpeed) => {
-          updateGauge(liveSpeed);
-        });
-        downloadWorked = true;
-        speedValDownload.textContent = downloadScore.toFixed(1);
-        updateGauge(downloadScore);
-      } catch (downloadErr) {
-        console.warn('Download phase failed:', downloadErr);
-        if (cardDownload) cardDownload.style.display = 'none';
-        resetGauge();
-      }
-      
-      await new Promise(r => setTimeout(r, 600));
-      
-      // Complete phase (upload is completely skipped)
-      testPhase = 'complete';
-      setPulseState(null, null);
-      
-      if (downloadWorked) {
-        updateGauge(downloadScore);
-        speedLiveVal.textContent = downloadScore.toFixed(1);
-        speedLiveUnit.textContent = 'Mbps';
-      } else if (pingWorked) {
-        resetGauge();
-        speedLiveVal.textContent = pingScore;
-        speedLiveUnit.textContent = 'ms';
-      } else {
-        resetGauge();
-        speedLiveVal.textContent = '0.0';
-        speedLiveUnit.textContent = 'Mbps';
-      }
-      
-    } catch (err) {
-      console.error('Speed test error:', err);
-      // Suppress showing error messages/toasts as requested
-      testPhase = 'idle';
-      setPulseState(null, null);
-      resetGauge();
-    } finally {
-      isRunning = false;
-      startBtn.disabled = false;
-      startBtn.style.opacity = '1';
-      startBtn.querySelector('span').textContent = 'Run Test Again';
-    }
-  }
-  
-  startBtn.addEventListener('click', startTest);
-  
-  async function runPingTest() {
-    const cloudflareUrls = [
-      'https://speed.cloudflare.com/cdn-cgi/trace',
-      'https://speed.cloudflare.com/cdn-cgi/trace',
-      'https://speed.cloudflare.com/cdn-cgi/trace',
-      'https://speed.cloudflare.com/cdn-cgi/trace',
-      'https://speed.cloudflare.com/cdn-cgi/trace'
-    ];
-    const localUrls = [
-      window.location.origin + '/assets/logo.png',
-      window.location.origin + '/assets/logo.png',
-      window.location.origin + '/assets/logo.png',
-      window.location.origin + '/assets/logo.png',
-      window.location.origin + '/assets/logo.png'
-    ];
-    
-    let useLocal = false;
-    try {
-      const res = await fetch(cloudflareUrls[0] + '?t=' + Math.random(), { cache: 'no-store', method: 'GET' });
-      if (!res.ok) useLocal = true;
-    } catch (e) {
-      useLocal = true;
-    }
-    
-    const targets = useLocal ? localUrls : cloudflareUrls;
-    let times = [];
-    let successCount = 0;
-    
-    for (let i = 0; i < targets.length; i++) {
-      const start = performance.now();
-      try {
-        const res = await fetch(targets[i] + '?t=' + Math.random(), { cache: 'no-store', method: 'GET' });
-        if (res.ok) {
-          const end = performance.now();
-          times.push(end - start);
-          successCount++;
-        }
-      } catch (e) {
-        // failed
-      }
-    }
-    
-    if (successCount === 0) {
-      throw new Error('Ping failed');
-    }
-    
-    const sum = times.reduce((a, b) => a + b, 0);
-    return Math.round(sum / times.length);
-  }
-  
-  async function runDownloadTest(onProgress) {
-    const urls = [
-      'https://speed.cloudflare.com/__down?bytes=5000000&t=' + Math.random(),
-      window.location.origin + '/assets/sama.png?t=' + Math.random(),
-      window.location.origin + '/assets/anek.png?t=' + Math.random()
-    ];
-    
-    let lastError = null;
-    for (const url of urls) {
-      try {
-        const response = await fetch(url, { cache: 'no-store' });
-        if (!response.ok) continue;
-        const reader = response.body.getReader();
-        let loaded = 0;
-        const startTime = performance.now();
-        let speeds = [];
-        
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          loaded += value.length;
-          const elapsed = (performance.now() - startTime) / 1000;
-          if (elapsed > 0) {
-            const speedBps = loaded / elapsed;
-            const speedMbps = (speedBps * 8) / 1000000;
-            speeds.push(speedMbps);
-            onProgress(speedMbps);
-          }
-        }
-        const activeSpeeds = speeds.slice(Math.floor(speeds.length * 0.2));
-        const sum = activeSpeeds.length > 0 ? activeSpeeds.reduce((a, b) => a + b, 0) : 1;
-        return sum / (activeSpeeds.length || 1);
-      } catch (err) {
-        lastError = err;
-        console.warn(`Download test failed for url ${url}:`, err);
-      }
-    }
-    throw lastError || new Error('All download sources failed');
-  }
-  
-  function runUploadTest(onProgress) {
-    return Promise.resolve(0);
-  }
-}
 
 function initToolsPageListeners(activeTool) {
   const toolId = activeTool || 'tints-shades';
@@ -6834,10 +6297,6 @@ function initToolsPageListeners(activeTool) {
     initQrGeneratorListeners();
   } else if (toolId === 'font-pairing') {
     initFontPairingListeners();
-  } else if (toolId === 'favicon-generator') {
-    initFaviconGeneratorListeners();
-  } else if (toolId === 'speed-test') {
-    initSpeedTestListeners();
   }
 }
 
@@ -6901,20 +6360,20 @@ function showClipboardToast(message) {
 // ============================================================
 
 const JOB_CATEGORIES = [
-  { id: 'all',               label: 'All Jobs' },
-  { id: 'ui-ux',             label: 'UI / UX Design' },
-  { id: 'graphic-design',    label: 'Graphic Design' },
-  { id: 'video-editing',     label: 'Video Editing' },
-  { id: 'motion-graphics',   label: 'Motion Graphics' },
-  { id: 'illustration',      label: 'Illustration' },
-  { id: 'branding',          label: 'Branding' },
-  { id: 'content-writing',   label: 'Content Writing' },
+  { id: 'all', label: 'All Jobs' },
+  { id: 'ui-ux', label: 'UI / UX Design' },
+  { id: 'graphic-design', label: 'Graphic Design' },
+  { id: 'video-editing', label: 'Video Editing' },
+  { id: 'motion-graphics', label: 'Motion Graphics' },
+  { id: 'illustration', label: 'Illustration' },
+  { id: 'branding', label: 'Branding' },
+  { id: 'content-writing', label: 'Content Writing' },
   { id: 'digital-marketing', label: 'Digital Marketing' },
-  { id: 'production',        label: 'Production' },
-  { id: '3d-cgi',            label: '3D Design / CGI' },
+  { id: 'production', label: 'Production' },
+  { id: '3d-cgi', label: '3D Design / CGI' },
   { id: 'motion-design-vfx', label: 'Motion Design / VFX' },
-  { id: 'packaging-print',   label: 'Packaging & Print' },
-  { id: 'web-ui-dev',        label: 'Web & UI Developer' },
+  { id: 'packaging-print', label: 'Packaging & Print' },
+  { id: 'web-ui-dev', label: 'Web & UI Developer' },
   { id: 'photography-shoot', label: 'Photography & Shoot' },
 ];
 
@@ -7043,16 +6502,16 @@ function renderJobsPage() {
 function renderJobCard(job) {
   const postedDate = job.postedAt
     ? (() => {
-        try {
-          const d = job.postedAt.toDate ? job.postedAt.toDate() : new Date(job.postedAt);
-          const diffDays = Math.floor((Date.now() - d.getTime()) / 86400000);
-          if (diffDays === 0) return 'Today';
-          if (diffDays === 1) return 'Yesterday';
-          if (diffDays < 7) return `${diffDays}d ago`;
-          if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
-          return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
-        } catch(e) { return ''; }
-      })()
+      try {
+        const d = job.postedAt.toDate ? job.postedAt.toDate() : new Date(job.postedAt);
+        const diffDays = Math.floor((Date.now() - d.getTime()) / 86400000);
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays}d ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+        return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+      } catch (e) { return ''; }
+    })()
     : '';
 
   const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category || '';
@@ -7228,7 +6687,7 @@ function initJobsPage() {
 
   try {
     _jobsUnsubscribe = attachListener(db.collection('jobs'));
-  } catch(e) {
+  } catch (e) {
     console.error('initJobsPage complete failure:', e);
   }
 }
@@ -7446,7 +6905,7 @@ function initJobsAdminPage() {
 
   try {
     _adminJobsUnsubscribe = attachAdminListener(db.collection('jobs'));
-  } catch(e) {
+  } catch (e) {
     console.error('initJobsAdminPage complete failure:', e);
   }
 }
@@ -7463,7 +6922,7 @@ function renderAdminJobsList() {
   listDiv.innerHTML = _adminJobsData.map(job => {
     const isEditing = _adminEditingJobId === job.id;
     const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category;
-    
+
     const logoHtml = job.logo
       ? `<img src="${job.logo}" alt="${job.company || ''}" class="admin-job-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="admin-job-logo-fallback" style="display:none">${(job.company || 'C').charAt(0).toUpperCase()}</div>`
       : `<div class="admin-job-logo-fallback">${(job.company || 'C').charAt(0).toUpperCase()}</div>`;
@@ -7535,7 +6994,7 @@ function editJob(jobId) {
   document.getElementById('jobLogo').value = job.logo || '';
   document.getElementById('jobLocation').value = job.location || '';
   document.getElementById('jobType').value = job.type || 'Full-time';
-  
+
   const isDefaultCategory = JOB_CATEGORIES.some(c => c.id === job.category);
   if (job.category && !isDefaultCategory) {
     document.getElementById('jobCategory').value = 'custom';
@@ -7750,15 +7209,15 @@ function openJobDetailModal(jobId) {
 
   const postedDate = job.postedAt
     ? (() => {
-        try {
-          const d = job.postedAt.toDate ? job.postedAt.toDate() : new Date(job.postedAt);
-          return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
-        } catch(e) { return ''; }
-      })()
+      try {
+        const d = job.postedAt.toDate ? job.postedAt.toDate() : new Date(job.postedAt);
+        return d.toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+      } catch (e) { return ''; }
+    })()
     : '';
 
   const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category || '';
-  
+
   const logoHtml = job.logo
     ? `<img src="${job.logo}" alt="${job.company || ''}" class="job-modal-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="job-modal-logo-fallback" style="display:none">${(job.company || 'C').charAt(0).toUpperCase()}</div>`
     : `<div class="job-modal-logo-fallback">${(job.company || 'C').charAt(0).toUpperCase()}</div>`;
@@ -7984,7 +7443,7 @@ function renderPostJobPage() {
 function initPostJobPage() {
   const state = history.state || parseUrl();
   const editJobId = state.query;
-  
+
   if (!currentUser) return;
 
   if (editJobId) {
@@ -8170,7 +7629,7 @@ function renderUserSubmittedJobs() {
   }
 
   const userJobs = _jobsData.filter(j => j.createdBy === currentUser.email);
-  
+
   if (userJobs.length === 0) {
     section.style.display = 'none';
     return;
@@ -8181,7 +7640,7 @@ function renderUserSubmittedJobs() {
 
   list.innerHTML = userJobs.map(job => {
     const catLabel = JOB_CATEGORIES.find(c => c.id === job.category)?.label || job.customCategoryLabel || job.category;
-    
+
     return `
       <div class="user-job-row" id="user-job-${job.id}">
         <div class="user-job-details">
@@ -8234,3 +7693,56 @@ function showWarningToast(message) {
     setTimeout(() => toast.remove(), 300);
   }, 4000);
 }
+
+// ── SUGGESTION FORM SUBMISSION ────────────────────────────────
+async function submitSuggestion(type, inputId, buttonId, statusId) {
+  const inputEl = document.getElementById(inputId);
+  const btnEl = document.getElementById(buttonId);
+  const statusEl = document.getElementById(statusId);
+  
+  const val = inputEl.value.trim();
+  if (!val) return;
+  
+  btnEl.disabled = true;
+  statusEl.textContent = "Submitting...";
+  statusEl.className = "suggestion-status-msg status-loading";
+  
+  const prefix = type === 'tool' ? '[Interactive Tool]' : '[Figma Plugin]';
+  const suggestionText = `${prefix} ${val}`;
+  
+  const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSelTnbPDsMu3Vwif8SbMHJCJVHgrPK2xmXZJCcZdBMYlgULLQ/formResponse";
+  const formData = new URLSearchParams();
+  formData.append("entry.1325306473", suggestionText);
+  
+  try {
+    await fetch(formUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formData
+    });
+    
+    inputEl.value = "";
+    statusEl.textContent = "Thank you! Your suggestion has been recorded.";
+    statusEl.className = "suggestion-status-msg status-success";
+  } catch (error) {
+    console.error("Error submitting suggestion:", error);
+    statusEl.textContent = "Failed to submit. Please try again.";
+    statusEl.className = "suggestion-status-msg status-error";
+  } finally {
+    btnEl.disabled = false;
+    setTimeout(() => {
+      statusEl.style.opacity = '0';
+      setTimeout(() => {
+        statusEl.textContent = '';
+        statusEl.style.opacity = '1';
+        statusEl.className = 'suggestion-status-msg';
+      }, 500);
+    }, 4000);
+  }
+}
+
+
+

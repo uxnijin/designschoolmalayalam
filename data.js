@@ -16,7 +16,7 @@ const SITE = {
   logo: "assets/logo.png",                          // path to logo image
   accentColor: "#FF6F2C",                           // used as CSS --accent
   cloudflareWorkerUrl: "https://design-school-visitors.nijuvenghat550649.workers.dev",  // Cloudflare Worker URL for live visitor stats
-  adminEmail:"nijuvenghat550649@gmail.com"       // ← YOUR Google email. Only this account can post/edit/delete jobs.
+  adminEmail: "nijuvenghat550649@gmail.com"       // ← YOUR Google email. Only this account can post/edit/delete jobs.
 };
 
 
@@ -59,12 +59,12 @@ const CATEGORIES = [
     title: "UX Design",
     description: "User experience research and strategy",
     subcategories: [{ id: "user-research", title: "User Research", description: "Interviews, surveys, usability testing" },
-      { id: "information-architecture", title: "Information Architecture", description: "Sitemaps, navigation, content structure" },
-      { id: "wireframing", title: "Wireframing", description: "Low-fi wireframes and user flows" },
-      { id: "prototyping", title: "Prototyping", description: "Interactive prototypes and testing" },
-      { id: "ux-laws", title: "UX Laws", description: "Foundational laws and cognitive psychology" },
-      { id: "ux-writing", title: "UX Writing", description: "Writing microcopy, error messages, and user guidance" },
-      { id: "accessibility", title: "Accessibility", description: "Designing inclusive products for people of all abilities" }],
+    { id: "information-architecture", title: "Information Architecture", description: "Sitemaps, navigation, content structure" },
+    { id: "wireframing", title: "Wireframing", description: "Low-fi wireframes and user flows" },
+    { id: "prototyping", title: "Prototyping", description: "Interactive prototypes and testing" },
+    { id: "ux-laws", title: "UX Laws", description: "Foundational laws and cognitive psychology" },
+    { id: "ux-writing", title: "UX Writing", description: "Writing microcopy, error messages, and user guidance" },
+    { id: "accessibility", title: "Accessibility", description: "Designing inclusive products for people of all abilities" }],
   },
   {
     id: "figma",
